@@ -1,188 +1,82 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>NOODY.AI — Lakshadweep Marketplace</title>
-  <meta name="description" content="NOODY.AI — Next-gen Oceanic Operations, Data & Yield. Select a Lakshadweep island, then browse services or products and enquire on WhatsApp." />
-  <meta name="robots" content="index,follow" />
-  <style>
-    :root { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color:#102a35; background:#f5fbfd; }
-    * { box-sizing:border-box; }
-    body { margin:0; background:linear-gradient(180deg,#e4f8fc 0,#f8fcfd 38%,#fff 100%); color:#102a35; }
-    .shell { width:min(1120px,calc(100% - 28px)); margin:0 auto; }
-    header { padding:20px 0; }
-    .brand { font-weight:900; font-size:26px; letter-spacing:-.04em; }
-    .tagline { color:#607982; font-size:13px; margin-top:3px; }
-    main { padding:26px 0 60px; }
-    .selector { background:#fff; border:1px solid #d6e8ed; border-radius:22px; box-shadow:0 14px 40px rgba(28,77,88,.08); overflow:hidden; }
-    .row { display:grid; grid-template-columns:180px 1fr; align-items:center; min-height:104px; border-bottom:1px solid #e5eff2; }
-    .row:last-child { border-bottom:0; }
-    .label { height:100%; display:flex; align-items:center; padding:24px 26px; font-size:13px; font-weight:900; letter-spacing:.12em; color:#607982; background:#f8fbfc; }
-    .choices { display:flex; gap:10px; flex-wrap:wrap; padding:20px 24px; }
-    button { font:inherit; }
-    .choice { border:1px solid #cfe2e7; background:#fff; color:#17343e; padding:14px 19px; border-radius:13px; font-weight:850; cursor:pointer; transition:.16s ease; }
-    .choice:hover { border-color:#84bdca; transform:translateY(-1px); }
-    .choice.active { background:#0f745e; color:#fff; border-color:#0f745e; box-shadow:0 8px 18px rgba(15,116,94,.18); }
-    .result { margin-top:22px; }
-    .result-head { background:#fff; border:1px solid #d7e8ec; border-radius:20px; padding:26px; }
-    .result-head small { display:block; font-weight:900; color:#6a838b; letter-spacing:.1em; text-transform:uppercase; margin-bottom:8px; }
-    .result-head h1 { margin:0; font-size:clamp(30px,5vw,48px); letter-spacing:-.04em; }
-    .result-head p { margin:10px 0 0; color:#58717a; line-height:1.7; max-width:820px; }
-    .cards { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:18px; }
-    .card { background:#fff; border:1px solid #d7e8ec; border-radius:18px; overflow:hidden; box-shadow:0 10px 28px rgba(32,82,93,.07); display:flex; flex-direction:column; min-width:0; }
-    .thumb { aspect-ratio:16/10; width:100%; display:block; object-fit:cover; background:#e9f7fa; }
-    .card-body { padding:18px; display:flex; flex-direction:column; gap:12px; flex:1; }
-    .card-kicker { font-size:11px; font-weight:900; letter-spacing:.11em; color:#66808a; text-transform:uppercase; }
-    .card h2 { margin:0; font-size:21px; letter-spacing:-.025em; }
-    .meta { display:flex; align-items:center; justify-content:space-between; gap:12px; color:#5e747d; font-size:13px; }
-    .price { font-weight:900; color:#17343e; }
-    .wa { margin-top:auto; display:block; text-align:center; background:#0f745e; color:#fff; text-decoration:none; font-weight:900; border-radius:11px; padding:12px 14px; }
-    .wa:hover { filter:brightness(.95); }
-    .note { margin-top:16px; color:#647c84; font-size:13px; line-height:1.6; text-align:center; }
-    footer { text-align:center; color:#6d848c; font-size:13px; padding:26px 0 40px; }
-    @media (max-width:920px) { .cards { grid-template-columns:repeat(2,1fr); } }
-    @media (max-width:720px) {
-      .row { grid-template-columns:1fr; }
-      .label { min-height:auto; padding:16px 20px 8px; background:#fff; }
-      .choices { padding:10px 18px 20px; }
-      .choice { flex:1 1 42%; text-align:center; }
-    }
-    @media (max-width:520px) { .cards { grid-template-columns:1fr; } }
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>NOODY.AI — Lakshadweep</title>
+<meta name="description" content="NOODY.AI — Next-gen Oceanic Operations, Data & Yield. Browse Lakshadweep island services and products, then enquire through WhatsApp."/>
+<meta name="robots" content="index,follow"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#183b31;--muted:#677971;--line:#e2eae6;--sea:#0c6b52;--soft:#edf5f1;--sand:#f7faf8;--white:#fff}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:95px}body{margin:0;background:#fff;color:var(--ink);font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.6}a{text-decoration:none;color:inherit}button{font:inherit;cursor:pointer}img{display:block;width:100%;object-fit:cover}h1,h2,h3,p{margin:0}h1,h2,h3{font-family:Manrope,sans-serif}.content{max-width:1240px;margin:auto;padding-inline:32px}.skip{position:fixed;top:-100px;left:20px;z-index:99;background:#fff;padding:12px}.skip:focus{top:10px}
+.nav{height:88px;max-width:1360px;padding:0 48px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:36px;background:#fff;position:relative;z-index:20}.brand{display:flex;align-items:center;gap:9px;color:var(--sea);font-family:Manrope,sans-serif;font-size:32px;font-weight:800;letter-spacing:-1.8px;line-height:1;position:relative}.brand-ai{font-weight:500}.bird-mark{width:38px;height:38px;display:grid;place-items:center;transform-origin:center;animation:birdFloat 3.2s ease-in-out infinite}.bird-mark svg{width:38px;height:38px}.bird-flight{position:absolute;left:-52px;top:-24px;width:250px;height:85px;pointer-events:none;overflow:visible}.fly{position:absolute;width:14px;height:14px;color:var(--sea);opacity:0}.fly.one{left:0;top:28px;animation:flyOne 6s linear infinite}.fly.two{left:12px;top:46px;width:11px;height:11px;animation:flyTwo 7.5s linear 1.4s infinite}.fly.three{left:3px;top:14px;width:10px;height:10px;animation:flyThree 8.6s linear 3s infinite}.nav-links{display:flex;gap:32px;align-items:center;font-size:14px;font-weight:600}.nav-links a:first-child{color:var(--sea)}.wa-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--sea);color:#fff;border:0;border-radius:30px;padding:12px 18px;font-size:14px;font-weight:700;transition:.2s}.wa-button:hover{background:#09533f;transform:translateY(-1px)}
+.hero{height:510px;margin:0 22px;position:relative;overflow:hidden;border-radius:22px;isolation:isolate;background:#13857c}.hero-photo{position:absolute;inset:-10% 0;width:100%;height:120%;object-position:50% 48%;z-index:-2;animation:arrival 1.5s ease-out both}.hero-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(1,46,44,.72),rgba(1,54,49,.18) 64%,rgba(0,48,45,.09));z-index:-1}.hero-content{max-width:1180px;margin:auto;padding:72px 26px;color:#fff;animation:rise .8s ease-out both}.island-label{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:2.3px;margin-bottom:22px}.hero h1{font-size:clamp(40px,4.4vw,60px);letter-spacing:-2.5px;line-height:1.14;font-weight:700;max-width:780px}.hero h1 em{font-style:normal;font-weight:500;color:#d4f1e0}.hero p{margin-top:22px;font-size:17px;line-height:1.75;color:#f0f8f4;max-width:700px}.hero-caption{position:absolute;right:28px;bottom:20px;color:#fff;font-size:12px;text-shadow:0 1px 6px #143d32}
+.explore{padding-top:68px}.section-top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px}.eyebrow{font-size:10px;font-weight:700;letter-spacing:1.8px;color:#789184;margin-bottom:12px}.section-top h2{font-size:34px;line-height:1.25;letter-spacing:-1.2px}.section-note{font-size:14px;color:#7b8881}.picker-panel{margin-top:28px;border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:0 12px 34px rgba(17,58,48,.06);overflow:hidden}.picker-row{display:grid;grid-template-columns:185px 1fr;align-items:center;min-height:92px;border-bottom:1px solid var(--line)}.picker-row:last-child{border-bottom:0}.picker-label{height:100%;display:flex;align-items:center;padding:22px 24px;background:#f8fbf9;font-size:11px;font-weight:800;letter-spacing:1.6px;color:#789184}.choices{display:flex;gap:10px;flex-wrap:wrap;padding:18px 22px}.choice{border:1px solid #d7e3dd;background:#fff;color:var(--ink);padding:12px 17px;border-radius:10px;font-weight:700}.choice:hover{background:#f4f8f5}.choice.active{background:var(--sea);border-color:var(--sea);color:#fff}.results-heading{display:flex;justify-content:space-between;align-items:center;margin:32px 0 22px}.results-heading h3{font-size:23px;font-weight:700;letter-spacing:-.7px}.results-heading span{font-size:12px;color:var(--muted)}.experience-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}.experience{min-width:0;animation:rise .45s ease-out}.card-image{position:relative;display:block;width:100%;border-radius:13px;overflow:hidden;height:212px;background:#e2ede6}.card-image img{height:100%;transition:transform .7s;object-position:center}.experience:hover .card-image img{transform:scale(1.055)}.card-tag{margin:16px 0 8px;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px;color:var(--sea);font-weight:700}.card-tag span{color:#809086;font-weight:400;white-space:nowrap}.experience h3{font-size:18px;letter-spacing:-.5px;line-height:1.35}.experience p{font-size:14px;color:#6d7c72;line-height:1.7;margin-top:9px;min-height:72px}.card-bottom{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);margin-top:17px;padding:13px 0;gap:10px}.card-bottom small{font-size:11px;color:#7a8880}.card-bottom .wa-link{color:var(--sea);font-weight:700;font-size:12px}.catalogue-note{margin-top:20px;display:flex;gap:9px;align-items:center;color:#829087;font-size:12px}.catalogue-note svg{flex:0 0 auto}
+.how{display:grid;grid-template-columns:1fr 1.25fr;gap:110px;margin-top:90px;padding-top:52px;padding-bottom:50px;border-top:1px solid var(--line)}.how h2{font-size:38px;line-height:1.25;letter-spacing:-1.2px}.how-intro>p{font-size:15px;color:#718175;margin-top:20px;line-height:1.8}.how-intro .wa-button{margin-top:25px}.steps{display:flex;flex-direction:column;justify-content:center}.step{display:flex;gap:26px;padding:22px 0;border-bottom:1px solid var(--line)}.step:first-child{padding-top:0}.step:last-child{border:0}.step>span{font-family:Manrope,sans-serif;color:#a6beb0;font-size:26px;font-weight:500;line-height:1.3}.step h3{font-size:17px;margin-bottom:6px}.step p{font-size:14px;line-height:1.7;color:#6e7e72;max-width:440px}.island-wide{max-width:1176px;margin:34px auto 0;display:grid;grid-template-columns:.9fr 1.1fr;overflow:hidden;border-radius:18px;background:#edf4ee}.island-wide-image{min-height:360px;position:relative}.island-wide-image img{position:absolute;height:100%;object-position:50% 58%}.island-wide-image:after{content:'';position:absolute;inset:48% 0 0;background:linear-gradient(transparent,rgba(12,57,47,.65))}.island-wide-label{position:absolute;left:28px;bottom:24px;color:#fff;z-index:2;font-family:Manrope,sans-serif;font-size:21px;font-weight:600}.island-wide-copy{padding:54px 56px}.island-wide-copy h2{font-size:32px;line-height:1.3}.island-wide-copy p{margin-top:17px;color:#65806d;line-height:1.85;font-size:15px}.island-wide-copy .wa-button{margin-top:24px}.faq{display:grid;grid-template-columns:1fr 1.3fr;gap:85px;padding-top:86px;padding-bottom:74px}.faq h2{font-size:30px}.faq details{border-bottom:1px solid var(--line);padding:17px 0}.faq details:first-child{padding-top:0}.faq summary{cursor:pointer;list-style:none;font-size:14px;font-weight:600;display:flex;justify-content:space-between;gap:20px}.faq summary::-webkit-details-marker{display:none}.faq details p{font-size:14px;color:#677b6d;margin-top:12px;line-height:1.8}.footer{padding-top:58px;padding-bottom:28px}.footer-top{display:flex;gap:30px;align-items:center;padding-bottom:35px;border-bottom:1px solid var(--line)}.footer-top .brand{font-size:27px}.footer-top p{font-size:13px;color:#829186}.footer-top>span{font-size:12px;color:#829186;margin-left:auto}.footer-bottom{display:flex;justify-content:space-between;gap:25px;margin-top:22px;font-size:11px;color:#859186}.credit{font-size:10px;color:#8a9790;margin-top:12px;text-align:right}
+@keyframes arrival{from{opacity:.55;transform:scale(1.07)}to{opacity:1;transform:scale(1)}}@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}@keyframes birdFloat{0%,100%{transform:rotate(-12deg) translateY(0)}45%{transform:rotate(-7deg) translateY(-3px)}72%{transform:rotate(-15deg) translateY(1px)}}@keyframes flyOne{0%{transform:translate3d(0,18px,0) rotate(-14deg) scale(.72);opacity:0}10%{opacity:.55}55%{transform:translate3d(145px,7px,0) rotate(7deg);opacity:.5}100%{transform:translate3d(245px,-18px,0) rotate(13deg) scale(.78);opacity:0}}@keyframes flyTwo{0%{transform:translate3d(0,5px,0) rotate(-18deg) scale(.65);opacity:0}15%{opacity:.4}65%{transform:translate3d(160px,-4px,0) rotate(9deg);opacity:.34}100%{transform:translate3d(238px,-27px,0) rotate(16deg);opacity:0}}@keyframes flyThree{0%{transform:translate3d(0,25px,0) rotate(-9deg) scale(.58);opacity:0}20%{opacity:.3}70%{transform:translate3d(180px,2px,0) rotate(10deg);opacity:.24}100%{transform:translate3d(248px,-24px,0) rotate(17deg);opacity:0}}
+@media(max-width:960px){.experience-grid{grid-template-columns:repeat(2,1fr)}.how{gap:55px}.island-wide{margin-inline:24px}}@media(max-width:760px){.nav{height:78px;padding:0 22px}.nav-links{display:none}.brand{font-size:28px}.hero{height:500px;margin:0 12px;border-radius:18px}.hero-content{padding:64px 22px}.content{padding-inline:20px}.picker-row{grid-template-columns:1fr}.picker-label{background:#fff;padding:16px 20px 6px}.choices{padding:8px 18px 18px}.choice{flex:1 1 42%;text-align:center}.how,.faq,.island-wide{grid-template-columns:1fr}.how,.faq{gap:34px}.island-wide{margin-inline:16px}.island-wide-image{min-height:285px}.island-wide-copy{padding:34px 28px}.footer-top,.footer-bottom{align-items:flex-start;flex-direction:column}.footer-top>span{margin-left:0}.credit{text-align:left}.fly.three{display:none}}@media(max-width:520px){.experience-grid{grid-template-columns:1fr}.section-top{align-items:flex-start;flex-direction:column}.card-image{height:225px}.hero h1{font-size:39px}.nav-right .wa-button{padding:10px 13px;font-size:12px}.bird-flight{display:none}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}.bird-mark,.fly,.hero-photo,.experience{animation:none!important}.fly{display:none}}
+</style>
 </head>
 <body>
-  <header>
-    <div class="shell">
-      <div class="brand">NOODY.AI</div>
-      <div class="tagline">Next-gen Oceanic Operations, Data &amp; Yield.</div>
-    </div>
-  </header>
-
-  <main>
-    <div class="shell">
-      <div class="selector" aria-label="NOODY marketplace selector">
-        <div class="row">
-          <div class="label">ISLAND</div>
-          <div class="choices" id="islandChoices">
-            <button class="choice active" type="button" data-island="Agatti">Agatti</button>
-            <button class="choice" type="button" data-island="Kadmat">Kadmat</button>
-            <button class="choice" type="button" data-island="Kavaratti">Kavaratti</button>
-            <button class="choice" type="button" data-island="Kalpeni">Kalpeni</button>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="label">PRODUCT / SERVICES</div>
-          <div class="choices" id="typeChoices">
-            <button class="choice active" type="button" data-kind="Services">Services</button>
-            <button class="choice" type="button" data-kind="Products">Products</button>
-          </div>
-        </div>
-      </div>
-
-      <section class="result" aria-live="polite">
-        <div class="result-head">
-          <small id="resultLabel">Agatti • Services</small>
-          <h1 id="resultTitle">Agatti Services</h1>
-          <p id="resultCopy">Choose a service below and enquire directly through the official NOODY WhatsApp channel.</p>
-        </div>
-        <div class="cards" id="cards"></div>
-        <div class="note">Availability and final price are confirmed through NOODY WhatsApp. Vendor names and private operational data are not shown on the public website.</div>
-      </section>
-    </div>
-  </main>
-
-  <footer>NOODY.AI • Lakshadweep</footer>
-
-  <script>
-    const WHATSAPP = '919446944562';
-    const islandButtons = [...document.querySelectorAll('[data-island]')];
-    const kindButtons = [...document.querySelectorAll('[data-kind]')];
-    const resultLabel = document.getElementById('resultLabel');
-    const resultTitle = document.getElementById('resultTitle');
-    const resultCopy = document.getElementById('resultCopy');
-    const cards = document.getElementById('cards');
-
-    const serviceSets = {
-      Agatti: ['Kayaking','Snorkeling','Scuba Diving','Glass Boat'],
-      Kadmat: ['Kayaking','Snorkeling','Scuba Diving','Lagoon Trip'],
-      Kavaratti: ['Snorkeling','Scuba Diving','Glass Boat','Local Guide'],
-      Kalpeni: ['Kayaking','Snorkeling','Lagoon Boat','Local Guide']
-    };
-
-    const productSets = {
-      Agatti: ['Local Food Pack','Island Souvenir','Travel Essentials','Water Activity Essentials'],
-      Kadmat: ['Local Food Pack','Island Souvenir','Travel Essentials','Beach Essentials'],
-      Kavaratti: ['Local Food Pack','Island Souvenir','Travel Essentials','Local Gift Pack'],
-      Kalpeni: ['Local Food Pack','Island Souvenir','Travel Essentials','Beach Essentials']
-    };
-
-    const icons = {
-      'Kayaking':'🛶','Snorkeling':'🤿','Scuba Diving':'🌊','Glass Boat':'🛥️','Lagoon Trip':'🏝️','Lagoon Boat':'⛵','Local Guide':'🧭',
-      'Local Food Pack':'🥥','Island Souvenir':'🎁','Travel Essentials':'🎒','Water Activity Essentials':'🦺','Beach Essentials':'🏖️','Local Gift Pack':'🎁'
-    };
-
-    function svgImage(label, icon) {
-      const safeLabel = label.replace(/&/g,'and').replace(/[<>]/g,'');
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
-        <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dff7fb"/><stop offset="1" stop-color="#9edbcf"/></linearGradient></defs>
-        <rect width="800" height="500" rx="28" fill="url(#g)"/>
-        <circle cx="665" cy="90" r="48" fill="#ffffff" opacity=".55"/>
-        <path d="M0 380 C160 320 250 450 430 380 S690 310 800 365 V500 H0Z" fill="#ffffff" opacity=".72"/>
-        <text x="70" y="220" font-size="105">${icon || '🌴'}</text>
-        <text x="70" y="315" font-family="Arial, sans-serif" font-weight="700" font-size="48" fill="#17343e">${safeLabel}</text>
-        <text x="70" y="360" font-family="Arial, sans-serif" font-size="25" fill="#45636d">NOODY.AI • Lakshadweep</text>
-      </svg>`;
-      return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
-    }
-
-    function waLink(item) {
-      const text = `Hi NOODY.AI, I am interested in ${item} in ${island}. Please share availability and price.`;
-      return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`;
-    }
-
-    let island = 'Agatti';
-    let kind = 'Services';
-
-    function render() {
-      resultLabel.textContent = `${island} • ${kind}`;
-      resultTitle.textContent = `${island} ${kind}`;
-      resultCopy.textContent = kind === 'Services'
-        ? `Choose a service below and enquire directly through the official NOODY WhatsApp channel.`
-        : `Choose a product below and enquire directly through the official NOODY WhatsApp channel.`;
-
-      const items = kind === 'Services' ? serviceSets[island] : productSets[island];
-      cards.innerHTML = items.map(item => `
-        <article class="card">
-          <img class="thumb" src="${svgImage(item, icons[item])}" alt="${item}" />
-          <div class="card-body">
-            <div class="card-kicker">${island} • ${kind === 'Services' ? 'Service' : 'Product'}</div>
-            <h2>${item}</h2>
-            <div class="meta"><span>Price</span><span class="price">Ask on WhatsApp</span></div>
-            <a class="wa" href="${waLink(item)}" target="_blank" rel="noopener">WhatsApp Enquiry</a>
-          </div>
-        </article>
-      `).join('');
-    }
-
-    islandButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        island = button.dataset.island;
-        islandButtons.forEach(item => item.classList.toggle('active', item === button));
-        render();
-      });
-    });
-
-    kindButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        kind = button.dataset.kind;
-        kindButtons.forEach(item => item.classList.toggle('active', item === button));
-        render();
-      });
-    });
-
-    render();
-  </script>
+<a href="#explore" class="skip">Skip to island services</a>
+<header class="nav">
+<a class="brand" href="#top" aria-label="NOODY.AI home">
+<span class="bird-flight" aria-hidden="true">
+<svg class="fly one" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 13c3-4 6-5 9-2 3-3 6-2 9 2-3-1-6 0-9 4-3-4-6-5-9-4Z"/></svg>
+<svg class="fly two" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 13c3-4 6-5 9-2 3-3 6-2 9 2-3-1-6 0-9 4-3-4-6-5-9-4Z"/></svg>
+<svg class="fly three" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 13c3-4 6-5 9-2 3-3 6-2 9 2-3-1-6 0-9 4-3-4-6-5-9-4Z"/></svg>
+</span>
+<span class="bird-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 13c4-5 7-6 10-2 3-4 6-3 10 2-4-1-7 1-10 5-3-4-6-6-10-5Z"/><path d="M12 11v7"/></svg></span>
+<span>noody<span class="brand-ai">.ai</span></span>
+</a>
+<nav class="nav-links"><a href="#explore">Island services</a><a href="#how">How it works</a><a href="#about">Lakshadweep</a></nav>
+<div class="nav-right"><a class="wa-button" id="topWhatsapp" href="#">WhatsApp</a></div>
+</header>
+<main id="top">
+<section class="hero">
+<img class="hero-photo" src="https://images.unsplash.com/photo-1572025310208-2fd6b91764c1?auto=format&fit=crop&q=82&w=2200" alt="Lakshadweep island and lagoon"/>
+<div class="hero-shade"></div>
+<div class="hero-content">
+<div class="island-label">⌖ &nbsp; LAKSHADWEEP ISLANDS</div>
+<h1>A little island. <em>A world of possibilities.</em></h1>
+<p>Stays, ocean adventures, local favourites, services and products across Lakshadweep. Choose your island and enquire directly on WhatsApp.</p>
+</div>
+<div class="hero-caption">Lakshadweep, Indian Ocean</div>
+</section>
+<section class="explore content" id="explore">
+<div class="section-top"><div><div class="eyebrow">EXPLORE NOODY.AI</div><h2>Choose your island.</h2></div><p class="section-note">Browse what is available. Enquire directly on WhatsApp.</p></div>
+<div class="picker-panel">
+<div class="picker-row"><div class="picker-label">ISLAND</div><div class="choices" id="islands"><button class="choice active" data-island="Agatti">Agatti</button><button class="choice" data-island="Kadmat">Kadmat</button><button class="choice" data-island="Kavaratti">Kavaratti</button><button class="choice" data-island="Kalpeni">Kalpeni</button></div></div>
+<div class="picker-row"><div class="picker-label">PRODUCT / SERVICES</div><div class="choices" id="kinds"><button class="choice active" data-kind="Services">Services</button><button class="choice" data-kind="Products">Products</button></div></div>
+</div>
+<div class="results-heading"><h3 id="resultTitle">Agatti services & facilities</h3><span id="resultCount"></span></div>
+<div class="experience-grid" id="cards"></div>
+<div class="catalogue-note"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 5 6v5c0 5 3 8 7 10 4-2 7-5 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg><span>Confirm availability, final price and service details on WhatsApp before booking.</span></div>
+</section>
+<section class="how content" id="how"><div class="how-intro"><div class="eyebrow">YOUR ISLAND, YOUR PLANS</div><h2>Choose. Explore.<br/>WhatsApp us.</h2><p>No customer account or enquiry form is needed. Select an island, choose a service or product, and continue through the official NOODY WhatsApp channel.</p><a class="wa-button" id="howWhatsapp" href="#">Start on WhatsApp</a></div><div class="steps"><div class="step"><span>01</span><div><h3>Choose an island</h3><p>See only the services and products listed for your selected Lakshadweep island.</p></div></div><div class="step"><span>02</span><div><h3>Find what you need</h3><p>Browse local activities, transport, food, essentials and island products.</p></div></div><div class="step"><span>03</span><div><h3>Enquire on WhatsApp</h3><p>Tap WhatsApp. Your selected island and item are included in the message. Send it when you are ready.</p></div></div></div></section>
+<section class="island-wide" id="about"><div class="island-wide-image"><img src="https://images.unsplash.com/photo-1685701448456-ceba683d9b42?auto=format&fit=crop&q=82&w=1600" alt="Agatti lagoon beach and palms"/><div class="island-wide-label">Lakshadweep · India</div></div><div class="island-wide-copy"><div class="eyebrow">ACROSS THE ISLANDS</div><h2>One simple marketplace for island needs.</h2><p>NOODY.AI is built for Lakshadweep-wide discovery and WhatsApp-first enquiries. Agatti, Kadmat, Kavaratti and Kalpeni are available in the public selector, with the platform ready to expand island by island.</p><a class="wa-button" id="aboutWhatsapp" href="#">Enquire on WhatsApp</a></div></section>
+<section class="faq content"><h2>A few things to know.</h2><div><details><summary>Do I need to sign in?<span>⌄</span></summary><p>No. Browse islands, services and products without creating a customer account. Enquiries take place on WhatsApp.</p></details><details><summary>Does tapping WhatsApp confirm a booking?<span>⌄</span></summary><p>No. WhatsApp opens with a prepared message. You choose whether to send it. Availability, price and arrangements must be confirmed in the chat.</p></details><details><summary>Why are some services different by island?<span>⌄</span></summary><p>Only items assigned to the selected island are shown. Listings can differ according to island availability and operating partners.</p></details><details><summary>Will vendor names appear publicly?<span>⌄</span></summary><p>No. Vendor operational information stays private. Customers interact with NOODY.AI and are routed through the official WhatsApp service flow.</p></details></div></section>
+</main>
+<footer class="footer content"><div class="footer-top"><a class="brand" href="#top"><span class="bird-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 13c4-5 7-6 10-2 3-4 6-3 10 2-4-1-7 1-10 5-3-4-6-6-10-5Z"/></svg></span><span>noody<span class="brand-ai">.ai</span></span></a><p>Next-gen Oceanic Operations, Data &amp; Yield.</p><span>Lakshadweep · India</span></div><div class="footer-bottom"><span>© <span id="year"></span> NOODY.AI</span><span>Official WhatsApp-first marketplace</span></div><div class="credit">Lakshadweep imagery: Anuj Chauhan / Unsplash and M Qasim / Unsplash.</div></footer>
+<script>
+const WHATSAPP='919446944562';
+const hero='https://images.unsplash.com/photo-1572025310208-2fd6b91764c1?auto=format&fit=crop&q=80&w=1100';
+const beach='https://images.unsplash.com/photo-1685701448456-ceba683d9b42?auto=format&fit=crop&q=80&w=1100';
+const reef='https://upload.wikimedia.org/wikipedia/commons/d/d1/Feather_star_coral_reef.jpg';
+const data={
+Agatti:{Services:[['Stays','Wake up to island life','Find a homestay or a comfortable room for your island visit.',beach],['Scuba diving','A whole world below','Explore your options for an instructor-led scuba experience.',reef],['Kayaking','Take the scenic route','Make time for a paddle on the lagoon.',hero],['Snorkelling','Meet the lagoon','Ask about guided snorkelling and suitable reef outings.',reef],['Taxi & auto','Your island, connected','Plan airport pickup and local rides around Agatti.',hero],['Boat trips','Out on the blue','Enquire about boat outings and permitted transfers.',hero],['Island tours','See Agatti up close','Plan a local introduction to the island.',beach],['Local food','A taste of the islands','Enquire about local meals, snacks and food delivery.',beach]],Products:[['Island products','A little piece of island life','Discover locally available island products and gifts.',beach],['Craft works','Made with island hands','Enquire about local craft pieces and custom orders.',beach],['Travel essentials','Ready for the island','Ask for useful travel and stay essentials.',hero],['Water activity essentials','For ocean days','Enquire about available activity essentials and accessories.',reef]]},
+Kadmat:{Services:[['Kayaking','Glide across the lagoon','Ask about kayaking availability and safety equipment.',hero],['Snorkelling','Meet the reef','Explore guided snorkelling options around Kadmat.',reef],['Scuba diving','Go below the blue','Ask about instructor-led scuba and suitability.',reef],['Lagoon trip','A slower island day','Plan a lagoon outing based on local conditions.',hero],['Local guide','See Kadmat locally','Ask for island guidance and local assistance.',beach],['Transport','Move around with ease','Enquire about local transport and pickup options.',hero]],Products:[['Local food pack','Island flavours','Ask about available local food and snack packs.',beach],['Island souvenir','Take a memory home','Browse available Lakshadweep souvenir options.',beach],['Travel essentials','Ready for the island','Ask for useful travel and stay essentials.',hero],['Beach essentials','For an easy beach day','Enquire about available beach-use essentials.',beach]]},
+Kavaratti:{Services:[['Snorkelling','Explore the lagoon','Ask about guided snorkelling and reef outings.',reef],['Scuba diving','Discover below','Enquire about scuba options and instructor availability.',reef],['Glass boat','See the water differently','Ask about glass boat availability and timing.',hero],['Local guide','Find your way locally','Get island guidance and local assistance.',beach],['Transport','Your island, connected','Ask about pickup and local transport options.',hero],['Local food','A taste of Kavaratti','Enquire about meals, snacks and local favourites.',beach]],Products:[['Local food pack','Island flavours','Ask about available local food and snack packs.',beach],['Island souvenir','A Lakshadweep memory','Browse available souvenir options.',beach],['Travel essentials','For your stay','Ask for useful travel essentials.',hero],['Local gift pack','Made for sharing','Enquire about available local gift options.',beach]]},
+Kalpeni:{Services:[['Kayaking','Paddle the lagoon','Ask about kayaking slots and equipment.',hero],['Snorkelling','A look below','Enquire about guided snorkelling availability.',reef],['Lagoon boat','Out on the blue','Ask about lagoon boat options and conditions.',hero],['Local guide','Explore Kalpeni','Get local island guidance and assistance.',beach],['Transport','Get around locally','Ask about pickup and local transport options.',hero],['Local food','Island favourites','Enquire about local meals and snacks.',beach]],Products:[['Local food pack','Island flavours','Ask about available local food and snack packs.',beach],['Island souvenir','Bring the island home','Browse available souvenir options.',beach],['Travel essentials','Ready for your stay','Ask for useful travel essentials.',hero],['Beach essentials','For your beach day','Enquire about available beach essentials.',beach]]}
+};
+let island='Agatti',kind='Services';
+const cards=document.getElementById('cards'),title=document.getElementById('resultTitle'),count=document.getElementById('resultCount');
+function wa(item=''){const text=item?`Hi NOODY.AI, I am interested in ${item} in ${island}. Please share availability and price.`:`Hi NOODY.AI, I need help with services or products in ${island}.`;return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`}
+function render(){const items=data[island][kind];title.textContent=`${island} ${kind.toLowerCase()} & facilities`;count.textContent=`${items.length} listings`;cards.innerHTML=items.map(([name,heading,desc,img])=>`<article class="experience"><div class="card-image"><img src="${img}" alt="${name}" loading="lazy"></div><div class="card-tag">${kind==='Services'?'SERVICE':'PRODUCT'}<span>⌖ ${island}</span></div><h3>${heading}</h3><p>${desc}</p><div class="card-bottom"><small>${name}</small><a class="wa-link" href="${wa(name)}" target="_blank" rel="noopener">WhatsApp enquiry →</a></div></article>`).join('');['topWhatsapp','howWhatsapp','aboutWhatsapp'].forEach(id=>document.getElementById(id).href=wa())}
+document.querySelectorAll('[data-island]').forEach(b=>b.addEventListener('click',()=>{island=b.dataset.island;document.querySelectorAll('[data-island]').forEach(x=>x.classList.toggle('active',x===b));render()}));document.querySelectorAll('[data-kind]').forEach(b=>b.addEventListener('click',()=>{kind=b.dataset.kind;document.querySelectorAll('[data-kind]').forEach(x=>x.classList.toggle('active',x===b));render()}));document.getElementById('year').textContent=new Date().getFullYear();render();
+</script>
 </body>
 </html>
