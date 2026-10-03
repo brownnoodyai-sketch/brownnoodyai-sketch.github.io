@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>NOODY.AI — Lakshadweep Marketplace</title>
-  <meta name="description" content="NOODY.AI — Next-gen Oceanic Operations, Data & Yield. Select a Lakshadweep island, then browse services or products." />
+  <meta name="description" content="NOODY.AI — Next-gen Oceanic Operations, Data & Yield. Select a Lakshadweep island, then browse services or products and enquire on WhatsApp." />
   <meta name="robots" content="index,follow" />
   <style>
     :root { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color:#102a35; background:#f5fbfd; }
@@ -24,19 +24,31 @@
     .choice { border:1px solid #cfe2e7; background:#fff; color:#17343e; padding:14px 19px; border-radius:13px; font-weight:850; cursor:pointer; transition:.16s ease; }
     .choice:hover { border-color:#84bdca; transform:translateY(-1px); }
     .choice.active { background:#0f745e; color:#fff; border-color:#0f745e; box-shadow:0 8px 18px rgba(15,116,94,.18); }
-    .result { margin-top:22px; background:#fff; border:1px solid #d7e8ec; border-radius:20px; padding:28px; }
-    .result small { display:block; font-weight:900; color:#6a838b; letter-spacing:.1em; text-transform:uppercase; margin-bottom:9px; }
-    .result h1 { margin:0; font-size:clamp(30px,5vw,48px); letter-spacing:-.04em; }
-    .result p { margin:10px 0 0; color:#58717a; line-height:1.7; max-width:760px; }
-    .empty { margin-top:20px; border:1px dashed #c8dce2; background:#f9fcfd; border-radius:15px; padding:20px; color:#58717a; }
-    .empty strong { display:block; color:#17343e; margin-bottom:6px; }
+    .result { margin-top:22px; }
+    .result-head { background:#fff; border:1px solid #d7e8ec; border-radius:20px; padding:26px; }
+    .result-head small { display:block; font-weight:900; color:#6a838b; letter-spacing:.1em; text-transform:uppercase; margin-bottom:8px; }
+    .result-head h1 { margin:0; font-size:clamp(30px,5vw,48px); letter-spacing:-.04em; }
+    .result-head p { margin:10px 0 0; color:#58717a; line-height:1.7; max-width:820px; }
+    .cards { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:18px; }
+    .card { background:#fff; border:1px solid #d7e8ec; border-radius:18px; overflow:hidden; box-shadow:0 10px 28px rgba(32,82,93,.07); display:flex; flex-direction:column; min-width:0; }
+    .thumb { aspect-ratio:16/10; width:100%; display:block; object-fit:cover; background:#e9f7fa; }
+    .card-body { padding:18px; display:flex; flex-direction:column; gap:12px; flex:1; }
+    .card-kicker { font-size:11px; font-weight:900; letter-spacing:.11em; color:#66808a; text-transform:uppercase; }
+    .card h2 { margin:0; font-size:21px; letter-spacing:-.025em; }
+    .meta { display:flex; align-items:center; justify-content:space-between; gap:12px; color:#5e747d; font-size:13px; }
+    .price { font-weight:900; color:#17343e; }
+    .wa { margin-top:auto; display:block; text-align:center; background:#0f745e; color:#fff; text-decoration:none; font-weight:900; border-radius:11px; padding:12px 14px; }
+    .wa:hover { filter:brightness(.95); }
+    .note { margin-top:16px; color:#647c84; font-size:13px; line-height:1.6; text-align:center; }
     footer { text-align:center; color:#6d848c; font-size:13px; padding:26px 0 40px; }
+    @media (max-width:920px) { .cards { grid-template-columns:repeat(2,1fr); } }
     @media (max-width:720px) {
       .row { grid-template-columns:1fr; }
       .label { min-height:auto; padding:16px 20px 8px; background:#fff; }
       .choices { padding:10px 18px 20px; }
       .choice { flex:1 1 42%; text-align:center; }
     }
+    @media (max-width:520px) { .cards { grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
@@ -70,13 +82,13 @@
       </div>
 
       <section class="result" aria-live="polite">
-        <small id="resultLabel">Agatti • Services</small>
-        <h1 id="resultTitle">Agatti Services</h1>
-        <p id="resultCopy">Available service listings for Agatti will appear here.</p>
-        <div class="empty">
-          <strong id="emptyTitle">Agatti service catalogue</strong>
-          <span id="emptyCopy">Only approved public listings will be shown here.</span>
+        <div class="result-head">
+          <small id="resultLabel">Agatti • Services</small>
+          <h1 id="resultTitle">Agatti Services</h1>
+          <p id="resultCopy">Choose a service below and enquire directly through the official NOODY WhatsApp channel.</p>
         </div>
+        <div class="cards" id="cards"></div>
+        <div class="note">Availability and final price are confirmed through NOODY WhatsApp. Vendor names and private operational data are not shown on the public website.</div>
       </section>
     </div>
   </main>
@@ -84,23 +96,74 @@
   <footer>NOODY.AI • Lakshadweep</footer>
 
   <script>
+    const WHATSAPP = '919446944562';
     const islandButtons = [...document.querySelectorAll('[data-island]')];
     const kindButtons = [...document.querySelectorAll('[data-kind]')];
     const resultLabel = document.getElementById('resultLabel');
     const resultTitle = document.getElementById('resultTitle');
     const resultCopy = document.getElementById('resultCopy');
-    const emptyTitle = document.getElementById('emptyTitle');
-    const emptyCopy = document.getElementById('emptyCopy');
+    const cards = document.getElementById('cards');
+
+    const serviceSets = {
+      Agatti: ['Kayaking','Snorkeling','Scuba Diving','Glass Boat'],
+      Kadmat: ['Kayaking','Snorkeling','Scuba Diving','Lagoon Trip'],
+      Kavaratti: ['Snorkeling','Scuba Diving','Glass Boat','Local Guide'],
+      Kalpeni: ['Kayaking','Snorkeling','Lagoon Boat','Local Guide']
+    };
+
+    const productSets = {
+      Agatti: ['Local Food Pack','Island Souvenir','Travel Essentials','Water Activity Essentials'],
+      Kadmat: ['Local Food Pack','Island Souvenir','Travel Essentials','Beach Essentials'],
+      Kavaratti: ['Local Food Pack','Island Souvenir','Travel Essentials','Local Gift Pack'],
+      Kalpeni: ['Local Food Pack','Island Souvenir','Travel Essentials','Beach Essentials']
+    };
+
+    const icons = {
+      'Kayaking':'🛶','Snorkeling':'🤿','Scuba Diving':'🌊','Glass Boat':'🛥️','Lagoon Trip':'🏝️','Lagoon Boat':'⛵','Local Guide':'🧭',
+      'Local Food Pack':'🥥','Island Souvenir':'🎁','Travel Essentials':'🎒','Water Activity Essentials':'🦺','Beach Essentials':'🏖️','Local Gift Pack':'🎁'
+    };
+
+    function svgImage(label, icon) {
+      const safeLabel = label.replace(/&/g,'and').replace(/[<>]/g,'');
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+        <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dff7fb"/><stop offset="1" stop-color="#9edbcf"/></linearGradient></defs>
+        <rect width="800" height="500" rx="28" fill="url(#g)"/>
+        <circle cx="665" cy="90" r="48" fill="#ffffff" opacity=".55"/>
+        <path d="M0 380 C160 320 250 450 430 380 S690 310 800 365 V500 H0Z" fill="#ffffff" opacity=".72"/>
+        <text x="70" y="220" font-size="105">${icon || '🌴'}</text>
+        <text x="70" y="315" font-family="Arial, sans-serif" font-weight="700" font-size="48" fill="#17343e">${safeLabel}</text>
+        <text x="70" y="360" font-family="Arial, sans-serif" font-size="25" fill="#45636d">NOODY.AI • Lakshadweep</text>
+      </svg>`;
+      return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+    }
+
+    function waLink(item) {
+      const text = `Hi NOODY.AI, I am interested in ${item} in ${island}. Please share availability and price.`;
+      return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`;
+    }
+
     let island = 'Agatti';
     let kind = 'Services';
 
     function render() {
-      const singular = kind === 'Services' ? 'service' : 'product';
       resultLabel.textContent = `${island} • ${kind}`;
       resultTitle.textContent = `${island} ${kind}`;
-      resultCopy.textContent = `Available ${kind.toLowerCase()} listings for ${island} will appear here.`;
-      emptyTitle.textContent = `${island} ${singular} catalogue`;
-      emptyCopy.textContent = `Only approved public ${kind.toLowerCase()} will be shown here.`;
+      resultCopy.textContent = kind === 'Services'
+        ? `Choose a service below and enquire directly through the official NOODY WhatsApp channel.`
+        : `Choose a product below and enquire directly through the official NOODY WhatsApp channel.`;
+
+      const items = kind === 'Services' ? serviceSets[island] : productSets[island];
+      cards.innerHTML = items.map(item => `
+        <article class="card">
+          <img class="thumb" src="${svgImage(item, icons[item])}" alt="${item}" />
+          <div class="card-body">
+            <div class="card-kicker">${island} • ${kind === 'Services' ? 'Service' : 'Product'}</div>
+            <h2>${item}</h2>
+            <div class="meta"><span>Price</span><span class="price">Ask on WhatsApp</span></div>
+            <a class="wa" href="${waLink(item)}" target="_blank" rel="noopener">WhatsApp Enquiry</a>
+          </div>
+        </article>
+      `).join('');
     }
 
     islandButtons.forEach(button => {
@@ -118,6 +181,8 @@
         render();
       });
     });
+
+    render();
   </script>
 </body>
 </html>
