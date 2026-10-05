@@ -89,29 +89,79 @@
 </div>
 
 <script>
-const WHATSAPP='919446944562';
-const data={
-Services:{
-Agatti:[['Kayaking','Paddle the lagoon with local availability confirmed on WhatsApp.','🛶'],['Snorkeling','Ask about guided reef outings, timing and safety requirements.','🤿'],['Scuba Diving','Instructor-led options subject to operator and weather confirmation.','🌊'],['Glass Boat','Lagoon sightseeing and glass-bottom boat availability.','🛥️'],['Taxi & Auto','Airport pickup and local transport around the island.','🚕'],['Local Guide','Local help for island plans, places and experiences.','🧭']],
-Kadmat:[['Kayaking','Lagoon kayaking enquiries with local availability.','🛶'],['Snorkeling','Guided snorkeling and reef outing enquiries.','🤿'],['Scuba Diving','Diving enquiries with operator confirmation.','🌊'],['Lagoon Trip','Boat and lagoon outing enquiries.','⛵'],['Local Guide','Find local guidance for your island plan.','🧭']],
-Kavaratti:[['Snorkeling','Guided snorkeling and local reef enquiries.','🤿'],['Scuba Diving','Ask about available diving experiences.','🌊'],['Glass Boat','Sightseeing boat enquiries for Kavaratti.','🛥️'],['Local Guide','Local guide and island assistance.','🧭'],['Taxi & Auto','Local transport enquiries.','🚕']],
-Kalpeni:[['Kayaking','Lagoon kayaking and activity enquiries.','🛶'],['Snorkeling','Ask about suitable snorkeling options.','🤿'],['Lagoon Boat','Local lagoon boat enquiries.','⛵'],['Local Guide','Island guidance and local assistance.','🧭'],['Transport','Local pickup and transport enquiries.','🚕']]
-},
-Products:{
-Agatti:[['Local Food Pack','Ask about local meals, snacks and food availability.','🥥'],['Island Souvenir','Local keepsakes and island gift enquiries.','🎁'],['Travel Essentials','Useful items for your Lakshadweep stay.','🎒'],['Water Activity Essentials','Ask about basic activity-related essentials.','🦺']],
-Kadmat:[['Local Food Pack','Local meal and snack enquiries.','🥥'],['Island Souvenir','Kadmat souvenir and gift enquiries.','🎁'],['Travel Essentials','Travel basics and island-use items.','🎒'],['Beach Essentials','Beach-use item enquiries.','🏖️']],
-Kavaratti:[['Local Food Pack','Local food and snack enquiries.','🥥'],['Island Souvenir','Local gift and souvenir enquiries.','🎁'],['Travel Essentials','Travel essentials for your island visit.','🎒'],['Local Gift Pack','Ask about local gift options.','🎁']],
-Kalpeni:[['Local Food Pack','Local food and snack enquiries.','🥥'],['Island Souvenir','Kalpeni souvenir enquiries.','🎁'],['Travel Essentials','Travel basics for your visit.','🎒'],['Beach Essentials','Beach-use product enquiries.','🏖️']]
-}};
-let island='',kind='';
+const API='https://noody-ai-production.up.railway.app/v1/public/catalogue';
+const FALLBACK_WHATSAPP='919446944562';
+const islandNames={AGATTI:'Agatti',KADMAT:'Kadmat',KAVARATTI:'Kavaratti',KALPENI:'Kalpeni'};
+let catalogue=null,island='',kind='';
 const modal=document.getElementById('typeModal'),title=document.getElementById('typeTitle'),cards=document.getElementById('cards'),results=document.getElementById('resultsWrap'),strip=document.getElementById('selectionStrip');
+const esc=(v)=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const iconFor=(item)=>{
+ const text=(item.name+' '+item.category).toLowerCase();
+ if(text.includes('kayak'))return '🛶';if(text.includes('snork'))return '🤿';if(text.includes('scuba'))return '🌊';
+ if(text.includes('boat'))return '🛥️';if(text.includes('taxi')||text.includes('transport')||text.includes('auto'))return '🚕';
+ if(text.includes('guide')||text.includes('tour'))return '🧭';if(text.includes('food')||text.includes('fish')||text.includes('coconut'))return '🥥';
+ if(item.kind==='PRODUCT')return '🎁';return '🏝️';
+};
 function openType(){title.textContent=`Explore ${island}`;modal.classList.add('open');document.body.style.overflow='hidden';setTimeout(()=>modal.querySelector('.type-card')?.focus(),30)}
 function closeType(){modal.classList.remove('open');document.body.style.overflow=''}
-function wa(item){return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(`Hi NOODY.AI, I am interested in ${item} in ${island}. Please share availability and price.`)}`}
-function render(){const items=data[kind][island]||[];document.getElementById('selectedIslandText').textContent=island;document.getElementById('selectedTypeText').textContent=kind;document.getElementById('resultTitle').textContent=`${island} ${kind}`;document.getElementById('resultCount').textContent=`${items.length} listings`;strip.classList.add('show');results.hidden=false;cards.innerHTML=items.map(([name,desc,icon],i)=>`<article class="card" style="animation-delay:${i*45}ms"><div class="thumb"><div class="thumb-icon">${icon}</div><div class="thumb-island">${island}</div></div><div class="card-body"><div class="card-kicker">${kind.slice(0,-1)} · ${island}</div><h3>${name}</h3><p>${desc}</p><div class="card-meta"><small>Price / availability on WhatsApp</small><a class="wa-link" target="_blank" rel="noopener" href="${wa(name)}">Enquire →</a></div></div></article>`).join('');results.scrollIntoView({behavior:'smooth',block:'start'})}
-document.querySelectorAll('[data-island]').forEach(btn=>btn.addEventListener('click',()=>{island=btn.dataset.island;document.querySelectorAll('[data-island]').forEach(b=>b.classList.toggle('active',b===btn));openType()}));
+function number(){return catalogue?.whatsappNumber||FALLBACK_WHATSAPP}
+function exactMessage(item){
+ return ['Hello NOODY.AI,','Website enquiry','Item: '+item.name,'Island: '+islandNames[item.islandCode],`NOODY_ITEM:${item.kind}:${item.id}`,`NOODY_ISLAND:${item.islandCode}`,'Please continue this exact enquiry.'].join('\n');
+}
+function wa(item){return `https://wa.me/${number()}?text=${encodeURIComponent(exactMessage(item))}`}
+function detail(item){return `item.html?kind=${encodeURIComponent(item.kind)}&id=${encodeURIComponent(item.id)}&island=${encodeURIComponent(item.islandCode)}`}
+function render(){
+ if(!catalogue)return;
+ const code=Object.keys(islandNames).find(k=>islandNames[k]===island);
+ const wanted=kind==='Products'?'PRODUCT':'SERVICE';
+ const items=catalogue.items.filter(x=>x.islandCode===code&&x.kind===wanted);
+ document.getElementById('selectedIslandText').textContent=island;
+ document.getElementById('selectedTypeText').textContent=kind;
+ document.getElementById('resultTitle').textContent=`${island} ${kind}`;
+ document.getElementById('resultCount').textContent=`${items.length} listings · live`;
+ strip.classList.add('show');results.hidden=false;
+ cards.innerHTML=items.length?items.map((item,i)=>`<article class="card" style="animation-delay:${i*45}ms"><div class="thumb"><div class="thumb-icon">${iconFor(item)}</div><div class="thumb-island">${esc(island)}</div></div><div class="card-body"><div class="card-kicker">${esc(item.kind)} · ${esc(island)}</div><h3><a href="${detail(item)}">${esc(item.name)}</a></h3><p>${esc(item.description)}</p><div class="card-meta"><small>${esc(item.price)} · ${esc(item.availability)}</small><a class="wa-link" target="_blank" rel="noopener" href="${wa(item)}">Enquire →</a></div></div></article>`).join(''):
+ `<article class="card"><div class="card-body"><div class="card-kicker">LIVE CATALOGUE</div><h3>No active ${esc(kind.toLowerCase())} yet</h3><p>Only approved, active NOODY listings from the central system appear here.</p></div></article>`;
+ results.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function setIslandAvailability(){
+ const active=new Set(catalogue.islands.filter(x=>x.active).map(x=>x.code));
+ document.querySelectorAll('[data-island]').forEach(btn=>{
+   const code=Object.keys(islandNames).find(k=>islandNames[k]===btn.dataset.island);
+   const enabled=active.has(code);
+   btn.disabled=!enabled;
+   btn.style.opacity=enabled?'1':'.48';
+   btn.querySelector('small').textContent=enabled?'Live catalogue available':'Currently inactive';
+ });
+}
+async function loadCatalogue(){
+ cards.innerHTML='';
+ try{
+   const response=await fetch(API,{headers:{accept:'application/json'},cache:'no-store'});
+   if(!response.ok)throw new Error('catalogue unavailable');
+   const data=await response.json();
+   if(data.contract!=='noody.public.v2'||!Array.isArray(data.items)||!Array.isArray(data.islands))throw new Error('invalid catalogue');
+   catalogue=data;
+   setIslandAvailability();
+   const first=data.islands.find(x=>x.active);
+   if(first&&!island)island=islandNames[first.code]||first.name;
+   document.getElementById('headerWa').href=`https://wa.me/${number()}`;
+ }catch{
+   document.getElementById('resultTitle').textContent='Live catalogue unavailable';
+   document.getElementById('resultCount').textContent='Please try again shortly';
+   results.hidden=false;
+   cards.innerHTML='<article class="card"><div class="card-body"><div class="card-kicker">NOODY.AI</div><h3>Unable to load live listings</h3><p>We do not show stale booking data when the central system cannot be verified.</p></div></article>';
+   document.querySelectorAll('[data-island]').forEach(btn=>{btn.disabled=true;btn.style.opacity='.48'});
+ }
+}
+document.querySelectorAll('[data-island]').forEach(btn=>btn.addEventListener('click',()=>{if(btn.disabled)return;island=btn.dataset.island;document.querySelectorAll('[data-island]').forEach(b=>b.classList.toggle('active',b===btn));openType()}));
 document.querySelectorAll('[data-kind]').forEach(btn=>btn.addEventListener('click',()=>{kind=btn.dataset.kind;closeType();render()}));
-document.getElementById('changeType').addEventListener('click',openType);document.getElementById('closeModal').addEventListener('click',closeType);modal.addEventListener('click',e=>{if(e.target===modal)closeType()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeType()});document.getElementById('year').textContent=new Date().getFullYear();
+document.getElementById('changeType').addEventListener('click',openType);
+document.getElementById('closeModal').addEventListener('click',closeType);
+modal.addEventListener('click',e=>{if(e.target===modal)closeType()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeType()});
+document.getElementById('year').textContent=new Date().getFullYear();
+loadCatalogue();
 </script>
 </body>
 </html>
