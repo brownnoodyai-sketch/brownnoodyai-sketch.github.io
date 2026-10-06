@@ -1,0 +1,4 @@
+# Keep CI fixtures and repository documentation out of the published site.
+exclude:
+  - .github
+  - README.md

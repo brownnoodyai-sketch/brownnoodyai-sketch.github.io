@@ -1,0 +1,36 @@
+name: Public Website Catalogue & WhatsApp Verification
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  public-website:
+    name: Public website / catalogue / WhatsApp
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Validate public website JavaScript and canonical listing contract
+        run: |
+          node --check index.mjs
+          node --check item.mjs
+          node --check listing.mjs
+          node --check copy.mjs
+          node --check catalogue.mjs
+          node --test .github/tests/catalogue.test.mjs .github/tests/listing.test.mjs
+      - name: Build isolated headless browser runtime
+        run: docker build -t noody-public-browser -f .github/tests/Dockerfile .github/tests
+      - name: Verify actual island selection, details, sharing, refresh and WhatsApp handoff
+        run: docker run --rm -v "$PWD:/website:ro" noody-public-browser
+      - name: Check live anonymous catalogue without sending messages or performing orders
+        run: node .github/tests/probe.mjs

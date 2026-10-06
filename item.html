@@ -9,42 +9,15 @@
 <style>
 :root{--sea:#08755c;--ink:#15372e;--muted:#6c8179;--line:#dfeae5;--soft:#eff7f3;--white:#fff}
 *{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#fff,#f3f8f5);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.6}a{text-decoration:none;color:inherit}.shell{width:min(920px,calc(100% - 32px));margin:auto}.nav{height:78px;display:flex;align-items:center;justify-content:space-between}.brand{font-size:27px;font-weight:800;color:var(--sea)}.back{font-size:13px;font-weight:700;color:var(--sea)}.hero{margin:16px 0 26px;border-radius:26px;padding:34px;background:linear-gradient(135deg,#08755c,#0b9270);color:#fff}.eyebrow{font-size:11px;letter-spacing:1.8px;font-weight:800;text-transform:uppercase;color:#d9fff2}.hero h1{font-size:clamp(34px,7vw,54px);line-height:1.06;margin:8px 0 12px}.hero p{max-width:680px;color:#e9fff7}.grid{display:grid;grid-template-columns:1.4fr .6fr;gap:20px}.panel{background:#fff;border:1px solid var(--line);border-radius:20px;padding:24px;box-shadow:0 14px 36px rgba(16,74,59,.07)}.panel h2{margin:0 0 12px}.meta{display:grid;gap:10px}.meta div{padding:12px 0;border-bottom:1px solid var(--line)}.meta div:last-child{border:0}.meta span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);font-weight:800}.meta strong{display:block;margin-top:3px}.wa{display:flex;align-items:center;justify-content:center;margin-top:18px;padding:14px 16px;background:var(--sea);color:#fff;border-radius:999px;font-weight:800}.notice{margin-top:16px;padding:13px 14px;border-radius:14px;background:var(--soft);color:var(--muted);font-size:13px}.error{padding:38px;text-align:center}.footer{padding:30px 0;color:var(--muted);font-size:12px}@media(max-width:720px){.grid{grid-template-columns:1fr}.hero{padding:26px 22px}}
+.nav{gap:12px;flex-wrap:wrap;height:auto;min-height:78px;padding:12px 0}.language{border:1px solid var(--line);border-radius:10px;padding:8px;background:#fff;color:var(--ink);font:inherit;font-size:12px}.share,.refresh{font:inherit;cursor:pointer;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--sea);padding:10px 14px}.share{width:100%;margin-top:12px}.hero h1,.panel p,.meta strong{overflow-wrap:anywhere}.status{font-size:13px;color:var(--muted)}
 </style>
 </head>
-<body>
+<body data-state="loading">
 <div class="shell">
-<header class="nav"><a class="brand" href="/">noody.ai</a><a class="back" href="/">← Back to islands</a></header>
+<header class="nav"><a class="brand" href="/">noody.ai</a><a data-copy="back" class="back" href="/">← Back to islands</a><select class="language" id="language" aria-label="Website language"><option value="en">English</option><option value="ml">മലയാളം</option><option value="hi">हिन्दी</option></select><button class="refresh" id="refresh" type="button" data-copy="refresh">Refresh</button></header>
 <main id="app"><div class="panel error">Loading live listing…</div></main>
-<footer class="footer">NOODY.AI — Next-gen Oceanic Operations, Data &amp; Yield.</footer>
+<footer class="footer">NOODY.AI — Next-gen Oceanic Operations, Data &amp; Yield. <a href="./privacy.html" data-copy="privacy">Privacy policy</a></footer>
 </div>
-<script>
-const API='https://noody-ai-production.up.railway.app/v1/public/catalogue';
-const FALLBACK_WHATSAPP='919446944562';
-const names={AGATTI:'Agatti',KADMAT:'Kadmat',KAVARATTI:'Kavaratti',KALPENI:'Kalpeni'};
-const esc=(v)=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const q=new URLSearchParams(location.search),id=q.get('id')||'',kind=(q.get('kind')||'').toUpperCase(),island=(q.get('island')||'').toUpperCase();
-function exactMessage(item){
- return ['Hello NOODY.AI,','Website enquiry','Item: '+item.name,'Island: '+(names[item.islandCode]||item.islandCode),`NOODY_ITEM:${item.kind}:${item.id}`,`NOODY_ISLAND:${item.islandCode}`,'Please continue this exact enquiry.'].join('\n');
-}
-async function run(){
- try{
-  const res=await fetch(API,{headers:{accept:'application/json'},cache:'no-store'});
-  if(!res.ok)throw new Error();
-  const data=await res.json();
-  const item=(data.items||[]).find(x=>x.id===id&&x.kind===kind&&(!island||x.islandCode===island));
-  if(!item)throw new Error('not found');
-  const number=data.whatsappNumber||FALLBACK_WHATSAPP;
-  const wa='https://wa.me/'+number+'?text='+encodeURIComponent(exactMessage(item));
-  document.title=item.name+' | NOODY.AI';
-  document.getElementById('app').innerHTML=
-   '<section class="hero"><div class="eyebrow">'+esc(item.kind)+' · '+esc(names[item.islandCode]||item.islandCode)+'</div><h1>'+esc(item.name)+'</h1><p>'+esc(item.description)+'</p></section>'+
-   '<div class="grid"><article class="panel"><h2>About this listing</h2><p>'+esc(item.description)+'</p><div class="notice">This page is loaded from the live NOODY central catalogue. Vendor identity, internal commission, routing and private operational data are never exposed here.</div></article>'+
-   '<aside class="panel"><h2>Plan your enquiry</h2><div class="meta"><div><span>Island</span><strong>'+esc(names[item.islandCode]||item.islandCode)+'</strong></div><div><span>Price</span><strong>'+esc(item.price)+'</strong></div><div><span>Availability</span><strong>'+esc(item.availability)+'</strong></div><div><span>Reference</span><strong>'+esc(item.id.slice(0,8))+'…</strong></div></div><a class="wa" href="'+wa+'" target="_blank" rel="noopener">Continue on WhatsApp ↗</a><div class="notice">The WhatsApp message includes the exact NOODY item ID, so the bot can continue the selected service/product without guessing.</div></aside></div>';
- }catch{
-  document.getElementById('app').innerHTML='<div class="panel error"><h1>Listing unavailable</h1><p>This item is not currently active in the live NOODY catalogue.</p><p><a class="back" href="/">Return to island listings</a></p></div>';
- }
-}
-run();
-</script>
+<script type="module" src="./item.mjs"></script>
 </body>
 </html>
