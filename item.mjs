@@ -1,9 +1,10 @@
+import {validateReviews,REVIEW_COPY} from './reviews.mjs';
 import {loadListingContent,validateContent,localized,SECTION_TITLES,FIELDS} from './listing-content.mjs';
 import {loadDesign} from './design.mjs';
 import {ISLAND_NAMES,validateConfig,validateCatalogue,readPublicJson} from './catalogue.mjs';
 import {parseItemQuery,itemLink,websiteEnquiry,readLanguage,rememberLanguage} from './listing.mjs';
 import {copy,applyCopy} from './copy.mjs';
-const $=id=>document.getElementById(id),target=parseItemQuery(location.search),state={config:null,catalogue:null,item:null,language:readLanguage(),busy:false,content:null,assets:{},photo:0};let shareVersion=0;
+const $=id=>document.getElementById(id),target=parseItemQuery(location.search),state={config:null,catalogue:null,item:null,language:readLanguage(),busy:false,content:null,assets:{},photo:0,reviews:null,reviewsAvailable:false};let shareVersion=0;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),t=key=>copy(state.language,key);
 function number(){return state.catalogue?.whatsappNumber||state.config?.whatsappNumber||'919446944562';}
 function richSections(content,lang){
@@ -11,7 +12,9 @@ function richSections(content,lang){
  let html=photos.length?'<section class="gallery" aria-label="'+esc(titles.gallery)+'"><img id="galleryMain" width="1200" height="800" alt=""><div class="gallery-controls"><button id="photoPrevious" type="button">'+esc(titles.back)+'</button><span id="photoCount"></span><button id="photoNext" type="button">'+esc(titles.next)+'</button></div><div class="gallery-thumbs">'+photos.map((p,i)=>'<button type="button" data-photo="'+i+'"><img loading="lazy" width="100" height="70" src="'+esc(state.assets[p.src]||p.src)+'" alt="'+esc(p.alt[lang]||p.alt.en||titles.gallery+' '+(i+1))+'"></button>').join('')+'</div></section>':'';
  const fallback=FIELDS.some(field=>localized(content,lang,field)&&!content?.text?.[lang]?.[field]);if(fallback)html+='<p class="status">'+esc(titles.fallback)+'</p>';
  for(const field of FIELDS.slice(3)){const value=localized(content,lang,field);if(value)html+='<section class="detail-section" data-section="'+field+'"><h2>'+esc(titles[field])+'</h2><p class="long-text">'+esc(value)+'</p></section>';}
- html+='<section class="detail-section"><h2>'+esc(titles.reviews)+'</h2><p id="verifiedReviews">'+esc(titles.noReviews)+'</p></section>';return html;
+ const reviews=state.reviews,r=REVIEW_COPY[lang];html+='<section class="detail-section"><h2>'+esc(titles.reviews)+'</h2><p id="verifiedReviews">'+esc(reviews?(reviews.rating.count?reviews.rating.average+' / 5 · '+reviews.rating.count+' '+r.count:r.none):r.unavailable)+'</p>';
+ if(reviews)for(const review of reviews.reviews)html+='<article class="detail-section"><strong>'+esc(review.firstName)+' · '+esc(review.stars)+' / 5</strong><p class="status">'+esc(r.verified)+' · '+esc(new Date(review.submittedAt).toLocaleDateString({en:'en-IN',ml:'ml-IN',hi:'hi-IN'}[lang]))+'</p><p class="long-text">'+esc(review.comment)+'</p></article>';
+ html+='</section>';return html;
 }
 function gallery(){
  const photos=state.content?.photos||[];if(!photos.length)return;state.photo=((state.photo%photos.length)+photos.length)%photos.length;
@@ -35,8 +38,8 @@ async function refresh(){
  try{
   if(!state.config){const response=await fetch(new URL('./config.json',import.meta.url),{cache:'no-store',credentials:'omit',signal:AbortSignal.timeout(8000)});state.config=validateConfig(await readPublicJson(response,4096),location.origin);}
   const response=await fetch(state.config.apiOrigin+'/v1/public/catalogue',{cache:'no-store',credentials:'omit',redirect:'error',headers:{accept:'application/json'},signal:AbortSignal.timeout(8000)});
-  state.catalogue=validateCatalogue(await readPublicJson(response));state.item=state.catalogue.items.find(i=>i.id.toLowerCase()===target.id&&i.kind===target.kind&&i.islandCode===target.islandCode)||null;state.content=state.item?await loadListingContent(state.item):null;document.body.dataset.state=state.item?'ready':'unavailable';
- }catch{state.catalogue=null;state.item=null;state.content=null;document.body.dataset.state='unavailable';}
+  state.catalogue=validateCatalogue(await readPublicJson(response));state.item=state.catalogue.items.find(i=>i.id.toLowerCase()===target.id&&i.kind===target.kind&&i.islandCode===target.islandCode)||null;state.content=state.item?await loadListingContent(state.item):null;state.reviews=null;if(state.item)void loadReviews(state.item,state.catalogue.revision);document.body.dataset.state=state.item?'ready':'unavailable';
+ }catch{state.catalogue=null;state.item=null;state.content=null;state.reviews=null;document.body.dataset.state='unavailable';}
  finally{state.busy=false;render();}
 }
 $('language').onchange=e=>{state.language=e.target.value;rememberLanguage(state.language);render();};$('refresh').onclick=refresh;
@@ -53,4 +56,8 @@ if(new URLSearchParams(location.search).get('listing_preview')==='1'&&window.par
   }catch{}
  });
  const ready=setInterval(()=>{if(!state.busy&&state.item){window.parent.postMessage({type:'NOODY_LISTING_READY'},location.origin);clearInterval(ready);}},100);
+}
+
+async function loadReviews(item,revision){
+ try{const url=new URL(state.config.apiOrigin+'/v1/public/reviews');url.search=new URLSearchParams({kind:item.kind,id:item.id,island:item.islandCode});const response=await fetch(url,{credentials:'omit',redirect:'error',signal:AbortSignal.timeout(8000)}),reviews=validateReviews(await readPublicJson(response,100000));if(state.item===item&&state.catalogue?.revision===revision){state.reviews=reviews;render();}}catch{}
 }
