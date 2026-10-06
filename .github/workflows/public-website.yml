@@ -41,6 +41,8 @@ jobs:
         run: docker run --rm -v "$PWD:/website:ro" noody-public-browser
       - name: Check live anonymous catalogue without sending messages or performing orders
         run: node .github/tests/probe.mjs
+      - name: Verify deployed listing API routes and owner CORS without credentials
+        run: node .github/tests/backend-readiness.mjs
       - name: Verify published Pages assets match this commit and exclude CI fixtures
         if: github.event_name == 'push'
         run: node .github/tests/published.mjs
