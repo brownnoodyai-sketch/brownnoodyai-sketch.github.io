@@ -10,6 +10,6 @@ English/Malayalam/Hindi interface and enquiry text are available without forcing
 
 Public config contains only the API origin and company WhatsApp number. No sample services, products, prices or inventory are published. The live API must allow https://brownnoodyai-sketch.github.io through its existing CORS configuration.
 
-GitHub Pages is already enabled on this public website repository. CI fixtures and documentation are excluded from the published site. CI uses 16 Node contract/link/privacy cases, six real Chromium checks and a read-only live feed probe. Private core/admin/API/bot source remains in the separate private repository; no operational core deployment is part of this website change.
+GitHub Pages is already enabled on this public website repository. CI fixtures and documentation are excluded from the published site. CI uses 16 Node contract/link/privacy cases, six real Chromium checks and a read-only live feed probe. After a main push, CI verifies the live HTML, modules and config against the exact source hashes, module MIME types, privacy availability and exclusion of fixtures/docs. Private core/admin/API/bot source remains in the separate private repository; no operational core deployment is part of this website change.
 
 Never commit access tokens, app secrets, payment secrets, customer records or private vendor documents to this repository.
