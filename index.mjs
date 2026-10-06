@@ -1,9 +1,10 @@
+import {loadContentIndex,entryFor,localized} from './listing-content.mjs';
 import {loadDesign} from './design.mjs';
 import {ISLAND_NAMES,validateConfig,validateCatalogue,readPublicJson} from './catalogue.mjs';
 import {itemLink,websiteEnquiry,readLanguage,rememberLanguage} from './listing.mjs';
 import {copy,applyCopy} from './copy.mjs';
 const names=ISLAND_NAMES,$=id=>document.getElementById(id),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const state={catalogue:null,config:null,island:'',kind:'',language:readLanguage(),busy:false,unavailable:false};let priorFocus=null;
+const state={catalogue:null,config:null,island:'',kind:'',language:readLanguage(),busy:false,unavailable:false,contentIndex:{entries:[]}};let priorFocus=null;
 const t=key=>copy(state.language,key),modal=$('typeModal'),cards=$('cards'),results=$('resultsWrap');
 const code=()=>Object.keys(names).find(k=>names[k]===state.island)||'';
 function number(){return state.catalogue?.whatsappNumber||state.config?.whatsappNumber||'919446944562';}
@@ -25,7 +26,7 @@ function render(scroll=false){
  $('selectedIslandText').textContent=state.island;$('selectedTypeText').textContent=kindText;$('resultTitle').textContent=state.island+' '+kindText;$('resultCount').textContent=items.length+' '+t('listings');
  $('catalogueStatus').textContent=state.busy?t('loading'):items.length+' '+t('listings');$('selectionStrip').classList.add('show');results.hidden=false;
  if(!items.length)fallback(t('empty'),t('emptyCopy'));
- else cards.innerHTML=items.map((item,i)=>'<article class="card" data-key="'+esc(item.kind+':'+item.id+':'+item.islandCode)+'" style="animation-delay:'+Math.min(i*45,500)+'ms"><div class="thumb"><div class="thumb-icon">'+iconFor(item)+'</div><div class="thumb-island">'+esc(state.island)+'</div></div><div class="card-body"><div class="card-kicker">'+esc(kindText)+' · '+esc(item.category)+'</div><h3><a href="'+esc(itemLink(item,location.href))+'">'+esc(item.name)+'</a></h3><p>'+esc(item.description)+'</p><div class="card-meta"><small>'+esc(item.price)+' · '+esc(item.availability)+'</small></div><div class="card-actions"><a class="wa-link" data-detail href="'+esc(itemLink(item,location.href))+'">'+esc(t('details'))+'</a><a class="wa-link" data-enquiry target="_blank" rel="noopener noreferrer" href="'+esc(websiteEnquiry(number(),item.islandCode,item,state.language,location.href))+'">'+esc(t('enquire'))+'</a></div></div></article>').join('');
+ else cards.innerHTML=items.map((item,i)=>'<article class="card" data-key="'+esc(item.kind+':'+item.id+':'+item.islandCode)+'" style="animation-delay:'+Math.min(i*45,500)+'ms"><div class="thumb">'+(entryFor(state.contentIndex,item)?.cover?'<img class="listing-cover" loading="lazy" width="600" height="400" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" src="'+esc(entryFor(state.contentIndex,item).cover.src)+'" alt="'+esc(entryFor(state.contentIndex,item).cover.alt[state.language]||item.name)+'">':'<div class="thumb-icon">'+iconFor(item)+'</div>')+'<div class="thumb-island">'+esc(state.island)+'</div></div><div class="card-body"><div class="card-kicker">'+esc(kindText)+' · '+esc(item.category)+'</div><h3><a href="'+esc(itemLink(item,location.href))+'">'+esc(localized(entryFor(state.contentIndex,item),state.language,'title',item.name))+'</a></h3><p>'+esc(localized(entryFor(state.contentIndex,item),state.language,'summary',item.description))+'</p><div class="card-meta"><small>'+esc(item.price)+' · '+esc(item.availability)+'</small></div><div class="card-actions"><a class="wa-link" data-detail href="'+esc(itemLink(item,location.href))+'">'+esc(t('details'))+'</a><a class="wa-link" data-enquiry target="_blank" rel="noopener noreferrer" href="'+esc(websiteEnquiry(number(),item.islandCode,item,state.language,location.href))+'">'+esc(t('enquire'))+'</a></div></div></article>').join('');
  if(scroll)results.scrollIntoView({behavior:'smooth',block:'start'});
 }
 async function refresh(){
@@ -33,7 +34,7 @@ async function refresh(){
  try{
   if(!state.config){const response=await fetch(new URL('./config.json',import.meta.url),{cache:'no-store',credentials:'omit',signal:AbortSignal.timeout(8000)});state.config=validateConfig(await readPublicJson(response,4096),location.origin);}
   const response=await fetch(state.config.apiOrigin+'/v1/public/catalogue',{cache:'no-store',credentials:'omit',redirect:'error',headers:{accept:'application/json'},signal:AbortSignal.timeout(8000)});
-  state.catalogue=validateCatalogue(await readPublicJson(response));state.unavailable=false;
+  state.catalogue=validateCatalogue(await readPublicJson(response));state.contentIndex=await loadContentIndex();state.unavailable=false;
   if(state.island&&!state.catalogue.islands.some(i=>i.code===code()&&i.active)){state.island='';state.kind='';closeType();}
   document.body.dataset.state='ready';
  }catch{state.catalogue=null;state.unavailable=true;closeType();document.body.dataset.state='unavailable';}

@@ -1,5 +1,5 @@
 import {readFile} from 'node:fs/promises';import {createHash} from 'node:crypto';
-const origin='https://brownnoodyai-sketch.github.io',paths=['index.html','item.html','index.mjs','item.mjs','catalogue.mjs','listing.mjs','copy.mjs','config.json','design.mjs','designer.mjs','designer.html','site-design.json'];
+const origin='https://brownnoodyai-sketch.github.io',paths=['index.html','item.html','index.mjs','item.mjs','catalogue.mjs','listing.mjs','copy.mjs','config.json','design.mjs','designer.mjs','designer.html','site-design.json','listing-content.mjs','listing-content.json','listing-editor.html','listing-editor.mjs','zip.mjs'];
 const digest=bytes=>createHash('sha256').update(bytes).digest('hex');
 const expected=new Map(await Promise.all(paths.map(async path=>[path,digest(await readFile(path))])));
 let problem='publication not ready';
