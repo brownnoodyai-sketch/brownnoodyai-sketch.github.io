@@ -1,5 +1,5 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {createServer} from 'node:http';import {readFile} from 'node:fs/promises';import {resolve,extname} from 'node:path';import {execFile} from 'node:child_process';import {promisify} from 'node:util';import {fixture} from './fixture.mjs';
-const run=promisify(execFile),root=resolve('.');
+import test from 'node:test';import assert from 'node:assert/strict';import {createServer} from 'node:http';import {readFile} from 'node:fs/promises';import {resolve,extname} from 'node:path';import {spawn} from 'node:child_process';import {fixture} from './fixture.mjs';
+const root=resolve('.');
 const mime={'.html':'text/html','.mjs':'text/javascript','.json':'application/json'};
 async function browserCheck({script,path='/',offline=false,mutate}){
  const data=fixture();if(mutate)mutate(data);let unavailable=offline,origin='';
@@ -15,8 +15,19 @@ async function browserCheck({script,path='/',offline=false,mutate}){
   res.setHeader('content-type',mime[extname(file)]||'application/octet-stream');res.end(bytes);
  }catch{res.statusCode=404;res.end();}});
  await new Promise(r=>server.listen(0,'127.0.0.1',r));origin='http://127.0.0.1:'+server.address().port;
- try{const {stdout}=await run(process.env.CHROMIUM_PATH||'/usr/bin/chromium',['--headless','--no-sandbox','--disable-dev-shm-usage','--disable-gpu','--no-proxy-server','--dump-dom','--virtual-time-budget=15000',origin+path],{timeout:30000,maxBuffer:2000000});assert.match(stdout,/>BROWSER_PASS</,stdout.match(/BROWSER_FAIL[^<]*/)?.[0]||stdout.slice(-2000));}
- finally{server.closeAllConnections();await new Promise(r=>server.close(r));}
+ const child=spawn(process.env.CHROMIUM_PATH||'/usr/bin/chromium',['--headless','--no-sandbox','--disable-dev-shm-usage','--disable-gpu','--no-proxy-server','--remote-debugging-port=0',origin+path],{stdio:['ignore','ignore','pipe']});let socket;
+ try{
+  const endpoint=await new Promise((resolve,reject)=>{let stderr='';const timer=setTimeout(()=>reject(Error('Chromium launch timeout')),10000);child.stderr.on('data',data=>{stderr+=data.toString();const m=/DevTools listening on (ws:\/\/127\.0\.0\.1:\d+\/[^\s]+)/.exec(stderr);if(m){clearTimeout(timer);resolve(m[1]);}});child.once('error',error=>{clearTimeout(timer);reject(error);});});
+  const debugOrigin=new URL(endpoint).origin.replace('ws:','http:');let page;
+  for(let n=0;n<100;n++){const pages=await (await fetch(debugOrigin+'/json/list')).json();page=pages.find(p=>p.type==='page'&&p.url===origin+path)||pages.find(p=>p.type==='page');if(page)break;await new Promise(r=>setTimeout(r,30));}assert.ok(page,'Chromium page not available');
+  socket=new WebSocket(page.webSocketDebuggerUrl);await new Promise((resolve,reject)=>{socket.addEventListener('open',resolve,{once:true});socket.addEventListener('error',reject,{once:true});});
+  let serial=0;const pending=new Map();socket.addEventListener('message',event=>{const data=JSON.parse(event.data);const request=pending.get(data.id);if(request){pending.delete(data.id);data.error?request.reject(Error(data.error.message)):request.resolve(data.result);}});
+  const evaluate=expression=>new Promise((resolve,reject)=>{const id=++serial;pending.set(id,{resolve,reject});socket.send(JSON.stringify({id,method:'Runtime.evaluate',params:{expression,returnByValue:true}}));});
+  const deadline=Date.now()+30000;let result='';
+  while(Date.now()<deadline){const response=await evaluate("document.getElementById('browser-result')?.textContent || ''");result=response.result?.value||'';if(result)break;await new Promise(r=>setTimeout(r,30));}
+  assert.equal(result,'BROWSER_PASS',result||'Browser check timed out');
+ }finally{socket?.close();child.kill('SIGKILL');server.closeAllConnections();await new Promise(r=>server.close(r));}
+
 }
 test('island-first product selection preserves animations, exact query detail and localized WhatsApp context',async()=>browserCheck({script:"if(document.querySelectorAll('[data-key]').length)throw Error('island not selected');if(!document.querySelector('.bird-trail'))throw Error('animation removed');document.querySelector('[data-island=Agatti]').click();if(!document.getElementById('typeModal').classList.contains('open'))throw Error('type modal');document.querySelector('[data-kind=Products]').click();if(document.querySelectorAll('[data-key]').length!==1)throw Error('product filter');const detail=new URL(document.querySelector('[data-detail]').href);if(detail.pathname!=='/item.html'||detail.searchParams.get('kind')!=='PRODUCT'||detail.searchParams.get('island')!=='AGATTI')throw Error('detail identity');const language=document.getElementById('language');language.value='ml';language.dispatchEvent(new Event('change'));const text=new URL(document.querySelector('[data-enquiry]').href).searchParams.get('text');if(!text.includes('NOODY_ITEM:PRODUCT:22222222')||!text.includes('NOODY_ISLAND:AGATTI')||!text.includes('വിശദാംശ'))throw Error('localized handoff');"}));
 test('shared service page opens the exact Kadmat record with working share and enquiry controls',async()=>browserCheck({path:'/item.html?kind=SERVICE&id=11111111-1111-4111-8111-111111111111&island=KADMAT',script:"if(document.getElementById('itemName').textContent!=='Kayaking'||!document.getElementById('itemDescription').textContent.includes('Kadmat'))throw Error('wrong item');if(!document.getElementById('shareItem'))throw Error('share unavailable');const text=new URL(document.getElementById('itemEnquiry').href).searchParams.get('text');if(!text.includes('NOODY_ISLAND:KADMAT')||!text.includes('NOODY_ITEM:SERVICE:11111111'))throw Error('wrong enquiry');const page=new URL(text.split('Page: ')[1]);if(page.searchParams.get('island')!=='KADMAT')throw Error('share identity');"}));
