@@ -1,0 +1,70 @@
+import {validateConfig,validateCatalogue,readPublicJson,ISLAND_NAMES} from './catalogue.mjs';
+import {itemLink,parseItemQuery} from './listing.mjs';
+import {FIELDS,FIELD_LABELS,LANGUAGES,contentKey,blankContent,validateContent,loadListingContent,loadContentIndex,updateContentIndex,photoUrl} from './listing-content.mjs';
+import {makeZip} from './zip.mjs';
+const $=id=>document.getElementById(id),state={items:[],item:null,content:null,index:null,config:null,assets:{},token:null,selection:0},draftKey='noody.listing.draft.v1';
+const note=(id,message,error=false)=>{$(id).textContent=message;$(id).classList.toggle('error',error);};
+function assetURL(src){return state.assets[src]||src;}
+function preview(){if(!state.content)return;$('preview').contentWindow?.postMessage({type:'NOODY_LISTING_PREVIEW',content:state.content,assets:state.assets,language:$('language').value},location.origin);}
+function persist(){try{localStorage.setItem(draftKey,JSON.stringify({content:state.content,assets:state.assets}));note('status','Draft saved on this device. Download the update to publish.');}catch{note('status','Device storage is full. Download your update now to keep this draft.',true);}preview();}
+function fields(){const lang=$('language').value;$('fields').replaceChildren();for(const field of FIELDS){const label=document.createElement('label');label.textContent=FIELD_LABELS[field];const input=document.createElement('textarea');input.dataset.field=field;input.rows=field==='title'?1:field==='summary'?2:4;input.maxLength=field==='title'?200:field==='summary'?400:6000;input.value=state.content.text[lang][field]||'';input.oninput=()=>{state.content.text[lang][field]=input.value;persist();};label.append(input);$('fields').append(label);}preview();}
+function photos(){$('photos').replaceChildren();state.content.photos.forEach((photo,i)=>{const box=document.createElement('div');box.className='photo';const img=document.createElement('img');img.src=assetURL(photo.src);img.alt=photo.alt.en||'Listing photo';box.append(img);for(const lang of LANGUAGES){const input=document.createElement('input');input.placeholder='Photo description ('+lang+')';input.value=photo.alt[lang]||'';input.maxLength=200;input.oninput=()=>{photo.alt[lang]=input.value;persist();};box.append(input);}const cover=document.createElement('button');cover.textContent=i?'Make cover':'Cover photo';cover.disabled=!i;cover.onclick=()=>{state.content.photos.splice(i,1);state.content.photos.unshift(photo);photos();persist();};const remove=document.createElement('button');remove.textContent='Remove';remove.onclick=()=>{state.content.photos.splice(i,1);delete state.assets[photo.src];photos();persist();};box.append(cover,remove);$('photos').append(box);});}
+const hints={service:'Explain the experience, inclusions, duration, safety precautions, eligibility and meeting point.',product:'Explain materials / ingredients, size, use, care, stock confirmation and delivery.',gift:'Explain the contents, occasion, gift note, packaging, customization and lead time.',photography:'Explain session duration, locations, number of edited photos, delivery time and permission to publish.'};
+function template(){$('template').value=state.content.template;$('templateHint').textContent=hints[state.content.template];}
+async function select(item,restore=true){
+ const selection=++state.selection;state.item=item;state.assets={};$('editor').hidden=true;note('status','Loading details…');const content=await loadListingContent(item);if(selection!==state.selection)return;state.content=content||blankContent(item);
+ if(restore){try{const draft=JSON.parse(localStorage.getItem(draftKey)||'null');if(draft&&contentKey(draft.content)===contentKey(item)){state.content=validateContent(draft.content,item);for(const [path,data] of Object.entries(draft.assets||{})){if(/^\.\/media\/[a-zA-Z0-9_-]+\.webp$/.test(path)&&typeof data==='string'&&data.length<500000&&/^data:image\/webp;base64,[A-Za-z0-9+/=]+$/.test(data))state.assets[path]=data;}}}catch{}}
+ $('editor').hidden=false;$('listing').value=contentKey(item);template();fields();photos();const url=new URL(itemLink(item,location.href));url.searchParams.set('listing_preview','1');$('preview').src=url.href;note('status','Edit your draft. Downloading does not publish it.');document.body.dataset.selection='ready';
+}
+async function reload(){
+ document.body.dataset.state='loading';try{
+ if(!state.config){const response=await fetch('./config.json',{credentials:'omit',signal:AbortSignal.timeout(8000)});state.config=validateConfig(await readPublicJson(response,4096),location.origin);}
+ const response=await fetch(state.config.apiOrigin+'/v1/public/catalogue',{credentials:'omit',redirect:'error',signal:AbortSignal.timeout(8000)}),catalogue=validateCatalogue(await readPublicJson(response));state.items=catalogue.items;state.index=await loadContentIndex();$('listing').replaceChildren(new Option('Choose a service or product',''));for(const item of state.items)$('listing').add(new Option(item.name+' · '+ISLAND_NAMES[item.islandCode]+' · '+item.kind,contentKey(item)));
+ note('catalogueMessage',state.items.length?state.items.length+' approved listings. Choose one to edit.':'No approved services or products are live yet. Add and approve them in your existing central admin first.');
+ if(state.item&&!state.items.some(i=>contentKey(i)===contentKey(state.item))){state.item=null;state.content=null;++state.selection;$('editor').hidden=true;$('preview').src='about:blank';}
+ document.body.dataset.state='ready';
+ }catch{state.items=[];$('listing').replaceChildren(new Option('Catalogue unavailable',''));$('editor').hidden=true;note('catalogueMessage','Could not verify the central catalogue. Try Refresh catalogue.',true);document.body.dataset.state='unavailable';}
+}
+$('listing').onchange=()=>{const item=state.items.find(i=>contentKey(i)===$('listing').value);if(item)select(item);};
+$('reload').onclick=reload;
+$('openLink').onclick=()=>{try{const url=new URL($('listingLink').value,location.href);if(url.origin!==location.origin||url.pathname!=='/item.html')throw Error('Use an exact listing link from this website.');const target=parseItemQuery(url.search),item=target&&state.items.find(i=>contentKey(i)===contentKey(target));if(!item)throw Error('This listing is not currently approved in the central catalogue.');select(item);}catch(e){note('catalogueMessage',e.message,true);}};
+$('template').onchange=()=>{state.content.template=$('template').value;template();persist();};
+$('language').onchange=fields;
+$('preview').onload=preview;
+window.addEventListener('message',event=>{if(event.origin===location.origin&&event.source===$('preview').contentWindow&&event.data?.type==='NOODY_LISTING_READY')preview();if(event.origin===location.origin&&event.source===$('preview').contentWindow&&event.data?.type==='NOODY_LISTING_APPLIED')document.body.dataset.previewApplied='true';});
+$('desktop').onclick=()=>$('preview').classList.remove('mobile');$('mobile').onclick=()=>$('preview').classList.add('mobile');
+$('addPhoto').onclick=()=>{try{if(state.content.photos.length>=8)throw Error('Use up to eight photos.');state.content.photos.push({src:photoUrl($('photoUrl').value),alt:{en:'',ml:'',hi:''}});$('photoUrl').value='';photos();persist();}catch(e){note('status',e.message,true);}};
+$('photosUpload').onchange=async()=>{
+ const files=[...$('photosUpload').files];$('photosUpload').value='';if(files.length+state.content.photos.length>8){note('status','Use up to eight photos.',true);return;}
+ const selection=state.selection;try{for(const file of files){if(file.size>5*1024*1024||!['image/png','image/jpeg','image/webp'].includes(file.type))throw Error('Use PNG, JPEG or WebP images up to 5 MB each.');
+ const bitmap=await createImageBitmap(file);if(bitmap.width*bitmap.height>40000000){bitmap.close();throw Error('This image is too large. Resize it first.');}
+ const scale=Math.min(1,1400/Math.max(bitmap.width,bitmap.height)),canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));canvas.getContext('2d').drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close();
+ let blob;for(const quality of [.85,.7,.5,.35]){blob=await new Promise(r=>canvas.toBlob(r,'image/webp',quality));if(blob&&blob.size<=300000)break;}
+ if(!blob||blob.type!=='image/webp'||blob.size>300000)throw Error('Could not compress this image. Try a smaller photo.');const data=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(blob);});
+ if(selection!==state.selection)return;const src='./media/'+crypto.randomUUID()+'.webp';state.assets[src]=data;state.content.photos.push({src,alt:{en:'',ml:'',hi:''}});photos();persist();
+ }}catch(e){note('status',e.message||'Image upload failed.',true);}
+};
+$('reset').onclick=()=>select(state.item,false);
+$('import').onchange=async()=>{try{const file=$('import').files[0];if(!file||file.size>300000)throw Error('Choose a listing JSON under 300 KB.');state.content=validateContent(JSON.parse(await file.text()),state.item);state.assets={};template();fields();photos();persist();}catch(e){note('status',e.message,true);}finally{$('import').value='';}};
+$('download').onclick=async()=>{try{
+ const content=validateContent(state.content,state.item),index=updateContentIndex(state.index,content),key=contentKey(content),files=[{path:'listing-content.json',data:JSON.stringify(index,null,2)+'\n'},{path:'listing-content/'+key+'.json',data:JSON.stringify(content,null,2)+'\n'}];
+ for(const photo of content.photos){const data=state.assets[photo.src];if(data){const binary=atob(data.split(',')[1]);files.push({path:photo.src.slice(2),data:Uint8Array.from(binary,c=>c.charCodeAt(0))});}}
+ const url=URL.createObjectURL(makeZip(Object.fromEntries(files.map(file=>[file.path,file.data])))),a=document.createElement('a');a.href=url;a.download='noody-'+key+'.zip';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);note('status','Downloaded. Extract the ZIP and upload its files / folders to your website GitHub repository. Keep existing listing index entries when combining updates.');
+ }catch(e){note('status',e.message,true);}};
+async function api(path,body,authorized=false){
+ const response=await fetch(state.config.apiOrigin+path,{method:'POST',credentials:'omit',redirect:'error',headers:{'Content-Type':'application/json',...(authorized?{Authorization:'Bearer '+state.token}:{})},body:JSON.stringify(body),signal:AbortSignal.timeout(25000)});
+ const data=await readPublicJson(response,300000);return data;
+}
+$('loginForm').onsubmit=async event=>{event.preventDefault();try{let deviceId=localStorage.getItem('noody.owner.editor.device');if(!deviceId){deviceId=crypto.randomUUID();localStorage.setItem('noody.owner.editor.device',deviceId);}
+ const result=await api('/v1/auth/login',{email:$('ownerEmail').value,password:$('ownerPassword').value,deviceId,deviceName:'NOODY listing editor'});state.token=result.accessToken;if(!state.token)throw Error('Approve this editor device in your existing admin and sign in again.');note('authStatus','Signed in. Session stays in this open tab only.');
+ }catch{state.token=null;note('authStatus','Sign in failed. Check your owner login and existing admin device approval. The central API deployment must be available.',true);}finally{$('ownerPassword').value='';}};
+$('logout').onclick=async()=>{const token=state.token;state.token=null;note('authStatus','Signed out.');if(token)try{await fetch(state.config.apiOrigin+'/v1/auth/logout',{method:'POST',credentials:'omit',headers:{Authorization:'Bearer '+token},signal:AbortSignal.timeout(8000)});}catch{}};
+$('assist').onclick=async()=>{if(!state.token){note('aiStatus','Sign in with your existing owner account first.',true);return;}const selection=state.selection;$('assist').disabled=true;try{
+ const result=await api('/v1/settings/website-content/assist',{brief:$('brief').value,kind:state.item.kind,template:state.content.template,text:state.content.text},true);if(selection!==state.selection)return;
+ const proposed=validateContent({...state.content,text:result.text},state.item);
+ const dialog=document.createElement('dialog');dialog.style.cssText='max-width:760px;width:95%;max-height:85vh;overflow:auto;border:1px solid #b4cdbf;border-radius:15px;padding:24px';const heading=document.createElement('h2');heading.textContent='Review AI suggestions';dialog.append(heading);
+ for(const lang of LANGUAGES){const h=document.createElement('h3');h.textContent=lang;dialog.append(h);for(const field of FIELDS)if(proposed.text[lang][field]){const label=document.createElement('strong');label.textContent=FIELD_LABELS[field];const p=document.createElement('p');p.style.whiteSpace='pre-wrap';p.textContent=proposed.text[lang][field];dialog.append(label,p);}}
+ const apply=document.createElement('button');apply.textContent='Use reviewed suggestions';apply.onclick=()=>{if(selection===state.selection){for(const lang of LANGUAGES)for(const field of FIELDS)if(proposed.text[lang][field]&&($('replaceText').checked||!state.content.text[lang][field]))state.content.text[lang][field]=proposed.text[lang][field];fields();persist();note('aiStatus','Reviewed suggestions applied to the draft. Check facts before publishing.');}dialog.close();dialog.remove();};
+ const cancel=document.createElement('button');cancel.textContent='Discard';cancel.onclick=()=>{dialog.close();dialog.remove();};dialog.append(apply,cancel);document.body.append(dialog);dialog.showModal();
+ }catch{note('aiStatus','AI is unavailable. You can keep editing manually. The owner AI endpoint and configured provider must be deployed first.',true);}finally{$('assist').disabled=false;}};
+reload();

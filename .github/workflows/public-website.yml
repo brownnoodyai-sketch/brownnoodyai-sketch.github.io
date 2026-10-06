@@ -29,7 +29,10 @@ jobs:
           node --check catalogue.mjs
           node --check design.mjs
           node --check designer.mjs
-          node --test .github/tests/catalogue.test.mjs .github/tests/listing.test.mjs .github/tests/design.test.mjs
+          node --check listing-content.mjs
+          node --check listing-editor.mjs
+          node --check zip.mjs
+          node --test .github/tests/catalogue.test.mjs .github/tests/listing.test.mjs .github/tests/design.test.mjs .github/tests/content.test.mjs
       - name: Build isolated headless browser runtime
         run: docker build -t noody-public-browser -f .github/tests/Dockerfile .github/tests
       - name: Verify actual island selection, details, sharing, refresh and WhatsApp handoff
