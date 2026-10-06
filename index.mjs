@@ -1,3 +1,4 @@
+import {loadDesign} from './design.mjs';
 import {ISLAND_NAMES,validateConfig,validateCatalogue,readPublicJson} from './catalogue.mjs';
 import {itemLink,websiteEnquiry,readLanguage,rememberLanguage} from './listing.mjs';
 import {copy,applyCopy} from './copy.mjs';
@@ -44,3 +45,5 @@ $('changeType').onclick=openType;$('closeModal').onclick=closeType;modal.onclick
 document.addEventListener('keydown',e=>{if(!modal.classList.contains('open'))return;if(e.key==='Escape')closeType();if(e.key==='Tab'){const nodes=[...modal.querySelectorAll('button')],first=nodes[0],last=nodes.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
 $('language').onchange=e=>{state.language=e.target.value;rememberLanguage(state.language);render();};$('refresh').onclick=refresh;$('year').textContent=new Date().getFullYear();
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refresh();});setInterval(()=>{if(document.visibilityState==='visible')refresh();},60000);render();refresh();
+
+loadDesign();

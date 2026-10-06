@@ -1,3 +1,4 @@
+import {loadDesign} from './design.mjs';
 import {ISLAND_NAMES,validateConfig,validateCatalogue,readPublicJson} from './catalogue.mjs';
 import {parseItemQuery,itemLink,websiteEnquiry,readLanguage,rememberLanguage} from './listing.mjs';
 import {copy,applyCopy} from './copy.mjs';
@@ -24,3 +25,5 @@ async function refresh(){
 }
 $('language').onchange=e=>{state.language=e.target.value;rememberLanguage(state.language);render();};$('refresh').onclick=refresh;
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refresh();});setInterval(()=>{if(document.visibilityState==='visible')refresh();},60000);refresh();
+
+loadDesign();

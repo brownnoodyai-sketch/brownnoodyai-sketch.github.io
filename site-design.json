@@ -1,0 +1,27 @@
+{
+  "schema": "noody.design.v1",
+  "colors": {
+    "accent": "#08755c",
+    "ink": "#15372e",
+    "background": "#fbfdfc",
+    "muted": "#6c8179"
+  },
+  "font": "DM Sans",
+  "radius": 28,
+  "columns": 3,
+  "animations": true,
+  "logo": "",
+  "banner": "",
+  "order": [
+    "hero",
+    "explore",
+    "how",
+    "about"
+  ],
+  "hidden": [],
+  "text": {
+    "en": {},
+    "ml": {},
+    "hi": {}
+  }
+}
