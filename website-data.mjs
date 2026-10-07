@@ -14,13 +14,19 @@ function validateBlock(block,seen){
  if(!['section','highlight','note','steps'].includes(block.style))throw Error('BLOCK_INVALID');
  return {id:block.id,style:block.style,title:localizedText(block.title,300),body:localizedText(block.body,10000)};
 }
+function validateDetail(row,seen){
+ if(!row||typeof row.id!=='string'||!/^[A-Za-z0-9_-]{1,80}$/.test(row.id)||seen.has(row.id))throw Error('DETAIL_INVALID');seen.add(row.id);
+ const label=localizedText(row.label,180),value=localizedText(row.value,1200);
+ if(!Object.values(label).some(Boolean)&&!Object.values(value).some(Boolean))throw Error('DETAIL_EMPTY');
+ return {id:row.id,label,value};
+}
 function validateReview(row){
  if(!row||typeof row.id!=='string'||!UUID.test(row.id)||typeof row.firstName!=='string'||!row.firstName.trim()||row.firstName.length>80||!Number.isInteger(row.stars)||row.stars<1||row.stars>5||typeof row.comment!=='string'||row.comment.length>4000)throw Error('REVIEW_INVALID');
  const date=typeof row.date==='string'&&row.date.length<=40?row.date:'';
  return {id:row.id,firstName:row.firstName.trim(),stars:row.stars,comment:row.comment.trim(),date,verified:row.verified===true};
 }
 export function blankItem(kind='SERVICE',islandCode='AGATTI'){
- const id=crypto.randomUUID();return {id,kind, islandCode,name:'',category:'',active:true,priceText:'Ask on WhatsApp',availabilityText:'Confirm on WhatsApp',title:{en:'',ml:'',hi:''},summary:{en:'',ml:'',hi:''},description:{en:'',ml:'',hi:''},photos:[],blocks:[],reviews:[]};
+ const id=crypto.randomUUID();return {id,kind,islandCode,name:'',category:'',active:true,priceText:'Ask on WhatsApp',availabilityText:'Confirm on WhatsApp',title:{en:'',ml:'',hi:''},summary:{en:'',ml:'',hi:''},description:{en:'',ml:'',hi:''},photos:[],details:[],blocks:[],reviews:[]};
 }
 export function validateWebsiteData(raw){
  if(!raw||raw.schema!==SITE_SCHEMA||!/^\d{8,15}$/.test(String(raw.whatsappNumber||''))||!Array.isArray(raw.islands)||raw.islands.length>4||!Array.isArray(raw.items)||raw.items.length>5000||!Array.isArray(raw.homepageBlocks)||raw.homepageBlocks.length>100)throw Error('WEBSITE_DATA_INVALID');
@@ -33,9 +39,10 @@ export function validateWebsiteData(raw){
   if(['travelpackage','travelpackages'].includes(row.category.toLowerCase().replace(/[\s_-]/g,'')))throw Error('TRAVEL_PACKAGE_DISABLED');
   const photos=Array.isArray(row.photos)?row.photos:[];if(photos.length>30)throw Error('TOO_MANY_PHOTOS');
   const cleanPhotos=photos.map(p=>({src:photoUrl(p.src),alt:localizedText(p.alt,240)}));
+  const details=(Array.isArray(row.details)?row.details:[]);if(details.length>80)throw Error('TOO_MANY_DETAILS');const seenDetails=new Set();
   const seenBlocks=new Set(),blocks=(Array.isArray(row.blocks)?row.blocks:[]);if(blocks.length>100)throw Error('TOO_MANY_BLOCKS');
   const reviews=(Array.isArray(row.reviews)?row.reviews:[]);if(reviews.length>200)throw Error('TOO_MANY_REVIEWS');
-  return {id:row.id.toLowerCase(),kind:row.kind,islandCode:row.islandCode,name:row.name.trim(),category:row.category.trim(),active:row.active,priceText:text(row.priceText??'',200)??'',availabilityText:text(row.availabilityText??'',200)??'',title:localizedText(row.title,300),summary:localizedText(row.summary,800),description:localizedText(row.description,12000),photos:cleanPhotos,blocks:blocks.map(b=>validateBlock(b,seenBlocks)),reviews:reviews.map(validateReview)};
+  return {id:row.id.toLowerCase(),kind:row.kind,islandCode:row.islandCode,name:row.name.trim(),category:row.category.trim(),active:row.active,priceText:text(row.priceText??'',200)??'',availabilityText:text(row.availabilityText??'',200)??'',title:localizedText(row.title,300),summary:localizedText(row.summary,800),description:localizedText(row.description,12000),photos:cleanPhotos,details:details.map(d=>validateDetail(d,seenDetails)),blocks:blocks.map(b=>validateBlock(b,seenBlocks)),reviews:reviews.map(validateReview)};
  });
  const seenHome=new Set(),homepageBlocks=raw.homepageBlocks.map(b=>validateBlock(b,seenHome));
  return {schema:SITE_SCHEMA,whatsappNumber:String(raw.whatsappNumber),islands,homepageBlocks,items};
