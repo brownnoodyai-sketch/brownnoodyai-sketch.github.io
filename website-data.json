@@ -6,8 +6,8 @@
     "logo": "",
     "tagline": {
       "en": "Next-gen Oceanic Operations, Data & Yield.",
-      "ml": "",
-      "hi": ""
+      "ml": "അടുത്ത തലമുറ സമുദ്ര പ്രവർത്തനങ്ങൾ, ഡാറ്റ & യീൽഡ്.",
+      "hi": "अगली पीढ़ी के समुद्री संचालन, डेटा और यील्ड।"
     }
   },
   "islands": [
@@ -17,13 +17,13 @@
       "image": "",
       "title": {
         "en": "Agatti",
-        "ml": "",
-        "hi": ""
+        "ml": "അഗത്തി",
+        "hi": "अगत्ती"
       },
       "description": {
         "en": "Lagoon and local island experiences",
-        "ml": "",
-        "hi": ""
+        "ml": "ലഗൂൺയും പ്രാദേശിക ദ്വീപ് അനുഭവങ്ങളും",
+        "hi": "लैगून और स्थानीय द्वीप अनुभव"
       }
     },
     {
@@ -32,13 +32,13 @@
       "image": "",
       "title": {
         "en": "Kadmat",
-        "ml": "",
-        "hi": ""
+        "ml": "കടമത്ത്",
+        "hi": "कदमत"
       },
       "description": {
         "en": "Reef and island experiences",
-        "ml": "",
-        "hi": ""
+        "ml": "റീഫ് അനുഭവങ്ങളും ദ്വീപ് പ്രവർത്തനങ്ങളും",
+        "hi": "रीफ और द्वीप अनुभव"
       }
     },
     {
@@ -47,13 +47,13 @@
       "image": "",
       "title": {
         "en": "Kavaratti",
-        "ml": "",
-        "hi": ""
+        "ml": "കവരത്തി",
+        "hi": "कवरत्ती"
       },
       "description": {
         "en": "Capital island services",
-        "ml": "",
-        "hi": ""
+        "ml": "തലസ്ഥാന ദ്വീപിലെ സേവനങ്ങൾ",
+        "hi": "राजधानी द्वीप की सेवाएं"
       }
     },
     {
@@ -62,13 +62,13 @@
       "image": "",
       "title": {
         "en": "Kalpeni",
-        "ml": "",
-        "hi": ""
+        "ml": "കൽപേനി",
+        "hi": "कल्पेनी"
       },
       "description": {
         "en": "Lagoon and local discovery",
-        "ml": "",
-        "hi": ""
+        "ml": "ലഗൂൺയും പ്രാദേശിക കണ്ടെത്തലുകളും",
+        "hi": "लैगून और स्थानीय खोज"
       }
     }
   ],
@@ -100,18 +100,18 @@
           "active": true,
           "eyebrow": {
             "en": "LAKSHADWEEP · INDIA",
-            "ml": "",
-            "hi": ""
+            "ml": "ലക്ഷദ്വീപ് · ഇന്ത്യ",
+            "hi": "लक्षद्वीप · भारत"
           },
           "title": {
             "en": "A little island. A world of possibilities.",
-            "ml": "",
-            "hi": ""
+            "ml": "ചെറിയൊരു ദ്വീപ്. സാധ്യതകളുടെ വലിയൊരു ലോകം.",
+            "hi": "एक छोटा द्वीप। संभावनाओं की एक बड़ी दुनिया।"
           },
           "body": {
             "en": "Choose your island, explore services or products, and continue your enquiry on WhatsApp.",
-            "ml": "",
-            "hi": ""
+            "ml": "ദ്വീപ് തിരഞ്ഞെടുക്കൂ, സേവനങ്ങളോ ഉൽപ്പന്നങ്ങളോ കാണൂ, ശേഷം WhatsApp വഴി ചോദിക്കൂ.",
+            "hi": "अपना द्वीप चुनें, सेवाएं या उत्पाद देखें और फिर WhatsApp पर पूछें।"
           },
           "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2000&q=85",
           "images": [],
@@ -126,8 +126,8 @@
           "variant": "split",
           "ctaLabel": {
             "en": "Enquire on WhatsApp",
-            "ml": "",
-            "hi": ""
+            "ml": "WhatsApp-ൽ ചോദിക്കൂ",
+            "hi": "WhatsApp पर पूछें"
           },
           "ctaAction": "whatsapp",
           "ctaTarget": "",
@@ -145,18 +145,18 @@
           "active": true,
           "eyebrow": {
             "en": "START HERE",
-            "ml": "",
-            "hi": ""
+            "ml": "ഇവിടെ തുടങ്ങൂ",
+            "hi": "यहां से शुरू करें"
           },
           "title": {
             "en": "Choose your island.",
-            "ml": "",
-            "hi": ""
+            "ml": "നിങ്ങളുടെ ദ്വീപ് തിരഞ്ഞെടുക്കൂ.",
+            "hi": "अपना द्वीप चुनें।"
           },
           "body": {
             "en": "Select an island, then browse Services or Products.",
-            "ml": "",
-            "hi": ""
+            "ml": "ഒരു ദ്വീപ് തിരഞ്ഞെടുക്കൂ, ശേഷം സേവനങ്ങളോ ഉൽപ്പന്നങ്ങളോ കാണൂ.",
+            "hi": "एक द्वीप चुनें, फिर सेवाएं या उत्पाद देखें।"
           },
           "image": "",
           "images": [],
@@ -190,8 +190,8 @@
   "footer": {
     "text": {
       "en": "Explore Lakshadweep with NOODY.AI.",
-      "ml": "",
-      "hi": ""
+      "ml": "NOODY.AI-യോടൊപ്പം ലക്ഷദ്വീപ് കണ്ടെത്തൂ.",
+      "hi": "NOODY.AI के साथ लक्षद्वीप को जानें।"
     },
     "showPrivacy": true
   },
