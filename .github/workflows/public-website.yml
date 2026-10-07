@@ -1,4 +1,4 @@
-name: Public Website Catalogue & WhatsApp Verification
+name: Public Website Enquiry & Studio Verification
 on:
   pull_request:
     branches: [main]
@@ -9,7 +9,7 @@ permissions:
   contents: read
 jobs:
   public-website:
-    name: Public website / catalogue / WhatsApp
+    name: Website-only catalogue / Studio / WhatsApp
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -20,29 +20,25 @@ jobs:
         with:
           node-version: '24'
           package-manager-cache: false
-      - name: Validate public website JavaScript and canonical listing contract
+      - name: Validate website-only data, links and design
         run: |
           node --check index.mjs
           node --check item.mjs
           node --check listing.mjs
+          node --check website-data.mjs
+          node --check studio-builder.mjs
           node --check copy.mjs
-          node --check catalogue.mjs
           node --check design.mjs
           node --check designer.mjs
-          node --check listing-content.mjs
-          node --check listing-editor.mjs
           node --check zip.mjs
-          node --check reviews.mjs
-          node --check review.mjs
-          node --test .github/tests/catalogue.test.mjs .github/tests/listing.test.mjs .github/tests/design.test.mjs .github/tests/content.test.mjs .github/tests/reviews.test.mjs
-      - name: Build isolated headless browser runtime
+          node --test .github/tests/website-data.test.mjs .github/tests/listing.test.mjs .github/tests/design.test.mjs
+      - name: Build isolated browser runtime
         run: docker build -t noody-public-browser -f .github/tests/Dockerfile .github/tests
-      - name: Verify actual island selection, details, sharing, refresh and WhatsApp handoff
+      - name: Verify manual catalogue, Studio and WhatsApp-only customer flow
         run: docker run --rm -v "$PWD:/website:ro" noody-public-browser
-      - name: Check live anonymous catalogue without sending messages or performing orders
+      - name: Verify live Pages website data without Core API dependency
+        if: github.event_name == 'push'
         run: node .github/tests/probe.mjs
-      - name: Verify deployed listing API routes and owner CORS without credentials
-        run: node .github/tests/backend-readiness.mjs
-      - name: Verify published Pages assets match this commit and exclude CI fixtures
+      - name: Verify published Pages assets match this commit
         if: github.event_name == 'push'
         run: node .github/tests/published.mjs
