@@ -23,7 +23,7 @@ main{height:calc(100vh - 68px);padding:10px}.frame{width:100%;height:100%;border
   <div class="brand"><div class="mark">N</div><div><strong>NOODY.AI Website Studio</strong><small>One place to edit the public website</small></div></div>
   <nav class="tabs" aria-label="Studio sections">
     <button class="active" data-view="design">Website design</button>
-    <button data-view="listing">Services & products</button>
+    <button data-view="listing">Full Website Builder</button>
     <button data-view="live">Live website</button>
     <button data-view="advanced">Advanced source</button>
   </nav>
@@ -33,18 +33,18 @@ main{height:calc(100vh - 68px);padding:10px}.frame{width:100%;height:100%;border
 </header>
 <main>
   <iframe id="design" class="frame active" src="./designer.html" title="Website design editor"></iframe>
-  <iframe id="listing" class="frame" src="./listing-editor.html" title="Service and product editor"></iframe>
+  <iframe id="listing" class="frame" src="./studio-builder.html" title="Full independent website builder"></iframe>
   <iframe id="live" class="frame" src="./" title="Live NOODY website"></iframe>
   <section id="advanced" class="frame">
-    <div class="note"><strong>Advanced access:</strong> use these only when you want to change page structure or code directly. Core catalogue/API data stays separate.</div>
+    <div class="note"><strong>Advanced access:</strong> Website is enquiry-only and independent from Core data. Use source access only when you want to change the code/layout beyond the visual builders.</div>
     <div class="grid">
       <article class="card"><h2>Homepage structure</h2><p>Edit the main HTML layout and section markup.</p><a target="_blank" rel="noopener" href="https://github.com/brownnoodyai-sketch/brownnoodyai-sketch.github.io/edit/main/index.html">Edit index.html ↗</a></article>
       <article class="card"><h2>Homepage behaviour</h2><p>Island selection, catalogue refresh, cards and interactions.</p><a target="_blank" rel="noopener" href="https://github.com/brownnoodyai-sketch/brownnoodyai-sketch.github.io/edit/main/index.mjs">Edit index.mjs ↗</a></article>
       <article class="card"><h2>Listing detail page</h2><p>Service/product detail page structure and layout.</p><a target="_blank" rel="noopener" href="https://github.com/brownnoodyai-sketch/brownnoodyai-sketch.github.io/edit/main/item.html">Edit item.html ↗</a></article>
       <article class="card"><h2>Listing behaviour</h2><p>Detail page data, reviews and WhatsApp actions.</p><a target="_blank" rel="noopener" href="https://github.com/brownnoodyai-sketch/brownnoodyai-sketch.github.io/edit/main/item.mjs">Edit item.mjs ↗</a></article>
       <article class="card"><h2>Design engine</h2><p>Colors, fonts, sections and saved design rules.</p><a target="_blank" rel="noopener" href="https://github.com/brownnoodyai-sketch/brownnoodyai-sketch.github.io/edit/main/design.mjs">Edit design.mjs ↗</a></article>
-      <article class="card"><h2>Catalogue connection</h2><p>Public catalogue validation and WhatsApp enquiry link format.</p><a target="_blank" rel="noopener" href="https://github.com/brownnoodyai-sketch/brownnoodyai-sketch.github.io/edit/main/catalogue.mjs">Edit catalogue.mjs ↗</a></article>
-      <article class="card"><h2>Public API config</h2><p>Railway API origin and official WhatsApp number only.</p><a target="_blank" rel="noopener" href="https://github.com/brownnoodyai-sketch/brownnoodyai-sketch.github.io/edit/main/config.json">Edit config.json ↗</a></article>
+      <article class="card"><h2>Website data model</h2><p>Manual website-only Services/Products, homepage blocks and WhatsApp enquiry data.</p><a target="_blank" rel="noopener" href="https://github.com/brownnoodyai-sketch/brownnoodyai-sketch.github.io/edit/main/website-data.json">Edit website-data.json ↗</a></article>
+      <article class="card"><h2>WhatsApp handoff</h2><p>Customer enquiry message format. No Core API data is fetched by the website.</p><a target="_blank" rel="noopener" href="https://github.com/brownnoodyai-sketch/brownnoodyai-sketch.github.io/edit/main/listing.mjs">Edit WhatsApp handoff ↗</a></article>
       <article class="card"><h2>All website files</h2><p>Open the public website repository for complete file access.</p><a target="_blank" rel="noopener" href="https://github.com/brownnoodyai-sketch/brownnoodyai-sketch.github.io">Open repository ↗</a></article>
     </div>
   </section>
