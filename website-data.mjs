@@ -34,9 +34,15 @@ function validateLegacyBlock(block,seen){
  return {id:block.id,style:block.style,title:localized(block.title,300),body:localized(block.body,10000)};
 }
 function blockStyle(raw={}){
- const padding=Number.isInteger(raw.padding)&&raw.padding>=0&&raw.padding<=120?raw.padding:48;
- const radius=Number.isInteger(raw.radius)&&raw.radius>=0&&raw.radius<=60?raw.radius:24;
- return {background:color(raw.background,'transparent'),textColor:color(raw.textColor,''),align:['left','center','right'].includes(raw.align)?raw.align:'left',width:['full','wide','normal','narrow'].includes(raw.width)?raw.width:'wide',padding,radius};
+ const padding=Number.isInteger(raw.padding)&&raw.padding>=0&&raw.padding<=140?raw.padding:48;
+ const radius=Number.isInteger(raw.radius)&&raw.radius>=0&&raw.radius<=80?raw.radius:24;
+ const bgX=Number.isInteger(raw.bgX)&&raw.bgX>=0&&raw.bgX<=100?raw.bgX:50;
+ const bgY=Number.isInteger(raw.bgY)&&raw.bgY>=0&&raw.bgY<=100?raw.bgY:50;
+ const overlay=Number.isInteger(raw.overlay)&&raw.overlay>=0&&raw.overlay<=90?raw.overlay:45;
+ const minHeight=Number.isInteger(raw.minHeight)&&raw.minHeight>=120&&raw.minHeight<=1000?raw.minHeight:460;
+ const contentWidth=Number.isInteger(raw.contentWidth)&&raw.contentWidth>=260&&raw.contentWidth<=1400?raw.contentWidth:700;
+ const gap=Number.isInteger(raw.gap)&&raw.gap>=0&&raw.gap<=120?raw.gap:24;
+ return {background:color(raw.background,'transparent'),textColor:color(raw.textColor,''),align:['left','center','right'].includes(raw.align)?raw.align:'left',width:['full','wide','normal','narrow'].includes(raw.width)?raw.width:'wide',padding,radius,bgX,bgY,bgSize:['cover','contain','auto'].includes(raw.bgSize)?raw.bgSize:'cover',overlay,minHeight,contentWidth,gap};
 }
 function validateFaq(row){
  if(!row||!ID.test(row.id))throw Error('FAQ_INVALID');return {id:row.id,question:localized(row.question,500),answer:localized(row.answer,5000)};
@@ -66,7 +72,7 @@ function validatePage(row,seenSlug){
  const seen=new Set();return {id:row.id.toLowerCase(),slug:row.slug,active:row.active!==false,showInNav:row.showInNav===true,navLabel:localized(row.navLabel,100),title:localized(row.title,300),metaDescription:localized(row.metaDescription,500),blocks:row.blocks.map(b=>validateBlock(b,seen))};
 }
 export function blankPage(slug='new-page'){return {id:crypto.randomUUID(),slug,active:true,showInNav:true,navLabel:{en:'New page',ml:'',hi:''},title:{en:'New page',ml:'',hi:''},metaDescription:{en:'',ml:'',hi:''},blocks:[]};}
-export function blankPageBlock(type='text'){return {id:crypto.randomUUID(),type,active:true,eyebrow:{en:'',ml:'',hi:''},title:{en:'',ml:'',hi:''},body:{en:'',ml:'',hi:''},image:'',images:[],style:{background:'transparent',textColor:'',align:'left',width:'wide',padding:48,radius:24},variant:'',ctaLabel:{en:'',ml:'',hi:''},ctaAction:'none',ctaTarget:'',itemKind:'ALL',category:'',islandCode:'',limit:8,columns:3,faqs:[],height:80};}
+export function blankPageBlock(type='text'){return {id:crypto.randomUUID(),type,active:true,eyebrow:{en:'',ml:'',hi:''},title:{en:'',ml:'',hi:''},body:{en:'',ml:'',hi:''},image:'',images:[],style:{background:'transparent',textColor:'',align:'left',width:'wide',padding:48,radius:24,bgX:50,bgY:50,bgSize:'cover',overlay:45,minHeight:460,contentWidth:700,gap:24},variant:'',ctaLabel:{en:'',ml:'',hi:''},ctaAction:'none',ctaTarget:'',itemKind:'ALL',category:'',islandCode:'',limit:8,columns:3,faqs:[],height:80};}
 export function blankItem(kind='SERVICE',islandCode='AGATTI'){return {id:crypto.randomUUID(),kind,islandCode,name:'',category:'',active:true,priceText:'Ask on WhatsApp',availabilityText:'Confirm on WhatsApp',categoryLabel:{en:'',ml:'',hi:''},priceLabel:{en:'Ask on WhatsApp',ml:'WhatsApp-ൽ ചോദിക്കൂ',hi:'WhatsApp पर पूछें'},availabilityLabel:{en:'Confirm on WhatsApp',ml:'WhatsApp-ൽ സ്ഥിരീകരിക്കുക',hi:'WhatsApp पर पुष्टि करें'},title:{en:'',ml:'',hi:''},summary:{en:'',ml:'',hi:''},description:{en:'',ml:'',hi:''},photos:[],details:[],blocks:[],reviews:[]};}
 function upgradeV1(raw){
  const hero=blankPageBlock('hero');hero.eyebrow.en='LAKSHADWEEP · INDIA';hero.title.en='A little island. A world of possibilities.';hero.body.en='Choose an island, explore services or products, then continue your enquiry through WhatsApp.';hero.variant='split';
