@@ -1,24 +1,199 @@
 {
-  "schema": "noody.website.v1",
+  "schema": "noody.website.v2",
   "whatsappNumber": "919446944562",
+  "brand": {
+    "name": "NOODY.AI",
+    "logo": "",
+    "tagline": {
+      "en": "Next-gen Oceanic Operations, Data & Yield.",
+      "ml": "",
+      "hi": ""
+    }
+  },
   "islands": [
     {
       "code": "AGATTI",
-      "active": true
+      "active": true,
+      "image": "",
+      "title": {
+        "en": "Agatti",
+        "ml": "",
+        "hi": ""
+      },
+      "description": {
+        "en": "Lagoon and local island experiences",
+        "ml": "",
+        "hi": ""
+      }
     },
     {
       "code": "KADMAT",
-      "active": true
+      "active": true,
+      "image": "",
+      "title": {
+        "en": "Kadmat",
+        "ml": "",
+        "hi": ""
+      },
+      "description": {
+        "en": "Reef and island experiences",
+        "ml": "",
+        "hi": ""
+      }
     },
     {
       "code": "KAVARATTI",
-      "active": true
+      "active": true,
+      "image": "",
+      "title": {
+        "en": "Kavaratti",
+        "ml": "",
+        "hi": ""
+      },
+      "description": {
+        "en": "Capital island services",
+        "ml": "",
+        "hi": ""
+      }
     },
     {
       "code": "KALPENI",
-      "active": true
+      "active": true,
+      "image": "",
+      "title": {
+        "en": "Kalpeni",
+        "ml": "",
+        "hi": ""
+      },
+      "description": {
+        "en": "Lagoon and local discovery",
+        "ml": "",
+        "hi": ""
+      }
     }
   ],
-  "homepageBlocks": [],
+  "pages": [
+    {
+      "id": "10000000-0000-4000-8000-000000000001",
+      "slug": "home",
+      "active": true,
+      "showInNav": false,
+      "navLabel": {
+        "en": "Home",
+        "ml": "",
+        "hi": ""
+      },
+      "title": {
+        "en": "NOODY.AI",
+        "ml": "",
+        "hi": ""
+      },
+      "metaDescription": {
+        "en": "Explore Lakshadweep services and products and enquire through WhatsApp.",
+        "ml": "",
+        "hi": ""
+      },
+      "blocks": [
+        {
+          "id": "hero-main",
+          "type": "hero",
+          "active": true,
+          "eyebrow": {
+            "en": "LAKSHADWEEP · INDIA",
+            "ml": "",
+            "hi": ""
+          },
+          "title": {
+            "en": "A little island. A world of possibilities.",
+            "ml": "",
+            "hi": ""
+          },
+          "body": {
+            "en": "Choose your island, explore services or products, and continue your enquiry on WhatsApp.",
+            "ml": "",
+            "hi": ""
+          },
+          "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2000&q=85",
+          "images": [],
+          "style": {
+            "background": "#08755c",
+            "textColor": "#ffffff",
+            "align": "left",
+            "width": "full",
+            "padding": 64,
+            "radius": 28
+          },
+          "variant": "split",
+          "ctaLabel": {
+            "en": "Enquire on WhatsApp",
+            "ml": "",
+            "hi": ""
+          },
+          "ctaAction": "whatsapp",
+          "ctaTarget": "",
+          "itemKind": "ALL",
+          "category": "",
+          "islandCode": "",
+          "limit": 8,
+          "columns": 3,
+          "faqs": [],
+          "height": 80
+        },
+        {
+          "id": "island-main",
+          "type": "islandSelector",
+          "active": true,
+          "eyebrow": {
+            "en": "START HERE",
+            "ml": "",
+            "hi": ""
+          },
+          "title": {
+            "en": "Choose your island.",
+            "ml": "",
+            "hi": ""
+          },
+          "body": {
+            "en": "Select an island, then browse Services or Products.",
+            "ml": "",
+            "hi": ""
+          },
+          "image": "",
+          "images": [],
+          "style": {
+            "background": "transparent",
+            "textColor": "",
+            "align": "left",
+            "width": "wide",
+            "padding": 48,
+            "radius": 24
+          },
+          "variant": "cards",
+          "ctaLabel": {
+            "en": "",
+            "ml": "",
+            "hi": ""
+          },
+          "ctaAction": "none",
+          "ctaTarget": "",
+          "itemKind": "ALL",
+          "category": "",
+          "islandCode": "",
+          "limit": 8,
+          "columns": 4,
+          "faqs": [],
+          "height": 80
+        }
+      ]
+    }
+  ],
+  "footer": {
+    "text": {
+      "en": "Explore Lakshadweep with NOODY.AI.",
+      "ml": "",
+      "hi": ""
+    },
+    "showPrivacy": true
+  },
   "items": []
 }
