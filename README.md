@@ -1,15 +1,59 @@
 # NOODY.AI Public Website
 
-Customer-facing website only: https://brownnoodyai-sketch.github.io/
+Live customer website: https://brownnoodyai-sketch.github.io/
 
-The existing animated island-first design and item.html query links are preserved. Services and products come automatically from the existing anonymous noody.public.v2 catalogue at https://noody-ai-production.up.railway.app/v1/public/catalogue. Refresh on opening, every minute while visible, tab return and manual Refresh. Only approved active backend records appear. Invalid/unavailable responses clear offers. Removed items cannot retain a price or exact-item enquiry.
+## Locked role
 
-Each listing has an island-specific detail/share link. WhatsApp enquiries include NOODY_SOURCE:WEBSITE, NOODY_ISLAND and NOODY_ITEM:SERVICE|PRODUCT:UUID, matching the existing official customer bot parser. The customer sends the prepared message. This website does not send messages or create orders itself, and link tests do not certify actual official Meta bot delivery.
+This repository is the **customer information + WhatsApp enquiry website only**.
 
-English/Malayalam/Hindi interface and enquiry text are available without forcing language selection. Public catalogue data is validated and projected to permitted fields; dynamic display text is escaped. No vendor identity, commission, private operational data or credentials are copied here.
+It is intentionally independent from the private NOODY Core Software database.
 
-Public config contains only the API origin and company WhatsApp number. No sample services, products, prices or inventory are published. The live API must allow https://brownnoodyai-sketch.github.io through its existing CORS configuration.
+- Website does not fetch Core service/product records.
+- Website does not create orders.
+- Website does not handle payments, OTP, vendor routing, commission, stock authority or settlements.
+- Core Software + official Meta WhatsApp API / LAK Bot remain the operational system.
+- Website Service/Product pages are manually created in the Website Studio.
+- A public Website item link may be pasted into the matching Core Software Service/Product as a reference only.
 
-GitHub Pages is already enabled on this public website repository. CI fixtures and documentation are excluded from the published site. CI uses 16 Node contract/link/privacy cases, six real Chromium checks and a read-only live feed probe. After a main push, CI verifies the live HTML, modules and config against the exact source hashes, module MIME types, privacy availability and exclusion of fixtures/docs. Private core/admin/API/bot source remains in the separate private repository; no operational core deployment is part of this website change.
+Customer flow:
 
-Never commit access tokens, app secrets, payment secrets, customer records or private vendor documents to this repository.
+Website information → Enquire on WhatsApp → official NOODY WhatsApp / LAK Bot → Core Software operations.
+
+## Full Website Studio
+
+Open:
+
+https://brownnoodyai-sketch.github.io/studio.html
+
+The Studio provides:
+- full manual Service/Product creation
+- island selection
+- customer-facing price/availability text
+- English / Malayalam / Hindi content
+- up to 30 photos per item
+- arbitrary custom sections (story, itinerary, safety, inclusions, ingredients, sizes, FAQ, pickup notes, etc.)
+- manual customer review display
+- homepage custom sections
+- live page preview
+- visual website design editor
+- full GitHub source access for changes beyond the visual builder
+
+Drafts stay on the owner's device until exported. Use **Download website update**, extract the ZIP, upload the generated files/folders to this GitHub repository, then commit changes.
+
+## Website data
+
+Manual website data is stored in `website-data.json`.
+
+It contains only public customer-facing content and the official WhatsApp number. Never put Core credentials, vendor private data, customer private data, Meta tokens, payment secrets or database credentials in this public repository.
+
+## WhatsApp handoff
+
+The website creates a prepared WhatsApp enquiry containing:
+- Website source
+- island
+- Service/Product name
+- website-only item identity
+- customer page link
+
+It deliberately does **not** send a Core item ID. LAK Bot / Core performs its own operational matching.
+
