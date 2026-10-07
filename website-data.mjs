@@ -1,7 +1,7 @@
 export const SITE_SCHEMA='noody.website.v2';
 export const LANGUAGES=['en','ml','hi'];
 export const ISLAND_NAMES={AGATTI:'Agatti',KADMAT:'Kadmat',KAVARATTI:'Kavaratti',KALPENI:'Kalpeni'};
-export const BLOCK_TYPES=['hero','islandSelector','text','imageText','gallery','featuredItems','reviews','faq','whatsappCta','spacer'];
+export const BLOCK_TYPES=['hero','islandSelector','text','imageText','slideshow','gallery','featuredItems','reviews','faq','whatsappCta','spacer'];
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const ID=/^[A-Za-z0-9_-]{1,80}$/;
 const SLUG=/^[a-z0-9]+(?:-[a-z0-9]+)*$/;
