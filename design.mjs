@@ -76,7 +76,7 @@ h1,h2,h3,.brand{font-family:var(--design-font)!important}
 .nav{min-height:var(--design-header-height)!important;gap:var(--design-nav-gap)!important}
 .brand img,.design-logo{width:var(--design-logo-width)!important;height:auto!important;max-height:calc(var(--design-header-height) - 16px)!important;object-fit:contain!important;flex:none}
 .wa,.wa-top,.cta,.kind-picker button,.language-buttons button{border-radius:var(--design-button-radius)!important;font-weight:var(--design-button-weight)!important}
-.island-card,.item-card,.review-card,.text-block,.image-text-block,.slideshow-block,.gallery-block,.featured-block,.review-block,.faq-block,.cta-block,.island-block{border-radius:var(--design-card-radius)!important;box-shadow:var(--design-card-shadow)!important}
+.island-card,.item-card,.review-card,.panel,.hero,.text-block,.image-text-block,.slideshow-block,.gallery-block,.featured-block,.review-block,.faq-block,.cta-block,.island-block{border-radius:var(--design-card-radius)!important;box-shadow:var(--design-card-shadow)!important}
 .island-card,.item-card,.review-card{background:var(--design-card)!important;border-color:var(--design-border)!important}
 .language-buttons button{border-color:var(--design-border)!important}
 html[data-language-style="minimal"] .language-buttons button{background:transparent!important;border-color:transparent!important}
@@ -84,7 +84,7 @@ html[data-language-style="solid"] .language-buttons button{background:var(--desi
 html[data-header-layout="center"] .nav{justify-content:center!important;flex-wrap:wrap}
 html[data-header-layout="center"] .brand{margin-right:0!important}
 html[data-header-layout="center"] .navlinks{order:3;flex-basis:100%;justify-content:center}
-html[data-header-layout="compact"] .nav{justify-content:flex-start!important}.site-header html[data-header-layout="compact"] .brand{margin-right:0!important}
+html[data-header-layout="compact"] .nav{justify-content:flex-start!important}html[data-header-layout="compact"] .brand{margin-right:0!important}
 html[data-design-motion="off"] *,html[data-design-motion="off"] *::before,html[data-design-motion="off"] *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 [hidden]{display:none!important}
 @media(min-width:981px){.cards{grid-template-columns:repeat(var(--design-columns),minmax(0,1fr))}}
