@@ -1,0 +1,24 @@
+{
+  "schema": "noody.website.v1",
+  "whatsappNumber": "919446944562",
+  "islands": [
+    {
+      "code": "AGATTI",
+      "active": true
+    },
+    {
+      "code": "KADMAT",
+      "active": true
+    },
+    {
+      "code": "KAVARATTI",
+      "active": true
+    },
+    {
+      "code": "KALPENI",
+      "active": true
+    }
+  ],
+  "homepageBlocks": [],
+  "items": []
+}
