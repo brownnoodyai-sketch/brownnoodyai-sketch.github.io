@@ -5,7 +5,9 @@ export function itemLink(item,pageUrl){const url=new URL('./item.html',pageUrl);
 export function websiteEnquiry(number,island,item=null,language='en',pageUrl=''){
  if(!/^\d{8,15}$/.test(String(number))||island&&!Object.hasOwn(ISLAND_NAMES,island)||item&&!island)return null;
  const hello={en:'Hello NOODY.AI, I would like to enquire about this item.',ml:'ഹലോ NOODY.AI, ഈ സേവനം / ഉൽപ്പന്നത്തെ കുറിച്ച് അറിയണം.',hi:'नमस्ते NOODY.AI, मुझे इस सेवा / उत्पाद के बारे में जानकारी चाहिए।'}[language]||'Hello NOODY.AI';
- const lines=[hello,'NOODY_SOURCE:WEBSITE'];if(island)lines.push('Island: '+ISLAND_NAMES[island],'NOODY_ISLAND:'+island);if(item)lines.push((item.kind==='SERVICE'?'Service: ':'Product: ')+item.name,'NOODY_WEBSITE_TYPE:'+item.kind,'NOODY_WEBSITE_ITEM:'+item.id);if(pageUrl){const p=new URL(pageUrl);lines.push('Page: '+(item?itemLink(item,p.href):p.origin+p.pathname));}
+ const labels={en:{island:'Island',service:'Service',product:'Product',page:'Page'},ml:{island:'ദ്വീപ്',service:'സേവനം',product:'ഉൽപ്പന്നം',page:'പേജ്'},hi:{island:'द्वीप',service:'सेवा',product:'उत्पाद',page:'पेज'}}[language]||{island:'Island',service:'Service',product:'Product',page:'Page'};
+ const itemName=item?(item.title?.[language]||item.title?.en||item.name):'';
+ const lines=[hello,'NOODY_SOURCE:WEBSITE'];if(island)lines.push(labels.island+': '+ISLAND_NAMES[island],'NOODY_ISLAND:'+island);if(item)lines.push((item.kind==='SERVICE'?labels.service:labels.product)+': '+itemName,'NOODY_WEBSITE_TYPE:'+item.kind,'NOODY_WEBSITE_ITEM:'+item.id);if(pageUrl){const p=new URL(pageUrl);lines.push(labels.page+': '+(item?itemLink(item,p.href):p.origin+p.pathname));}
  return 'https://wa.me/'+number+'?text='+encodeURIComponent(lines.join('\n'));
 }
 export function readLanguage(){try{const saved=globalThis.localStorage?.getItem('noody-language');if(['en','ml','hi'].includes(saved))return saved;}catch{}const language=globalThis.navigator?.language||'en';return /^ml/i.test(language)?'ml':/^hi/i.test(language)?'hi':'en';}
