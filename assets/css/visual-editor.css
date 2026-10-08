@@ -100,10 +100,10 @@ body.noody-editing .item-card-media {
 }
 
 body.noody-editing .item-card-media::after {
-  content: '📷 Click to Change Photo';
+  content: '📷 Click or Drop Photo';
   position: absolute;
   inset: 0;
-  background: rgba(10, 34, 57, 0.7);
+  background: rgba(10, 34, 57, 0.75);
   color: #ffffff;
   display: flex;
   align-items: center;
@@ -119,6 +119,109 @@ body.noody-editing .item-card-media::after {
 body.noody-editing .item-card-media:hover::after {
   opacity: 1;
 }
+
+/* Drag & Drop Glowing Target State */
+.noody-drop-target-active {
+  outline: 3px dashed #14b8a6 !important;
+  outline-offset: -3px;
+  position: relative;
+}
+
+.noody-drop-target-active::before {
+  content: '📥 Drop image here to replace!';
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 117, 92, 0.85);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 800;
+  z-index: 100;
+  pointer-events: none;
+  backdrop-filter: blur(4px);
+}
+
+/* Hero Slider Background Button */
+.editor-hero-bg-btn {
+  position: absolute;
+  top: 90px;
+  right: 24px;
+  z-index: 25;
+  background: rgba(10, 34, 57, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(20, 184, 166, 0.6);
+  color: #ffffff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  transition: all 0.25s ease;
+}
+
+.editor-hero-bg-btn:hover {
+  background: #08755c;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(8, 117, 92, 0.5);
+}
+
+body.noody-editing .editor-hero-bg-btn {
+  display: inline-flex;
+}
+
+/* Modal Dropzone */
+.image-dropzone-box {
+  border: 2px dashed #08755c;
+  background: rgba(8, 117, 92, 0.04);
+  border-radius: 14px;
+  padding: 28px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  margin-bottom: 18px;
+}
+
+.image-dropzone-box:hover, .image-dropzone-box.drag-over {
+  background: rgba(8, 117, 92, 0.12);
+  border-color: #14b8a6;
+  transform: scale(1.01);
+}
+
+.image-dropzone-icon {
+  font-size: 2.2rem;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.image-dropzone-title {
+  font-weight: 700;
+  color: #0a2239;
+  font-size: 0.98rem;
+  margin-bottom: 4px;
+}
+
+.image-dropzone-sub {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.image-preview-thumbnail {
+  max-height: 140px;
+  max-width: 100%;
+  border-radius: 8px;
+  margin-top: 10px;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
 
 /* Delete Card Button */
 .noody-delete-card-btn {

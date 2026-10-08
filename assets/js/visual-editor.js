@@ -1,7 +1,7 @@
 /**
  * NOODY.AI — Inline Visual Editor
  * Click-to-edit inline content, add new services & products, delete cards, remove prices,
- * and save directly to physical HTML files
+ * upload/drag-and-drop background and card photos, and save directly to physical HTML files
  */
 
 (function () {
@@ -20,6 +20,13 @@
   ];
 
   // Preset curated ocean images for instant 1-click selection
+  const HERO_PRESETS = [
+    { title: 'Agatti Atoll Lagoon', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2000&q=85' },
+    { title: 'Coral Reefs & Marine', url: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=2000&q=85' },
+    { title: 'Turquoise Waters Aerial', url: 'https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?auto=format&fit=crop&w=2000&q=85' },
+    { title: 'Tropical Island Shore', url: 'https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?auto=format&fit=crop&w=2000&q=85' }
+  ];
+
   const SERVICE_PRESETS = [
     { title: 'Lagoon Kayaking', url: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80' },
     { title: 'Scuba Reef Dive', url: 'https://images.unsplash.com/photo-1682687220063-4742bd7fd538?auto=format&fit=crop&w=800&q=80' },
@@ -61,6 +68,7 @@
     const saveBtn = document.getElementById('editor-save-btn');
     const addSrvBtn = document.getElementById('editor-add-service-btn');
     const addPrdBtn = document.getElementById('editor-add-product-btn');
+    const heroBtn = document.getElementById('editor-hero-bg-btn');
 
     if (isEditing) {
       badge.textContent = '✏️ Editing ON';
@@ -69,9 +77,12 @@
       saveBtn.style.display = 'inline-flex';
       if (addSrvBtn) addSrvBtn.style.display = 'inline-flex';
       if (addPrdBtn) addPrdBtn.style.display = 'inline-flex';
+      if (heroBtn) heroBtn.style.display = 'inline-flex';
       setupCardControls();
+      setupHeroControls();
+      setupImageDropHandlers();
       enableContentEditable();
-      showToast('✏️ Edit Mode Active: Add cards, click text/price to edit, or click ✕ / 🗑️ to delete!');
+      showToast('✏️ Edit Mode Active: Drag & drop photos onto cards or hero background to replace!');
     } else {
       badge.textContent = '👁️ Preview Mode';
       badge.className = 'editor-badge';
@@ -79,6 +90,7 @@
       saveBtn.style.display = 'none';
       if (addSrvBtn) addSrvBtn.style.display = 'none';
       if (addPrdBtn) addPrdBtn.style.display = 'none';
+      if (heroBtn) heroBtn.style.display = 'none';
       disableContentEditable();
       showToast('👁️ Preview Mode Active');
     }
@@ -128,35 +140,35 @@
     });
   }
 
+  function setupHeroControls() {
+    const hero = document.querySelector('.noody-hero-slider');
+    if (!hero) return;
+
+    let heroBtn = document.getElementById('editor-hero-bg-btn');
+    if (!heroBtn) {
+      heroBtn = document.createElement('button');
+      heroBtn.type = 'button';
+      heroBtn.id = 'editor-hero-bg-btn';
+      heroBtn.className = 'editor-hero-bg-btn';
+      heroBtn.innerHTML = '🖼️ Change Hero Background (Upload / Drop)';
+      heroBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const activeSlideLayer = hero.querySelector('.hero-slide.active .slide-image-layer') || hero.querySelector('.slide-image-layer');
+        if (activeSlideLayer) {
+          openImagePickerModal(activeSlideLayer, 'Hero Slide Background', HERO_PRESETS);
+        }
+      });
+      hero.appendChild(heroBtn);
+    }
+  }
+
   function enableContentEditable() {
     EDITABLE_SELECTORS.forEach(selector => {
       document.querySelectorAll(selector).forEach(el => {
         el.setAttribute('contenteditable', 'true');
         el.setAttribute('spellcheck', 'false');
       });
-    });
-
-    // Image click handler in edit mode
-    document.querySelectorAll('.item-card-media, .slide-image-layer').forEach(media => {
-      if (!media._hasEditListener) {
-        media._hasEditListener = true;
-        media.addEventListener('click', (e) => {
-          if (!isEditing) return;
-          e.preventDefault();
-          e.stopPropagation();
-          const img = media.querySelector('img');
-          const currentUrl = img ? img.src : media.style.backgroundImage.replace(/url\(['"]?(.*?)['"]?\)/i, '$1');
-          const newUrl = prompt('Enter new Image URL for this card:', currentUrl);
-          if (newUrl && newUrl.trim()) {
-            if (img) {
-              img.src = newUrl.trim();
-            } else {
-              media.style.backgroundImage = `url('${newUrl.trim()}')`;
-            }
-            showToast('📷 Image updated! Click "Save Changes" to apply.');
-          }
-        });
-      }
     });
   }
 
@@ -166,6 +178,283 @@
         el.removeAttribute('contenteditable');
         el.removeAttribute('spellcheck');
       });
+    });
+  }
+
+  // =========================================================================
+  // FILE UPLOAD & DIRECT DRAG-AND-DROP SYSTEM FOR ALL IMAGES
+  // =========================================================================
+
+  function uploadImageFile(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const base64 = e.target.result;
+        try {
+          const res = await fetch('/api/upload-image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ filename: file.name, base64: base64 })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            resolve(data.url);
+          } else {
+            // Fallback to data URL
+            resolve(base64);
+          }
+        } catch (err) {
+          console.warn('Upload API fallback to data URL:', err);
+          resolve(base64);
+        }
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function applyImageToTarget(target, url) {
+    if (!target) return;
+    const img = target.tagName === 'IMG' ? target : target.querySelector('img');
+    if (img) {
+      img.src = url;
+    } else {
+      target.style.backgroundImage = `url('${url}')`;
+    }
+  }
+
+  function getTargetCurrentUrl(target) {
+    if (!target) return '';
+    const img = target.tagName === 'IMG' ? target : target.querySelector('img');
+    if (img) return img.src;
+    return target.style.backgroundImage.replace(/url\(['"]?(.*?)['"]?\)/i, '$1');
+  }
+
+  function setupImageDropHandlers() {
+    // 1. Target all card media elements, images, and hero sliders
+    const dropTargets = document.querySelectorAll('.item-card-media, .slide-image-layer, .hero-slide, .noody-hero-slider, .island-card');
+
+    dropTargets.forEach(target => {
+      if (target._hasDropSetup) return;
+      target._hasDropSetup = true;
+
+      // Click to open image modal
+      target.addEventListener('click', (e) => {
+        if (!isEditing) return;
+        // Don't trigger if clicked on child button or link
+        if (e.target.closest('button, a, input, select')) return;
+        e.preventDefault();
+        e.stopPropagation();
+
+        let realTarget = target;
+        if (target.classList.contains('noody-hero-slider') || target.classList.contains('hero-slide')) {
+          realTarget = document.querySelector('.hero-slide.active .slide-image-layer') || target.querySelector('.slide-image-layer') || target;
+        }
+
+        const isHero = target.classList.contains('noody-hero-slider') || target.classList.contains('hero-slide') || target.classList.contains('slide-image-layer');
+        openImagePickerModal(realTarget, isHero ? 'Hero Slide Background' : 'Card Photo', isHero ? HERO_PRESETS : SERVICE_PRESETS);
+      });
+
+      // Drag and drop event listeners
+      target.addEventListener('dragenter', (e) => {
+        if (!isEditing) return;
+        e.preventDefault();
+        e.stopPropagation();
+        target.classList.add('noody-drop-target-active');
+      });
+
+      target.addEventListener('dragover', (e) => {
+        if (!isEditing) return;
+        e.preventDefault();
+        e.stopPropagation();
+        e.dataTransfer.dropEffect = 'copy';
+        target.classList.add('noody-drop-target-active');
+      });
+
+      target.addEventListener('dragleave', (e) => {
+        if (!isEditing) return;
+        e.preventDefault();
+        e.stopPropagation();
+        // Only remove if leaving element itself
+        if (e.relatedTarget && target.contains(e.relatedTarget)) return;
+        target.classList.remove('noody-drop-target-active');
+      });
+
+      target.addEventListener('drop', async (e) => {
+        if (!isEditing) return;
+        e.preventDefault();
+        e.stopPropagation();
+        target.classList.remove('noody-drop-target-active');
+
+        const files = e.dataTransfer.files;
+        if (files && files.length > 0) {
+          const file = files[0];
+          if (!file.type.startsWith('image/')) {
+            showToast('⚠️ Please drop a valid image file (JPG, PNG, WEBP).', true);
+            return;
+          }
+
+          showToast('⏳ Uploading dropped image...');
+          try {
+            const savedUrl = await uploadImageFile(file);
+
+            let realTarget = target;
+            if (target.classList.contains('noody-hero-slider') || target.classList.contains('hero-slide')) {
+              realTarget = document.querySelector('.hero-slide.active .slide-image-layer') || target.querySelector('.slide-image-layer') || target;
+            }
+
+            applyImageToTarget(realTarget, savedUrl);
+            showToast('✅ Image replaced via Drag & Drop! Click "💾 Save Changes" to write to file.');
+          } catch (err) {
+            console.error('Drop error:', err);
+            showToast('❌ Image upload failed.', true);
+          }
+        }
+      });
+    });
+  }
+
+  // =========================================================================
+  // IMAGE PICKER MODAL (UPLOAD FILE + DRAG & DROP + PRESETS + URL)
+  // =========================================================================
+
+  function openImagePickerModal(targetElement, label = 'Replace Photo', presets = SERVICE_PRESETS) {
+    const modalId = 'noody-image-picker-modal-backdrop';
+    let backdrop = document.getElementById(modalId);
+
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.id = modalId;
+      backdrop.className = 'noody-modal-backdrop';
+      document.body.appendChild(backdrop);
+    }
+
+    const currentUrl = getTargetCurrentUrl(targetElement);
+
+    backdrop.innerHTML = `
+      <div class="noody-modal" role="dialog" aria-modal="true" style="max-width: 600px;">
+        <div class="noody-modal-header">
+          <div>
+            <h3>📷 ${label}</h3>
+            <div class="noody-modal-subtitle">Upload file from computer, drag & drop, or choose preset</div>
+          </div>
+          <button type="button" class="noody-modal-close" id="noody-img-picker-close">&times;</button>
+        </div>
+        <div class="noody-modal-body">
+          <!-- 1. Drag & Drop File Upload Area -->
+          <div class="image-dropzone-box" id="modal-image-dropzone">
+            <span class="image-dropzone-icon">📁</span>
+            <div class="image-dropzone-title">Click to Browse File or Drag &amp; Drop Here</div>
+            <div class="image-dropzone-sub">Supports JPG, PNG, WEBP, GIF, SVG (Saved directly to assets/uploads/)</div>
+            <input type="file" id="modal-file-input" accept="image/*" style="display: none;">
+          </div>
+
+          <!-- Current / Selected Image Preview -->
+          <div style="text-align: center; margin-bottom: 20px;">
+            <div style="font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 6px;">CURRENT PREVIEW:</div>
+            <img id="modal-current-preview" class="image-preview-thumbnail" src="${currentUrl || presets[0].url}" alt="Preview">
+          </div>
+
+          <!-- 2. One-Click Curated Presets -->
+          <div class="form-group">
+            <label>✨ Or Select a Curated Island Photograph:</label>
+            <div class="photo-preset-chips" id="modal-preset-chips">
+              ${presets.map(p => `
+                <div class="photo-chip" data-url="${p.url}" title="${p.title}">
+                  <img src="${p.url}" alt="${p.title}">
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- 3. Direct Image URL Input -->
+          <div class="form-group" style="margin-top: 16px;">
+            <label for="modal-url-input">🔗 Or Paste Web Image URL:</label>
+            <div style="display: flex; gap: 8px;">
+              <input type="url" id="modal-url-input" class="form-input" value="${currentUrl}" placeholder="https://images.unsplash.com/...">
+              <button type="button" id="modal-apply-url-btn" class="editor-dock-btn" style="background:#08755c; border:none; white-space:nowrap;">Apply URL</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    backdrop.classList.add('active');
+
+    const fileInput = backdrop.querySelector('#modal-file-input');
+    const dropzone = backdrop.querySelector('#modal-image-dropzone');
+    const previewImg = backdrop.querySelector('#modal-current-preview');
+    const urlInput = backdrop.querySelector('#modal-url-input');
+
+    // Click dropzone to open file picker
+    dropzone.addEventListener('click', () => fileInput.click());
+
+    // File selected from computer
+    fileInput.addEventListener('change', async () => {
+      if (fileInput.files && fileInput.files[0]) {
+        await handleModalFileUpload(fileInput.files[0]);
+      }
+    });
+
+    // Drop file onto modal dropzone
+    dropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropzone.classList.add('drag-over');
+    });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+    dropzone.addEventListener('drop', async (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('drag-over');
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        await handleModalFileUpload(e.dataTransfer.files[0]);
+      }
+    });
+
+    async function handleModalFileUpload(file) {
+      if (!file.type.startsWith('image/')) {
+        alert('Please select a valid image file.');
+        return;
+      }
+      dropzone.querySelector('.image-dropzone-title').textContent = '⏳ Uploading ' + file.name + '...';
+      try {
+        const uploadedUrl = await uploadImageFile(file);
+        previewImg.src = uploadedUrl;
+        applyImageToTarget(targetElement, uploadedUrl);
+        backdrop.classList.remove('active');
+        showToast('✅ Photo uploaded and updated! Click "💾 Save Changes" to write to file.');
+      } catch (err) {
+        console.error(err);
+        alert('Could not upload image.');
+        dropzone.querySelector('.image-dropzone-title').textContent = 'Click to Browse File or Drag & Drop Here';
+      }
+    }
+
+    // Preset clicks
+    backdrop.querySelectorAll('.photo-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const url = chip.getAttribute('data-url');
+        previewImg.src = url;
+        urlInput.value = url;
+        applyImageToTarget(targetElement, url);
+        backdrop.classList.remove('active');
+        showToast('✅ Preset photo applied! Click "💾 Save Changes" to write to file.');
+      });
+    });
+
+    // Apply URL button
+    backdrop.querySelector('#modal-apply-url-btn').addEventListener('click', () => {
+      const url = urlInput.value.trim();
+      if (url) {
+        applyImageToTarget(targetElement, url);
+        backdrop.classList.remove('active');
+        showToast('✅ URL applied! Click "💾 Save Changes" to write to file.');
+      }
+    });
+
+    // Close button & outside click
+    backdrop.querySelector('#noody-img-picker-close').addEventListener('click', () => backdrop.classList.remove('active'));
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) backdrop.classList.remove('active');
     });
   }
 
@@ -227,8 +516,12 @@
             </div>
 
             <div class="form-group">
-              <label>Image URL * (Paste custom URL or click a preset below)</label>
-              <input type="url" id="add-item-image" class="form-input" value="${presets[0].url}" required>
+              <label>Image URL * (Upload file or click a preset below)</label>
+              <div style="display:flex; gap:8px;">
+                <input type="url" id="add-item-image" class="form-input" value="${presets[0].url}" required>
+                <button type="button" id="btn-add-item-upload-file" class="editor-dock-btn" style="background:#08755c; border:none; white-space:nowrap;">📁 Upload</button>
+                <input type="file" id="file-add-item-upload" accept="image/*" style="display:none;">
+              </div>
               <div class="photo-preset-chips" id="add-item-preset-chips">
                 ${presets.map((p, i) => `
                   <div class="photo-chip ${i === 0 ? 'selected' : ''}" data-url="${p.url}" title="${p.title}">
@@ -267,6 +560,23 @@
         chip.classList.add('selected');
         imgInput.value = chip.getAttribute('data-url');
       });
+    });
+
+    // Upload file button inside add item modal
+    const uploadBtn = backdrop.querySelector('#btn-add-item-upload-file');
+    const fileElem = backdrop.querySelector('#file-add-item-upload');
+    uploadBtn.addEventListener('click', () => fileElem.click());
+    fileElem.addEventListener('change', async () => {
+      if (fileElem.files && fileElem.files[0]) {
+        uploadBtn.textContent = '⏳ Uploading...';
+        try {
+          const url = await uploadImageFile(fileElem.files[0]);
+          imgInput.value = url;
+          uploadBtn.textContent = '✓ Uploaded!';
+        } catch (err) {
+          uploadBtn.textContent = '📁 Upload';
+        }
+      }
     });
 
     // Close handlers
@@ -374,8 +684,9 @@
     // Prepend to grid
     grid.prepend(card);
 
-    // Refresh controls & reviews
+    // Refresh controls, drops & reviews
     setupCardControls();
+    setupImageDropHandlers();
     enableContentEditable();
     if (window.NoodyReviews) {
       window.NoodyReviews.renderAllCardRatings();
@@ -403,15 +714,19 @@
 
       const dock = document.getElementById('noody-editor-dock');
       const toast = document.getElementById('editor-toast');
+      const heroBtn = document.getElementById('editor-hero-bg-btn');
       const addModal = document.getElementById('noody-add-item-modal-backdrop');
       const revModal = document.getElementById('noody-review-modal-backdrop');
+      const imgModal = document.getElementById('noody-image-picker-modal-backdrop');
       const deleteButtons = Array.from(document.querySelectorAll('.noody-delete-card-btn'));
       const priceToggleButtons = Array.from(document.querySelectorAll('.noody-price-toggle-btn'));
 
       if (dock) dock.remove();
       if (toast) toast.remove();
+      if (heroBtn) heroBtn.remove();
       if (addModal) addModal.remove();
       if (revModal) revModal.remove();
+      if (imgModal) imgModal.remove();
       deleteButtons.forEach(b => b.remove());
       priceToggleButtons.forEach(b => b.remove());
 
@@ -422,6 +737,8 @@
       if (dock) document.body.appendChild(dock);
       document.body.classList.add('noody-editing');
       setupCardControls();
+      setupHeroControls();
+      setupImageDropHandlers();
       enableContentEditable();
 
       // 4. Determine current page filename
@@ -480,6 +797,9 @@
         }
       }
     });
+
+    setupHeroControls();
+    setupImageDropHandlers();
   }
 
   // Load editor stylesheet and init dock when DOM ready

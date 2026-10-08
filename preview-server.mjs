@@ -10,6 +10,8 @@ const MIME = {
   '.json': 'application/json; charset=utf-8',
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.webp': 'image/webp',
   '.svg': 'image/svg+xml'
 };
 
@@ -26,6 +28,54 @@ const server = http.createServer(async (req, res) => {
   }
 
   let reqPath = req.url.split('?')[0];
+
+  // API endpoint to upload image directly to disk
+  if (req.method === 'POST' && reqPath === '/api/upload-image') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', async () => {
+      try {
+        const data = JSON.parse(body);
+        if (!data.base64) {
+          throw new Error('No image base64 provided');
+        }
+        const matches = data.base64.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+        let ext = '.jpg';
+        let buffer;
+        if (matches && matches.length === 3) {
+          const mime = matches[1].toLowerCase();
+          if (mime.includes('png')) ext = '.png';
+          else if (mime.includes('webp')) ext = '.webp';
+          else if (mime.includes('svg')) ext = '.svg';
+          buffer = Buffer.from(matches[2], 'base64');
+        } else {
+          buffer = Buffer.from(data.base64, 'base64');
+        }
+
+        const uploadsDir = path.join(process.cwd(), 'assets', 'uploads');
+        if (!fs.existsSync(uploadsDir)) {
+          fs.mkdirSync(uploadsDir, { recursive: true });
+        }
+
+        const rawName = (data.filename || 'photo').replace(/\.[^/.]+$/, '');
+        const safeName = rawName.replace(/[^a-z0-9_-]/gi, '_').slice(0, 30) || 'image';
+        const savedFileName = `${Date.now()}_${safeName}${ext}`;
+        const targetPath = path.join(uploadsDir, savedFileName);
+
+        await fs.promises.writeFile(targetPath, buffer);
+        console.log(`[Upload] Saved image to: ${targetPath}`);
+
+        const publicUrl = `assets/uploads/${savedFileName}`;
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, url: publicUrl }));
+      } catch (err) {
+        console.error('[Upload] Error:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: err.message }));
+      }
+    });
+    return;
+  }
 
   // API endpoint to save edited page directly to disk
   if (req.method === 'POST' && reqPath === '/api/save-page') {
