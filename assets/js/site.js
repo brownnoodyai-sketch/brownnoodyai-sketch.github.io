@@ -22,36 +22,36 @@
       name: { en: 'Agatti', ml: 'അഗത്തി', hi: 'अगत्ती' },
       status: 'active',
       tagline: {
-        en: 'Lagoon adventures, water sports, and local homestays · Phase 1 Live',
-        ml: 'ലഗൂൺ സാഹസികതകൾ, വാട്ടർ സ്പോർട്സ്, പ്രാദേശിക ഹോംസ്റ്റേകൾ · ഫേസ് 1 ലൈവ്',
-        hi: 'लैगून रोमांच, वाटर स्पोर्ट्स और स्थानीय होमस्टे · चरण 1 लाइव'
+        en: 'Lagoon adventures, water sports, and local homestays · Active Destination',
+        ml: 'ലഗൂൺ സാഹസികതകൾ, വാട്ടർ സ്പോർട്സ്, പ്രാദേശിക ഹോംസ്റ്റേകൾ · സജീവ ഡെസ്റ്റിനേഷൻ',
+        hi: 'लैगून रोमांच, वाटर स्पोर्ट्स और स्थानीय होमस्टे · सक्रिय गंतव्य'
       }
     },
     KADMAT: {
       name: { en: 'Kadmat', ml: 'കടമത്ത്', hi: 'कदमत' },
-      status: 'preview',
+      status: 'active',
       tagline: {
-        en: 'Long sandy beaches, scuba diving, and coral reefs · Operational Preview',
-        ml: 'നീണ്ട മണൽത്തീരങ്ങൾ, സ്കൂബ ഡൈവിംഗ്, പവിഴപ്പുറ്റുകൾ · പ്രിവ്യൂ',
-        hi: 'लंबे रेतीले समुद्र तट, स्कूबा डाइविंग और मूंगा चट्टानें · पूर्वावलोकन'
+        en: 'Long sandy beaches, scuba diving, and coral reefs · Active Destination',
+        ml: 'നീണ്ട മണൽത്തീരങ്ങൾ, സ്കൂബ ഡൈവിംഗ്, പവിഴപ്പുറ്റുകൾ · സജീവ ഡെസ്റ്റിനേഷൻ',
+        hi: 'लंबे रेतीले समुद्र तट, स्कूबा डाइविंग और मूंगा चट्टानें · सक्रिय गंतव्य'
       }
     },
     KAVARATTI: {
       name: { en: 'Kavaratti', ml: 'കവരത്തി', hi: 'कवरत्ती' },
-      status: 'preview',
+      status: 'active',
       tagline: {
-        en: 'Capital island marine heritage and lagoon safaris · Operational Preview',
-        ml: 'തലസ്ഥാന ദ്വീപ് സമുദ്ര പൈതൃകവും ലഗൂൺ സഫാരികളും · പ്രിവ്യൂ',
-        hi: 'राजधानी द्वीप की समुद्री विरासत और लैगून सफारी · पूर्वावलोकन'
+        en: 'Capital island marine heritage and lagoon safaris · Active Destination',
+        ml: 'തലസ്ഥാന ദ്വീപ് സമുദ്ര പൈതൃകവും ലഗൂൺ സഫാരികളും · സജീവ ഡെസ്റ്റിനേഷൻ',
+        hi: 'राजधानी द्वीप की समुद्री विरासत और लैगून सफारी · सक्रिय गंतव्य'
       }
     },
     KALPENI: {
       name: { en: 'Kalpeni', ml: 'കൽപേനി', hi: 'कल्पेनी' },
-      status: 'preview',
+      status: 'active',
       tagline: {
-        en: 'Huge storm beach, turquoise lagoon, and kayaking · Operational Preview',
-        ml: 'വിശാലമായ ലഗൂണും കയാക്കിംഗും · പ്രിവ്യൂ',
-        hi: 'विशाल लैगून और कयाकिंग · पूर्वावलोकन'
+        en: 'Huge storm beach, turquoise lagoon, and kayaking · Active Destination',
+        ml: 'വിശാലമായ ലഗൂണും കയാക്കിംഗും · സജീവ ഡെസ്റ്റിനേഷൻ',
+        hi: 'विशाल लैगून और कयाकिंग · सक्रिय गंतव्य'
       }
     }
   };
@@ -69,10 +69,10 @@
       heroEyebrow: 'LAKSHADWEEP · INDIA',
       heroTitle: 'A little island. A world of possibilities.',
       heroDesc: 'Select an island, discover verified water sports, authentic local produce, and continue your enquiry directly on WhatsApp with official NOODY operations.',
-      btnExplore: 'Explore Agatti Now',
+      btnExplore: 'Explore Islands Now',
       btnHow: 'How It Works',
       step1Title: 'Choose Your Island',
-      step1Desc: 'Start by selecting your island destination. Agatti is Phase 1 Live.',
+      step1Desc: 'Start by selecting your island destination: Agatti, Kadmat, Kavaratti, or Kalpeni.',
       step2Title: 'Browse Services & Products',
       step2Desc: 'Find certified water sports, homestays, and authentic tuna & coconut crafts.',
       step3Title: 'Enquire on WhatsApp',
@@ -103,10 +103,10 @@
       heroEyebrow: 'ലക്ഷദ്വീപ് · ഇന്ത്യ',
       heroTitle: 'ചെറിയൊരു ദ്വീപ്. സാധ്യതകളുടെ വലിയൊരു ലോകം.',
       heroDesc: 'ദ്വീപ് തിരഞ്ഞെടുക്കൂ, വാട്ടർ സ്പോർട്സും പ്രാദേശിക ഉൽപ്പന്നങ്ങളും കാണൂ, ശേഷം WhatsApp വഴി നേരിട്ട് ചോദിക്കൂ.',
-      btnExplore: 'അഗത്തി ഇപ്പോൾ കാണാം',
+      btnExplore: 'ദ്വീപുകൾ ഇപ്പോൾ കാണാം',
       btnHow: 'എങ്ങനെ പ്രവർത്തിക്കുന്നു',
       step1Title: 'ദ്വീപ് തിരഞ്ഞെടുക്കൂ',
-      step1Desc: 'ആദ്യം നിങ്ങളുടെ ദ്വീപ് തിരഞ്ഞെടുക്കൂ. അഗത്തി ഫേസ് 1 ലൈവാണ്.',
+      step1Desc: 'ആദ്യം നിങ്ങളുടെ ദ്വീപ് തിരഞ്ഞെടുക്കൂ: അഗത്തി, കടമത്ത്, കവരത്തി, കൽപേനി (സജീവ ഡെസ്റ്റിനേഷനുകൾ).',
       step2Title: 'സേവനങ്ങളും ഉൽപ്പന്നങ്ങളും',
       step2Desc: 'അംഗീകൃത സ്കൂബ, കയാക്കിംഗ്, ഹോംസ്റ്റേകൾ, ട്യൂണ ഉൽപ്പന്നങ്ങൾ എന്നിവ കണ്ടെത്തൂ.',
       step3Title: 'WhatsApp-ൽ ചോദിക്കൂ',
@@ -137,10 +137,10 @@
       heroEyebrow: 'लक्षद्वीप · भारत',
       heroTitle: 'एक छोटा द्वीप। संभावनाओं की एक बड़ी दुनिया।',
       heroDesc: 'द्वीप चुनें, सत्यापित वाटर स्पोर्ट्स और स्थानीय उत्पाद देखें, और सीधे WhatsApp पर पूछें।',
-      btnExplore: 'अगत्ती अभी देखें',
+      btnExplore: 'द्वीप अभी देखें',
       btnHow: 'यह कैसे काम करता है',
       step1Title: 'अपना द्वीप चुनें',
-      step1Desc: 'पहले अपना गंतव्य द्वीप चुनें। अगत्ती चरण 1 लाइव है।',
+      step1Desc: 'पहले अपना गंतव्य द्वीप चुनें: अगत्ती, कदमत, कवरत्ती, या कल्पेनी (सभी सक्रिय)।',
       step2Title: 'सेवाएं और उत्पाद देखें',
       step2Desc: 'प्रमाणित स्कूबा, कयाकिंग, होमस्टे और स्थानीय उत्पाद खोजें।',
       step3Title: 'WhatsApp पर पूछें',
