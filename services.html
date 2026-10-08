@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Water Sports & Services — NOODY.AI | Lakshadweep</title>
+  <meta name="description" content="Certified water sports, PADI scuba diving, kayak rentals, glass bottom boat tours, and authentic beach homestays in Lakshadweep.">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%2308755c'/><text y='65' x='26' font-size='42' fill='white' font-family='sans-serif' font-weight='bold'>N</text></svg>">
+</head>
+<body>
+  <header class="noody-header">
+    <div class="header-container">
+      <div class="brand-wrapper">
+        <a href="index.html" class="noody-wordmark">
+          <svg class="noody-logo-symbol" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="44" stroke="#14b8a6" stroke-width="7" stroke-dasharray="14 7"/><path d="M28 65L28 35L42 35L58 55L58 35L72 35L72 65L58 65L42 45L42 65Z" fill="#08755c"/></svg>
+          <span class="noody-logo-text">NOODY.AI</span>
+        </a>
+      </div>
+      <nav class="site-nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="islands.html" class="nav-link">Islands</a>
+        <a href="services.html" class="nav-link active">Services</a>
+        <a href="products.html" class="nav-link">Products</a>
+        <a href="gallery.html" class="nav-link">Gallery</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="feedback.html" class="nav-link">Feedback</a>
+        <a href="support.html" class="nav-link">Support</a>
+      </nav>
+      <div class="header-actions">
+        <div class="lang-selector">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="ml">മലയാളം</button>
+          <button class="lang-btn" data-lang="hi">हिन्दी</button>
+        </div>
+        <a href="https://wa.me/919446944562" class="btn-whatsapp-header" target="_blank" rel="noopener">WhatsApp</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="listings-section">
+    <div class="section-header">
+      <span class="section-eyebrow">VERIFIED OPERATORS</span>
+      <h1 class="section-title">Water Sports & Experiences</h1>
+      <p class="section-sub">Discover authorized island activities. Filter by island destination below.</p>
+    </div>
+
+    <!-- Island filter pill selector -->
+    <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap;">
+      <button class="filter-pill active" onclick="Noody.selectIsland('AGATTI')">Agatti (Phase 1 Live)</button>
+      <button class="filter-pill" onclick="Noody.selectIsland('KADMAT')">Kadmat</button>
+      <button class="filter-pill" onclick="Noody.selectIsland('KAVARATTI')">Kavaratti</button>
+      <button class="filter-pill" onclick="Noody.selectIsland('KALPENI')">Kalpeni</button>
+    </div>
+
+    <div class="items-grid">
+      <!-- 1. Kayaking -->
+      <div class="item-card" data-listing-island="AGATTI">
+        <div class="item-card-media">
+          <img class="item-card-img" src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80" alt="Clear Kayaking">
+          <span class="item-category-tag">Water Sports</span>
+        </div>
+        <div class="item-card-body">
+          <span class="item-card-island">Agatti Island</span>
+          <h2 class="item-card-title">Clear Lagoon Kayaking</h2>
+          <p class="item-card-desc">Single and double transparent bottom kayaks. Certified lifejackets included. Safe for all swimming skill levels inside the calm Agatti reef lagoon.</p>
+          <div class="item-card-meta">
+            <div class="item-price-info">
+              <span class="price-label">Price Guide</span>
+              <span class="price-value">₹500 / hr</span>
+            </div>
+            <a href="#" class="btn-item-enquire" data-whatsapp-action data-item-name="Clear Lagoon Kayaking" data-item-kind="SERVICE" data-item-id="srv-agatti-01">WhatsApp &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. PADI Scuba -->
+      <div class="item-card" data-listing-island="AGATTI">
+        <div class="item-card-media">
+          <img class="item-card-img" src="https://images.unsplash.com/photo-1682687220063-4742bd7fd538?auto=format&fit=crop&w=800&q=80" alt="Scuba Diving">
+          <span class="item-category-tag">Diving</span>
+        </div>
+        <div class="item-card-body">
+          <span class="item-card-island">Agatti Island</span>
+          <h2 class="item-card-title">Discover Scuba Diving (PADI)</h2>
+          <p class="item-card-desc">Complete introductory scuba dive with brief lagoon theory, shallow skills, and 45-minute reef dive accompanied by an authorized dive master.</p>
+          <div class="item-card-meta">
+            <div class="item-price-info">
+              <span class="price-label">Price Guide</span>
+              <span class="price-value">₹3,500 / dive</span>
+            </div>
+            <a href="#" class="btn-item-enquire" data-whatsapp-action data-item-name="Discover Scuba Diving (PADI)" data-item-kind="SERVICE" data-item-id="srv-agatti-02">WhatsApp &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Snorkelling Trip -->
+      <div class="item-card" data-listing-island="AGATTI">
+        <div class="item-card-media">
+          <img class="item-card-img" src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" alt="Snorkelling">
+          <span class="item-category-tag">Snorkelling</span>
+        </div>
+        <div class="item-card-body">
+          <span class="item-card-island">Agatti Island</span>
+          <h2 class="item-card-title">Outer Reef Snorkelling Tour</h2>
+          <p class="item-card-desc">Boat ride to the ship wreck reef edge. Mask, snorkel, fins, and floatation guide provided. Excellent visibility up to 25 meters.</p>
+          <div class="item-card-meta">
+            <div class="item-price-info">
+              <span class="price-label">Price Guide</span>
+              <span class="price-value">₹1,200 / person</span>
+            </div>
+            <a href="#" class="btn-item-enquire" data-whatsapp-action data-item-name="Outer Reef Snorkelling Tour" data-item-kind="SERVICE" data-item-id="srv-agatti-05">WhatsApp &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Banana Boat & Speed Boat -->
+      <div class="item-card" data-listing-island="AGATTI">
+        <div class="item-card-media">
+          <img class="item-card-img" src="https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?auto=format&fit=crop&w=800&q=80" alt="Speed Boat">
+          <span class="item-category-tag">Speed Boat</span>
+        </div>
+        <div class="item-card-body">
+          <span class="item-card-island">Agatti Island</span>
+          <h2 class="item-card-title">Banana Boat & Speed Ride</h2>
+          <p class="item-card-desc">Thrilling ride towed across calm waters by twin-engine speed craft with licensed captains and safety marshals.</p>
+          <div class="item-card-meta">
+            <div class="item-price-info">
+              <span class="price-label">Price Guide</span>
+              <span class="price-value">₹650 / ride</span>
+            </div>
+            <a href="#" class="btn-item-enquire" data-whatsapp-action data-item-name="Banana Boat & Speed Ride" data-item-kind="SERVICE" data-item-id="srv-agatti-06">WhatsApp &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Homestay Accommodation -->
+      <div class="item-card" data-listing-island="AGATTI">
+        <div class="item-card-media">
+          <img class="item-card-img" src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80" alt="Homestay">
+          <span class="item-category-tag">Homestay</span>
+        </div>
+        <div class="item-card-body">
+          <span class="item-card-island">Agatti Island</span>
+          <h2 class="item-card-title">Coral Breeze Homestay</h2>
+          <p class="item-card-desc">Authentic beachfront stay with air conditioning, hot shower, complimentary island breakfast, and bicycle rentals.</p>
+          <div class="item-card-meta">
+            <div class="item-price-info">
+              <span class="price-label">Price Guide</span>
+              <span class="price-value">₹3,200 / night</span>
+            </div>
+            <a href="#" class="btn-item-enquire" data-whatsapp-action data-item-name="Coral Breeze Homestay" data-item-kind="SERVICE" data-item-id="srv-agatti-04">WhatsApp &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Two-Wheeler Island Rental -->
+      <div class="item-card" data-listing-island="AGATTI">
+        <div class="item-card-media">
+          <img class="item-card-img" src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80" alt="Scooter Rental">
+          <span class="item-category-tag">Transport</span>
+        </div>
+        <div class="item-card-body">
+          <span class="item-card-island">Agatti Island</span>
+          <h2 class="item-card-title">Two-Wheeler Scooter Rental</h2>
+          <p class="item-card-desc">Explore the 6km paved perimeter of Agatti independently with reliable automatic scooters. Helmet included.</p>
+          <div class="item-card-meta">
+            <div class="item-price-info">
+              <span class="price-label">Price Guide</span>
+              <span class="price-value">₹500 / day</span>
+            </div>
+            <a href="#" class="btn-item-enquire" data-whatsapp-action data-item-name="Two-Wheeler Scooter Rental" data-item-kind="SERVICE" data-item-id="srv-agatti-07">WhatsApp &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="noody-footer">
+    <div class="footer-container">
+      <div class="footer-bottom">
+        <div class="footer-legal-links">
+          <a href="terms.html">Customer Terms</a>
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="cancellation.html">Refund Policy</a>
+          <a href="contact.html">Accessibility</a>
+        </div>
+        <div>&copy; 2026 NOODY.AI. All rights reserved.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/site.js"></script>
+</body>
+</html>

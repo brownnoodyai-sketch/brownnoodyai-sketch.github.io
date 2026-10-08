@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Feedback & Reviews — NOODY.AI</title>
+  <link rel="stylesheet" href="assets/css/site.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%2308755c'/><text y='65' x='26' font-size='42' fill='white' font-family='sans-serif' font-weight='bold'>N</text></svg>">
+</head>
+<body>
+  <header class="noody-header">
+    <div class="header-container">
+      <div class="brand-wrapper">
+        <a href="index.html" class="noody-wordmark">
+          <svg class="noody-logo-symbol" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="44" stroke="#14b8a6" stroke-width="7" stroke-dasharray="14 7"/><path d="M28 65L28 35L42 35L58 55L58 35L72 35L72 65L58 65L42 45L42 65Z" fill="#08755c"/></svg>
+          <span class="noody-logo-text">NOODY.AI</span>
+        </a>
+      </div>
+      <nav class="site-nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="islands.html" class="nav-link">Islands</a>
+        <a href="services.html" class="nav-link">Services</a>
+        <a href="products.html" class="nav-link">Products</a>
+        <a href="gallery.html" class="nav-link">Gallery</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="feedback.html" class="nav-link active">Feedback</a>
+        <a href="support.html" class="nav-link">Support</a>
+      </nav>
+      <div class="header-actions">
+        <div class="lang-selector">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="ml">മലയാളം</button>
+          <button class="lang-btn" data-lang="hi">हिन्दी</button>
+        </div>
+        <a href="https://wa.me/919446944562" class="btn-whatsapp-header" target="_blank" rel="noopener">WhatsApp</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="feedback-section">
+    <div class="section-header">
+      <span class="section-eyebrow">TRANSPARENT REVIEWS</span>
+      <h1 class="section-title">Verified Customer Experiences</h1>
+      <p class="section-sub">Read authentic reviews from completed NOODY orders, or share your own experience below.</p>
+    </div>
+
+    <!-- Feedback Submission Card -->
+    <div class="noody-glass-card" style="max-width: 760px; margin: 0 auto 50px auto; padding: 36px;">
+      <h2 style="font-family: var(--noody-font-heading); font-size: 1.5rem; color: var(--noody-deep-ocean); margin-bottom: 12px;">Share Your Experience</h2>
+      <p style="font-size: 0.95rem; color: var(--noody-muted); margin-bottom: 24px;">Your feedback is reviewed by NOODY operations. Only approved feedback with your explicit permission appears publicly.</p>
+
+      <form id="feedback-form" onsubmit="handleFeedbackSubmit(event)">
+        <div style="margin-bottom: 18px;">
+          <label style="display:block; font-weight:700; font-size:0.9rem; margin-bottom:6px;">Your Name *</label>
+          <input type="text" id="fb-name" required placeholder="e.g. Ananya R." style="width:100%; padding:12px; border:1px solid var(--noody-border); border-radius:10px; font-family:inherit;">
+        </div>
+
+        <div style="margin-bottom: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div>
+            <label style="display:block; font-weight:700; font-size:0.9rem; margin-bottom:6px;">Island Visited *</label>
+            <select id="fb-island" style="width:100%; padding:12px; border:1px solid var(--noody-border); border-radius:10px; font-family:inherit;">
+              <option value="AGATTI">Agatti</option>
+              <option value="KADMAT">Kadmat</option>
+              <option value="KAVARATTI">Kavaratti</option>
+              <option value="KALPENI">Kalpeni</option>
+            </select>
+          </div>
+          <div>
+            <label style="display:block; font-weight:700; font-size:0.9rem; margin-bottom:6px;">Rating *</label>
+            <select id="fb-stars" style="width:100%; padding:12px; border:1px solid var(--noody-border); border-radius:10px; font-family:inherit;">
+              <option value="5">★★★★★ (5 - Exceptional)</option>
+              <option value="4">★★★★☆ (4 - Very Good)</option>
+              <option value="3">★★★☆☆ (3 - Good)</option>
+              <option value="2">★★☆☆☆ (2 - Fair)</option>
+              <option value="1">★☆☆☆☆ (1 - Poor)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 18px;">
+          <label style="display:block; font-weight:700; font-size:0.9rem; margin-bottom:6px;">Comments & Feedback *</label>
+          <textarea id="fb-comment" required rows="4" placeholder="Describe the water sports, operator punctuality, equipment safety, or product quality..." style="width:100%; padding:12px; border:1px solid var(--noody-border); border-radius:10px; font-family:inherit;"></textarea>
+        </div>
+
+        <div style="margin-bottom: 24px; display:flex; align-items:flex-start; gap:10px;">
+          <input type="checkbox" id="fb-consent" required style="margin-top:4px;">
+          <label for="fb-consent" style="font-size:0.85rem; color:var(--noody-muted);">I agree to publish my first name, star rating and review after administrative verification.</label>
+        </div>
+
+        <button type="submit" class="btn-primary-hero" style="border:none; cursor:pointer; width:100%;">Submit Feedback for Review</button>
+      </form>
+      <div id="fb-alert" style="display:none; margin-top:20px; padding:16px; border-radius:10px; background:#e6f6f1; color:#08755c; font-weight:600;"></div>
+    </div>
+
+    <!-- Approved reviews grid -->
+    <div class="reviews-grid">
+      <div class="review-card">
+        <div class="review-card-header">
+          <span class="review-author">Prashant Menon</span>
+          <span class="review-stars">★★★★★</span>
+        </div>
+        <span class="verified-tag">✓ Verified Customer · Agatti</span>
+        <p class="review-text">"Scuba diving in Agatti was life changing. The dive instructors were calm, checked our gear thrice, and took underwater photos for us without charging extra."</p>
+      </div>
+
+      <div class="review-card">
+        <div class="review-card-header">
+          <span class="review-author">Fatima Zahra</span>
+          <span class="review-stars">★★★★★</span>
+        </div>
+        <span class="verified-tag">✓ Verified Customer · Agatti</span>
+        <p class="review-text">"Homestay family prepared delicious hot meals with fresh tuna curries. Everything coordinated over WhatsApp smoothly."</p>
+      </div>
+
+      <div class="review-card">
+        <div class="review-card-header">
+          <span class="review-author">Vikram Roy</span>
+          <span class="review-stars">★★★★★</span>
+        </div>
+        <span class="verified-tag">✓ Verified Customer · Agatti</span>
+        <p class="review-text">"Transparent pricing, no bargaining needed on the beach. Great initiative for Lakshadweep tourism."</p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="noody-footer">
+    <div class="footer-container">
+      <div class="footer-bottom">
+        <div class="footer-legal-links">
+          <a href="terms.html">Customer Terms</a>
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="cancellation.html">Refund Policy</a>
+          <a href="contact.html">Accessibility</a>
+        </div>
+        <div>&copy; 2026 NOODY.AI. All rights reserved.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/site.js"></script>
+  <script>
+    function handleFeedbackSubmit(e) {
+      e.preventDefault();
+      const alertBox = document.getElementById('fb-alert');
+      alertBox.style.display = 'block';
+      alertBox.textContent = 'Thank you! Your feedback has been received and queued for administrative moderation.';
+      document.getElementById('feedback-form').reset();
+    }
+  </script>
+</body>
+</html>

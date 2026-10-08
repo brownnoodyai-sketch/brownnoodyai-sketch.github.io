@@ -1,0 +1,44 @@
+/*
+Theme Name: NOODY.AI Oceanic
+Theme URI: https://brownnoodyai-sketch.github.io/
+Author: NOODY.AI Engineering Team
+Author URI: https://noody.ai/
+Description: Premium oceanic block theme for NOODY.AI Lakshadweep tourism platform. Fully editable with WordPress Site Editor, Gutenberg blocks, and custom oceanic animations.
+Version: 1.0.0
+Requires at least: 6.4
+Tested up to: 6.7
+Requires PHP: 8.0
+License: Proprietary / NOODY.AI All Rights Reserved
+Text Domain: noody-oceanic
+Tags: full-site-editing, block-patterns, custom-colors, custom-menu, responsive-layout, translation-ready
+*/
+
+:root {
+  --noody-turquoise: #08755c;
+  --noody-deep-ocean: #0a2239;
+  --noody-ocean-mid: #0d3b66;
+  --noody-lagoon-cyan: #14b8a6;
+  --noody-sand-light: #fbfdfc;
+  --noody-sand-warm: #f4f6f4;
+  --noody-ink: #15372e;
+  --noody-ink-light: #4a5d56;
+  --noody-border: #dfeae5;
+  --noody-white: #ffffff;
+  --noody-glass: rgba(255, 255, 255, 0.85);
+  --noody-glass-border: rgba(255, 255, 255, 0.4);
+  --noody-shadow: 0 10px 30px rgba(10, 34, 57, 0.08);
+  --noody-shadow-hover: 0 20px 40px rgba(8, 117, 92, 0.15);
+  --noody-radius: 20px;
+  --noody-radius-sm: 12px;
+  --noody-font: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+  font-family: var(--noody-font);
+  color: var(--noody-ink);
+  background-color: var(--noody-sand-light);
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
