@@ -1,6 +1,6 @@
 /**
  * NOODY.AI — Inline Visual Editor
- * Click-to-edit inline content and save directly to physical HTML files
+ * Click-to-edit inline content, delete cards, remove prices, and save directly to physical HTML files
  */
 
 (function () {
@@ -12,7 +12,8 @@
     '.hero-eyebrow', '.hero-title', '.hero-description',
     '.section-eyebrow', '.section-title', '.section-sub',
     '.island-name', '.island-desc',
-    '.item-card-title', '.item-card-desc', '.price-value',
+    '.item-card-title', '.item-card-desc',
+    '.price-label', '.price-value',
     '.review-author', '.review-text',
     '.footer-tagline'
   ];
@@ -46,8 +47,9 @@
       badge.className = 'editor-badge mode-editing';
       toggleBtn.innerHTML = '👁️ Preview Mode';
       saveBtn.style.display = 'inline-flex';
+      setupCardControls();
       enableContentEditable();
-      showToast('✏️ Edit Mode Active: Click any text or image to change it!');
+      showToast('✏️ Edit Mode Active: Click any text/price to change or click ✕ / 🗑️ to delete!');
     } else {
       badge.textContent = '👁️ Preview Mode';
       badge.className = 'editor-badge';
@@ -56,6 +58,51 @@
       disableContentEditable();
       showToast('👁️ Preview Mode Active');
     }
+  }
+
+  function setupCardControls() {
+    // 1. Setup Card Delete Buttons
+    document.querySelectorAll('.item-card').forEach(card => {
+      if (!card.querySelector('.noody-delete-card-btn')) {
+        const delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.className = 'noody-delete-card-btn';
+        delBtn.innerHTML = '🗑️ Delete';
+        delBtn.title = 'Remove this item card';
+        delBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const title = card.querySelector('.item-card-title')?.textContent || 'this item';
+          if (confirm(`Do you want to delete "${title.trim()}"?`)) {
+            card.remove();
+            showToast('🗑️ Item card deleted! Click "Save Changes" to apply.');
+          }
+        });
+        card.style.position = 'relative';
+        card.appendChild(delBtn);
+      }
+    });
+
+    // 2. Setup Price Remove Buttons
+    document.querySelectorAll('.item-price-info').forEach(priceBox => {
+      if (!priceBox.querySelector('.noody-price-toggle-btn')) {
+        const removePriceBtn = document.createElement('button');
+        removePriceBtn.type = 'button';
+        removePriceBtn.className = 'noody-price-toggle-btn';
+        removePriceBtn.innerHTML = '✕ Remove Price';
+        removePriceBtn.title = 'Completely remove or hide this price';
+        removePriceBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const meta = priceBox.closest('.item-card-meta');
+          if (confirm('Completely remove this price amount from display?')) {
+            priceBox.remove();
+            showToast('Amount removed! Click "Save Changes" to apply.');
+          }
+        });
+        priceBox.appendChild(removePriceBtn);
+      }
+    });
   }
 
   function enableContentEditable() {
@@ -83,7 +130,7 @@
             } else {
               media.style.backgroundImage = `url('${newUrl.trim()}')`;
             }
-            showToast('📷 Image updated! Click "Save to File" to apply.');
+            showToast('📷 Image updated! Click "Save Changes" to apply.');
           }
         });
       }
@@ -106,21 +153,27 @@
     saveBtn.disabled = true;
 
     try {
-      // 1. Temporarily disable editing state and remove editor dock before cloning
+      // 1. Temporarily disable editing state and remove editor controls
       disableContentEditable();
       document.body.classList.remove('noody-editing');
 
       const dock = document.getElementById('noody-editor-dock');
       const toast = document.getElementById('editor-toast');
+      const deleteButtons = Array.from(document.querySelectorAll('.noody-delete-card-btn'));
+      const priceToggleButtons = Array.from(document.querySelectorAll('.noody-price-toggle-btn'));
+
       if (dock) dock.remove();
       if (toast) toast.remove();
+      deleteButtons.forEach(b => b.remove());
+      priceToggleButtons.forEach(b => b.remove());
 
       // 2. Clone clean document
       const cleanHtml = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
 
-      // 3. Re-insert dock and restore editing mode for user
-      document.body.appendChild(dock);
+      // 3. Re-insert dock and restore editing controls
+      if (dock) document.body.appendChild(dock);
       document.body.classList.add('noody-editing');
+      setupCardControls();
       enableContentEditable();
 
       // 4. Determine current page filename
