@@ -25,6 +25,13 @@ require_once NOODY_CONNECTOR_PATH . 'includes/vendor-registration.php';
 require_once NOODY_CONNECTOR_PATH . 'includes/feedback-moderation.php';
 require_once NOODY_CONNECTOR_PATH . 'includes/static-exporter.php';
 
+// Ensure NOODY Oceanic block theme is active
+add_action('after_setup_theme', function () {
+    if (get_stylesheet() !== 'noody-oceanic' && function_exists('switch_theme')) {
+        switch_theme('noody-oceanic');
+    }
+}, 1);
+
 /**
  * Initialize Plugin Settings
  */
