@@ -518,6 +518,116 @@ a {
   box-shadow: 0 12px 35px rgba(8, 117, 92, 0.18);
 }
 
+/* ==========================================================================
+   CARDS WITH BACKGROUND IMAGES, SEMI-BLUR OVERLAYS & TEXT FOCUS SHAPES
+   ========================================================================== */
+.island-card[style*="background-image"],
+.island-card.has-bg-image,
+.item-card[style*="background-image"],
+.item-card.has-bg-image {
+  background-size: cover !important;
+  background-position: center center !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* Automatic Semi-Blur Dark Glass Overlay */
+.island-card[style*="background-image"]::before,
+.island-card.has-bg-image::before,
+.item-card[style*="background-image"]::before,
+.item-card.has-bg-image::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--card-overlay-bg, linear-gradient(180deg, rgba(10, 34, 57, 0.45) 0%, rgba(10, 34, 57, 0.78) 100%));
+  backdrop-filter: blur(var(--card-blur, 5px));
+  -webkit-backdrop-filter: blur(var(--card-blur, 5px));
+  z-index: 1;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.island-card[style*="background-image"]:hover::before,
+.island-card.has-bg-image:hover::before {
+  background: var(--card-overlay-bg, linear-gradient(180deg, rgba(10, 34, 57, 0.35) 0%, rgba(10, 34, 57, 0.7) 100%));
+}
+
+.island-card[style*="background-image"] > *,
+.island-card.has-bg-image > *,
+.item-card[style*="background-image"] > *,
+.item-card.has-bg-image > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Text Focus on photo backgrounds */
+.island-card[style*="background-image"] .island-name,
+.island-card.has-bg-image .island-name {
+  color: #ffffff !important;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8) !important;
+}
+
+.island-card[style*="background-image"] .island-desc,
+.island-card.has-bg-image .island-desc {
+  color: #f1f5f9 !important;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8) !important;
+}
+
+.island-card[style*="background-image"] .island-select-indicator,
+.island-card.has-bg-image .island-select-indicator {
+  color: #38bdf8 !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Semi-blur level utilities */
+.blur-none::before { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+.blur-semi::before { backdrop-filter: blur(5px) !important; -webkit-backdrop-filter: blur(5px) !important; }
+.blur-heavy::before { backdrop-filter: blur(12px) !important; -webkit-backdrop-filter: blur(12px) !important; }
+
+/* Text Focus Shapes */
+.text-shape-glass {
+  background: rgba(10, 34, 57, 0.78) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  border-radius: 14px !important;
+  padding: 14px 16px !important;
+  margin-bottom: 12px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35) !important;
+}
+
+.text-shape-light {
+  background: rgba(255, 255, 255, 0.88) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  border-radius: 14px !important;
+  padding: 14px 16px !important;
+  margin-bottom: 12px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
+}
+.text-shape-light .island-name,
+.text-shape-light h1, .text-shape-light h2, .text-shape-light h3 {
+  color: #0a2239 !important;
+  text-shadow: none !important;
+}
+.text-shape-light .island-desc,
+.text-shape-light p {
+  color: #334155 !important;
+  text-shadow: none !important;
+}
+
+.text-shape-pill {
+  background: rgba(8, 117, 92, 0.85) !important;
+  backdrop-filter: blur(8px) !important;
+  border: 1px solid rgba(20, 184, 166, 0.5) !important;
+  border-radius: 999px !important;
+  padding: 6px 16px !important;
+  display: inline-block !important;
+  color: #ffffff !important;
+  margin-bottom: 8px !important;
+}
+
 .island-badge {
   display: inline-flex;
   align-items: center;

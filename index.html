@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="assets/css/site.css">
   <link rel="stylesheet" href="assets/css/reviews.css">
   <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;circle cx='50' cy='50' r='46' fill='%2308755c'/&gt;&lt;text y='65' x='26' font-size='42' fill='white' font-family='sans-serif' font-weight='bold'&gt;N&lt;/text&gt;&lt;/svg&gt;">
-<link rel="stylesheet" href="assets/css/visual-editor.css"></head>
+<link rel="stylesheet" href="assets/css/visual-editor.css"><link rel="stylesheet" href="assets/css/visual-editor.css"></head>
 <body class="">
 
   <!-- ==========================================================================
@@ -89,7 +89,7 @@
       <h1 class="hero-title" data-i18n="heroTitle">A little island. A world of possibilities.</h1>
       <p class="hero-description" data-i18n="heroDesc">Select an island, discover verified water sports, authentic local produce, and continue your enquiry directly on WhatsApp with official NOODY operations.</p>
       <div class="hero-actions">
-        <a href="#islands-section" class="btn-primary-hero" data-i18n="btnExplore">Explore Agatti Now</a>
+        <a href="#islands-section" class="btn-primary-hero" data-i18n="btnExplore">Explore Islands Now</a>
         <a href="#how-it-works" class="btn-secondary-hero" data-i18n="btnHow">How It Works</a>
       </div>
     </div>
@@ -126,13 +126,13 @@
     <div class="section-header">
       <span class="section-eyebrow" data-i18n="step1Title">Choose Your Island</span>
       <h2 class="section-title" data-i18n="allIslands">Explore Islands</h2>
-      <p class="section-sub" data-i18n="step1Desc">Select an island to browse verified water sports, stays, and authentic products.</p>
+      <p class="section-sub" data-i18n="step1Desc">Start by selecting your island destination: Agatti, Kadmat, Kavaratti, or Kalpeni.</p>
     </div>
 
     <div class="island-cards-grid">
       <!-- Agatti (Active) -->
-      <div class="island-card active" data-island="AGATTI">
-        <div>
+      <div class="island-card" data-island="AGATTI" style="background-image: url(&quot;assets/uploads/1791470820327_images__1_.jpg&quot;); background-position: center 30%; --card-blur: 5px;">
+        <div class="card-text-box text-shape-glass">
           <span class="island-badge badge-live">Active Destination</span>
           <h3 class="island-name">Agatti</h3>
           <p class="island-desc">Gateway to Lakshadweep. Renowned for turquoise lagoons, certified scuba diving, kayaking, and direct flight connectivity.</p>
@@ -143,8 +143,8 @@
       </div>
 
       <!-- Kadmat (Active) -->
-      <div class="island-card" data-island="KADMAT">
-        <div>
+      <div class="island-card" data-island="KADMAT" style="background-image: url(&quot;assets/uploads/1791470991430_kadmat.webp&quot;); background-position: center 35%; --card-blur: 5px;">
+        <div class="card-text-box text-shape-glass">
           <span class="island-badge badge-live">Active Destination</span>
           <h3 class="island-name">Kadmat</h3>
           <p class="island-desc">Long pristine sandy beaches, rich barrier reef formations, water sports centers, and tranquil island hideaways.</p>
@@ -155,8 +155,8 @@
       </div>
 
       <!-- Kavaratti (Active) -->
-      <div class="island-card" data-island="KAVARATTI">
-        <div>
+      <div class="island-card active" data-island="KAVARATTI" style="background-image: url(&quot;assets/uploads/1791471084399_images__3_.jpg&quot;); background-position: center 30%; --card-blur: 5px;">
+        <div class="card-text-box text-shape-glass">
           <span class="island-badge badge-live">Active Destination</span>
           <h3 class="island-name">Kavaratti</h3>
           <p class="island-desc">Administrative capital, marine aquarium, glass bottom boats, and deep cultural heritage.</p>
@@ -167,8 +167,8 @@
       </div>
 
       <!-- Kalpeni (Active) -->
-      <div class="island-card" data-island="KALPENI">
-        <div>
+      <div class="island-card" data-island="KALPENI" style="background-image: url(&quot;assets/uploads/1791471201158_images__5_.jpg&quot;); background-position: center 30%; --card-blur: 5px;">
+        <div class="card-text-box text-shape-glass">
           <span class="island-badge badge-live">Active Destination</span>
           <h3 class="island-name">Kalpeni</h3>
           <p class="island-desc">Immense turquoise lagoon, coral debris storm banks, authentic coconut agroforestry, and traditional island cuisine.</p>
@@ -186,7 +186,7 @@
   <section class="listings-section" id="services-section">
     <div class="section-header">
       <span class="section-eyebrow">STEP 2 · DISCOVER EXPERIENCES</span>
-      <h2 class="section-title"><span data-i18n="verifiedServices">Verified Water Sports &amp; Experiences</span> in <span data-island-title="">Agatti</span></h2>
+      <h2 class="section-title"><span data-i18n="verifiedServices">Verified Water Sports &amp; Experiences</span> in <span data-island-title="">Kavaratti</span></h2>
       <p class="section-sub">Certified operators, verified equipment, transparent pricing, and instant WhatsApp booking.</p>
     </div>
 
@@ -200,7 +200,7 @@
 
     <div class="items-grid">
       <!-- Item 1: Lagoon Kayaking (Agatti) -->
-      <div class="item-card" data-listing-island="AGATTI" data-category="watersports" style="position: relative;">
+      <div class="item-card" data-listing-island="AGATTI" data-category="watersports" style="position: relative; display: none;">
         <div class="item-card-media">
           <img class="item-card-img" src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="Lagoon Kayaking" loading="lazy">
           <span class="item-category-tag">Water Sports</span>
@@ -209,9 +209,14 @@
           <span class="item-card-island">Agatti Island</span>
           <h3 class="item-card-title">Clear Lagoon Kayaking</h3>
           <p class="item-card-desc">Paddle across crystal shallow waters with certified life vests and scenic guidance across the Agatti reef perimeter.</p>
-          <div class="item-card-meta">
+          <div class="item-card-rating" data-item-id="srv-agatti-01" data-item-name="Clear Lagoon Kayaking" data-item-island="Agatti Island">
+        <span class="stars-gold">★★★★★</span>
+        <span class="rating-score">4.7</span>
+        <span class="rating-count">(3)</span>
+        <button type="button" class="btn-card-reviews">⭐ Reviews &amp; Write</button>
+      </div><div class="item-card-meta">
             
-            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AClear%20Lagoon%20Kayaking%0AIsland%3A%20Agatti%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AAGATTI%0ANOODY_ITEM%3ASERVICE%3Asrv-agatti-01%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Clear Lagoon Kayaking" data-item-kind="SERVICE" data-item-id="srv-agatti-01">
+            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AClear%20Lagoon%20Kayaking%0AIsland%3A%20Kavaratti%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKAVARATTI%0ANOODY_ITEM%3ASERVICE%3Asrv-agatti-01%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Clear Lagoon Kayaking" data-item-kind="SERVICE" data-item-id="srv-agatti-01">
               <span>WhatsApp</span> →
             </a>
           </div>
@@ -219,7 +224,7 @@
       </div>
 
       <!-- Item 2: Scuba Diving (Agatti) -->
-      <div class="item-card" data-listing-island="AGATTI" data-category="watersports" style="position: relative;">
+      <div class="item-card" data-listing-island="AGATTI" data-category="watersports" style="position: relative; display: none;">
         <div class="item-card-media">
           <img class="item-card-img" src="https://images.unsplash.com/photo-1682687220063-4742bd7fd538?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="Scuba Diving" loading="lazy">
           <span class="item-category-tag">Diving</span>
@@ -228,9 +233,14 @@
           <span class="item-card-island">Agatti Island</span>
           <h3 class="item-card-title">Discover Scuba Diving (PADI)</h3>
           <p class="item-card-desc">Beginner-friendly guided scuba session with certified master divers. Explore vibrant marine life and sea turtles.</p>
-          <div class="item-card-meta">
+          <div class="item-card-rating" data-item-id="srv-agatti-02" data-item-name="Discover Scuba Diving (PADI)" data-item-island="Agatti Island">
+        <span class="stars-gold">★★★★★</span>
+        <span class="rating-score">5.0</span>
+        <span class="rating-count">(3)</span>
+        <button type="button" class="btn-card-reviews">⭐ Reviews &amp; Write</button>
+      </div><div class="item-card-meta">
             
-            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0ADiscover%20Scuba%20Diving%20(PADI)%0AIsland%3A%20Agatti%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AAGATTI%0ANOODY_ITEM%3ASERVICE%3Asrv-agatti-02%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Discover Scuba Diving (PADI)" data-item-kind="SERVICE" data-item-id="srv-agatti-02">
+            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0ADiscover%20Scuba%20Diving%20(PADI)%0AIsland%3A%20Kavaratti%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKAVARATTI%0ANOODY_ITEM%3ASERVICE%3Asrv-agatti-02%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Discover Scuba Diving (PADI)" data-item-kind="SERVICE" data-item-id="srv-agatti-02">
               <span>WhatsApp</span> →
             </a>
           </div>
@@ -238,18 +248,23 @@
       </div>
 
       <!-- Item 3: Glass Bottom Boat (Agatti) -->
-      <div class="item-card" data-listing-island="AGATTI" data-category="watersports" style="position: relative;">
+      <div class="item-card" data-listing-island="AGATTI" data-category="watersports" style="position: relative; display: none;">
         <div class="item-card-media">
-          <img class="item-card-img" src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="Glass Bottom Boat" loading="lazy">
+          <img class="item-card-img" src="assets/uploads/1791470580639_images.jpg" alt="Glass Bottom Boat" loading="lazy">
           <span class="item-category-tag">Boat Safari</span>
         </div>
         <div class="item-card-body">
           <span class="item-card-island">Agatti Island</span>
           <h3 class="item-card-title">Glass Bottom Coral Tour</h3>
           <p class="item-card-desc">Witness Lakshadweep's rich underwater corals and schools of tropical fish comfortably from a glass-bottom boat.</p>
-          <div class="item-card-meta">
+          <div class="item-card-rating" data-item-id="srv-agatti-03" data-item-name="Glass Bottom Coral Tour" data-item-island="Agatti Island">
+        <span class="stars-gold">★★★★★</span>
+        <span class="rating-score">4.5</span>
+        <span class="rating-count">(2)</span>
+        <button type="button" class="btn-card-reviews">⭐ Reviews &amp; Write</button>
+      </div><div class="item-card-meta">
             
-            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AGlass%20Bottom%20Coral%20Tour%0AIsland%3A%20Agatti%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AAGATTI%0ANOODY_ITEM%3ASERVICE%3Asrv-agatti-03%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Glass Bottom Coral Tour" data-item-kind="SERVICE" data-item-id="srv-agatti-03">
+            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AGlass%20Bottom%20Coral%20Tour%0AIsland%3A%20Kavaratti%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKAVARATTI%0ANOODY_ITEM%3ASERVICE%3Asrv-agatti-03%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Glass Bottom Coral Tour" data-item-kind="SERVICE" data-item-id="srv-agatti-03">
               <span>WhatsApp</span> →
             </a>
           </div>
@@ -257,18 +272,23 @@
       </div>
 
       <!-- Item 4: Beachside Homestay (Agatti) -->
-      <div class="item-card" data-listing-island="AGATTI" data-category="stays" style="position: relative;">
+      <div class="item-card" data-listing-island="AGATTI" data-category="stays" style="position: relative; display: none;">
         <div class="item-card-media">
-          <img class="item-card-img" src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="Beachside Homestay" loading="lazy">
+          <img class="item-card-img" src="assets/uploads/1791470676650_000.jpg" alt="Beachside Homestay" loading="lazy">
           <span class="item-category-tag">Homestay</span>
         </div>
         <div class="item-card-body">
           <span class="item-card-island">Agatti Island</span>
           <h3 class="item-card-title">Coral Breeze Homestay</h3>
           <p class="item-card-desc">Warm local hospitality with authentic island meals, beachfront porch, and air-conditioned island rooms.</p>
-          <div class="item-card-meta">
+          <div class="item-card-rating" data-item-id="srv-agatti-04" data-item-name="Coral Breeze Homestay" data-item-island="Agatti Island">
+        <span class="stars-gold">★★★★★</span>
+        <span class="rating-score">5.0</span>
+        <span class="rating-count">(2)</span>
+        <button type="button" class="btn-card-reviews">⭐ Reviews &amp; Write</button>
+      </div><div class="item-card-meta">
             
-            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0ACoral%20Breeze%20Homestay%0AIsland%3A%20Agatti%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AAGATTI%0ANOODY_ITEM%3ASERVICE%3Asrv-agatti-04%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Coral Breeze Homestay" data-item-kind="SERVICE" data-item-id="srv-agatti-04">
+            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0ACoral%20Breeze%20Homestay%0AIsland%3A%20Kavaratti%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKAVARATTI%0ANOODY_ITEM%3ASERVICE%3Asrv-agatti-04%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Coral Breeze Homestay" data-item-kind="SERVICE" data-item-id="srv-agatti-04">
               <span>WhatsApp</span> →
             </a>
           </div>
@@ -285,12 +305,17 @@
           <span class="item-card-island">Kadmat Island</span>
           <h3 class="item-card-title">Kadmat Deep Reef Safari</h3>
           <p class="item-card-desc">Explore pristine outer reef drop-offs, manta ray channels, and untouched coral ecosystems in Kadmat.</p>
-          <div class="item-card-meta">
+          <div class="item-card-rating" data-item-id="srv-kadmat-01" data-item-name="Kadmat Deep Reef Safari" data-item-island="Kadmat Island">
+        <span class="stars-gold">★★★★★</span>
+        <span class="rating-score">5.0</span>
+        <span class="rating-count">(2)</span>
+        <button type="button" class="btn-card-reviews">⭐ Reviews &amp; Write</button>
+      </div><div class="item-card-meta">
             <div class="item-price-info">
               <span class="price-label">Price Guide</span>
               <span class="price-value">₹4,200 / dive</span>
             </div>
-            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AKadmat%20Deep%20Reef%20Safari%0AIsland%3A%20KADMAT%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKADMAT%0ANOODY_ITEM%3ASERVICE%3Asrv-kadmat-01" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Kadmat Deep Reef Safari" data-item-kind="SERVICE" data-item-id="srv-kadmat-01">
+            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AKadmat%20Deep%20Reef%20Safari%0AIsland%3A%20Kavaratti%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKAVARATTI%0ANOODY_ITEM%3ASERVICE%3Asrv-kadmat-01%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Kadmat Deep Reef Safari" data-item-kind="SERVICE" data-item-id="srv-kadmat-01">
               <span>WhatsApp</span> →
             </a>
           </div>
@@ -298,21 +323,26 @@
       </div>
 
       <!-- Item 6: Kavaratti Glass Bottom Safari (Kavaratti) -->
-      <div class="item-card" data-listing-island="KAVARATTI" data-category="watersports" style="position: relative; display: none;">
+      <div class="item-card" data-listing-island="KAVARATTI" data-category="watersports" style="position: relative;">
         <div class="item-card-media">
           <img class="item-card-img" src="https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="Kavaratti Dolphin Safari" loading="lazy">
           <span class="item-category-tag">Boat Safari</span>
         </div>
         <div class="item-card-body">
           <span class="item-card-island">Kavaratti Island</span>
-          <h3 class="item-card-title">Kavaratti Dolphin & Glass Bottom Safari</h3>
+          <h3 class="item-card-title">Kavaratti Dolphin &amp; Glass Bottom Safari</h3>
           <p class="item-card-desc">Navigate the northern lagoon with glass viewing panels to spot playful dolphins and vivid corals.</p>
-          <div class="item-card-meta">
+          <div class="item-card-rating" data-item-id="srv-kavaratti-01" data-item-name="Kavaratti Dolphin &amp; Glass Bottom Safari" data-item-island="Kavaratti Island">
+        <span class="stars-gold">★★★★★</span>
+        <span class="rating-score">5.0</span>
+        <span class="rating-count">(2)</span>
+        <button type="button" class="btn-card-reviews">⭐ Reviews &amp; Write</button>
+      </div><div class="item-card-meta">
             <div class="item-price-info">
               <span class="price-label">Price Guide</span>
               <span class="price-value">₹950 / person</span>
             </div>
-            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AKavaratti%20Dolphin%20Safari%0AIsland%3A%20KAVARATTI%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKAVARATTI%0ANOODY_ITEM%3ASERVICE%3Asrv-kavaratti-01" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Kavaratti Dolphin Safari" data-item-kind="SERVICE" data-item-id="srv-kavaratti-01">
+            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AKavaratti%20Dolphin%20Safari%0AIsland%3A%20Kavaratti%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKAVARATTI%0ANOODY_ITEM%3ASERVICE%3Asrv-kavaratti-01%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Kavaratti Dolphin Safari" data-item-kind="SERVICE" data-item-id="srv-kavaratti-01">
               <span>WhatsApp</span> →
             </a>
           </div>
@@ -327,14 +357,19 @@
         </div>
         <div class="item-card-body">
           <span class="item-card-island">Kalpeni Island</span>
-          <h3 class="item-card-title">Kalpeni Islet & Storm Bank Tour</h3>
+          <h3 class="item-card-title">Kalpeni Islet &amp; Storm Bank Tour</h3>
           <p class="item-card-desc">Boat transfer across the turquoise lagoon to satellite islets with guided walking tours of coral storm banks.</p>
-          <div class="item-card-meta">
+          <div class="item-card-rating" data-item-id="srv-kalpeni-01" data-item-name="Kalpeni Islet &amp; Storm Bank Tour" data-item-island="Kalpeni Island">
+        <span class="stars-gold">★★★★★</span>
+        <span class="rating-score">5.0</span>
+        <span class="rating-count">(2)</span>
+        <button type="button" class="btn-card-reviews">⭐ Reviews &amp; Write</button>
+      </div><div class="item-card-meta">
             <div class="item-price-info">
               <span class="price-label">Price Guide</span>
               <span class="price-value">₹1,500 / tour</span>
             </div>
-            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AKalpeni%20Islet%20Tour%0AIsland%3A%20KALPENI%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKALPENI%0ANOODY_ITEM%3ASERVICE%3Asrv-kalpeni-01" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Kalpeni Islet Tour" data-item-kind="SERVICE" data-item-id="srv-kalpeni-01">
+            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AKalpeni%20Islet%20Tour%0AIsland%3A%20Kavaratti%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKAVARATTI%0ANOODY_ITEM%3ASERVICE%3Asrv-kalpeni-01%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Kalpeni Islet Tour" data-item-kind="SERVICE" data-item-id="srv-kalpeni-01">
               <span>WhatsApp</span> →
             </a>
           </div>
@@ -355,7 +390,7 @@
 
     <div class="items-grid">
       <!-- Product 1: Tuna Mas (Agatti) -->
-      <div class="item-card" data-listing-island="AGATTI" data-category="tuna" style="position: relative;">
+      <div class="item-card" data-listing-island="AGATTI" data-category="tuna" style="position: relative; display: none;">
         <div class="item-card-media">
           <img class="item-card-img" src="https://images.unsplash.com/photo-1615141982883-c7ad0e69fd62?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="Smoked Tuna Mas" loading="lazy">
           <span class="item-category-tag">Seafood</span>
@@ -364,9 +399,14 @@
           <span class="item-card-island">Agatti Island</span>
           <h3 class="item-card-title">Traditional Smoked Tuna Mas</h3>
           <p class="item-card-desc">Naturally sun-dried and wood-smoked skipjack tuna. Authentic Lakshadweep superfood packed with rich protein.</p>
-          <div class="item-card-meta">
+          <div class="item-card-rating" data-item-id="prd-agatti-01" data-item-name="Traditional Smoked Tuna Mas" data-item-island="Agatti Island">
+        <span class="stars-gold">★★★★★</span>
+        <span class="rating-score">5.0</span>
+        <span class="rating-count">(2)</span>
+        <button type="button" class="btn-card-reviews">⭐ Reviews &amp; Write</button>
+      </div><div class="item-card-meta">
             
-            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0ATraditional%20Smoked%20Tuna%20Mas%0AIsland%3A%20Agatti%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AAGATTI%0ANOODY_ITEM%3APRODUCT%3Aprd-agatti-01%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Traditional Smoked Tuna Mas" data-item-kind="PRODUCT" data-item-id="prd-agatti-01">
+            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0ATraditional%20Smoked%20Tuna%20Mas%0AIsland%3A%20Kavaratti%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKAVARATTI%0ANOODY_ITEM%3APRODUCT%3Aprd-agatti-01%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Traditional Smoked Tuna Mas" data-item-kind="PRODUCT" data-item-id="prd-agatti-01">
               <span>WhatsApp</span> →
             </a>
           </div>
@@ -374,7 +414,7 @@
       </div>
 
       <!-- Product 2: Island Tuna Pickle -->
-      <div class="item-card" data-listing-island="AGATTI" data-category="tuna" style="position: relative;">
+      <div class="item-card" data-listing-island="AGATTI" data-category="tuna" style="position: relative; display: none;">
         <div class="item-card-media">
           <img class="item-card-img" src="https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="Island Tuna Pickle" loading="lazy">
           <span class="item-category-tag">Pickles</span>
@@ -383,9 +423,14 @@
           <span class="item-card-island">Agatti Island</span>
           <h3 class="item-card-title">Island Spicy Tuna Pickle</h3>
           <p class="item-card-desc">Handmade in small batches with cold-pressed virgin coconut oil, local spices, and fresh ocean tuna chunks.</p>
-          <div class="item-card-meta">
+          <div class="item-card-rating" data-item-id="prd-agatti-02" data-item-name="Island Spicy Tuna Pickle" data-item-island="Agatti Island">
+        <span class="stars-gold">★★★★★</span>
+        <span class="rating-score">5.0</span>
+        <span class="rating-count">(2)</span>
+        <button type="button" class="btn-card-reviews">⭐ Reviews &amp; Write</button>
+      </div><div class="item-card-meta">
             
-            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AIsland%20Spicy%20Tuna%20Pickle%0AIsland%3A%20Agatti%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AAGATTI%0ANOODY_ITEM%3APRODUCT%3Aprd-agatti-02%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Island Spicy Tuna Pickle" data-item-kind="PRODUCT" data-item-id="prd-agatti-02">
+            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AIsland%20Spicy%20Tuna%20Pickle%0AIsland%3A%20Kavaratti%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKAVARATTI%0ANOODY_ITEM%3APRODUCT%3Aprd-agatti-02%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Island Spicy Tuna Pickle" data-item-kind="PRODUCT" data-item-id="prd-agatti-02">
               <span>WhatsApp</span> →
             </a>
           </div>
@@ -393,7 +438,7 @@
       </div>
 
       <!-- Product 3: Coconut Shell Craft -->
-      <div class="item-card" data-listing-island="AGATTI" data-category="craft" style="position: relative;">
+      <div class="item-card" data-listing-island="AGATTI" data-category="craft" style="position: relative; display: none;">
         <div class="item-card-media">
           <img class="item-card-img" src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="Coconut Shell Craft" loading="lazy">
           <span class="item-category-tag">Handicraft</span>
@@ -402,9 +447,14 @@
           <span class="item-card-island">Agatti Island</span>
           <h3 class="item-card-title">Carved Coconut Shell Bowls</h3>
           <p class="item-card-desc">Eco-friendly polished bowls hand-carved by island artisans from natural organic Lakshadweep coconuts.</p>
-          <div class="item-card-meta">
+          <div class="item-card-rating" data-item-id="prd-agatti-03" data-item-name="Carved Coconut Shell Bowls" data-item-island="Agatti Island">
+        <span class="stars-gold">★★★★★</span>
+        <span class="rating-score">5.0</span>
+        <span class="rating-count">(1)</span>
+        <button type="button" class="btn-card-reviews">⭐ Reviews &amp; Write</button>
+      </div><div class="item-card-meta">
             
-            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0ACarved%20Coconut%20Shell%20Bowls%0AIsland%3A%20Agatti%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AAGATTI%0ANOODY_ITEM%3APRODUCT%3Aprd-agatti-03%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Carved Coconut Shell Bowls" data-item-kind="PRODUCT" data-item-id="prd-agatti-03">
+            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0ACarved%20Coconut%20Shell%20Bowls%0AIsland%3A%20Kavaratti%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKAVARATTI%0ANOODY_ITEM%3APRODUCT%3Aprd-agatti-03%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Carved Coconut Shell Bowls" data-item-kind="PRODUCT" data-item-id="prd-agatti-03">
               <span>WhatsApp</span> →
             </a>
           </div>
@@ -421,12 +471,17 @@
           <span class="item-card-island">Kadmat Island</span>
           <h3 class="item-card-title">Kadmat Pure Palm Jaggery</h3>
           <p class="item-card-desc">Unrefined sweet coconut inflorescence sap boiled fresh daily by Kadmat local climbers. Pure island minerals.</p>
-          <div class="item-card-meta">
+          <div class="item-card-rating" data-item-id="prd-kadmat-01" data-item-name="Kadmat Pure Palm Jaggery" data-item-island="Kadmat Island">
+        <span class="stars-gold">★★★★★</span>
+        <span class="rating-score">5.0</span>
+        <span class="rating-count">(1)</span>
+        <button type="button" class="btn-card-reviews">⭐ Reviews &amp; Write</button>
+      </div><div class="item-card-meta">
             <div class="item-price-info">
               <span class="price-label">Price Guide</span>
               <span class="price-value">₹320 / 500g</span>
             </div>
-            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AKadmat%20Palm%20Jaggery%0AIsland%3A%20KADMAT%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKADMAT%0ANOODY_ITEM%3APRODUCT%3Aprd-kadmat-01" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Kadmat Palm Jaggery" data-item-kind="PRODUCT" data-item-id="prd-kadmat-01">
+            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AKadmat%20Palm%20Jaggery%0AIsland%3A%20Kavaratti%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKAVARATTI%0ANOODY_ITEM%3APRODUCT%3Aprd-kadmat-01%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Kadmat Palm Jaggery" data-item-kind="PRODUCT" data-item-id="prd-kadmat-01">
               <span>WhatsApp</span> →
             </a>
           </div>
@@ -434,7 +489,7 @@
       </div>
 
       <!-- Product 5: Kavaratti Spiced Tuna Crisps (Kavaratti) -->
-      <div class="item-card" data-listing-island="KAVARATTI" data-category="tuna" style="position: relative; display: none;">
+      <div class="item-card" data-listing-island="KAVARATTI" data-category="tuna" style="position: relative;">
         <div class="item-card-media">
           <img class="item-card-img" src="https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="Kavaratti Tuna Crisps" loading="lazy">
           <span class="item-category-tag">Seafood Snacks</span>
@@ -443,12 +498,17 @@
           <span class="item-card-island">Kavaratti Island</span>
           <h3 class="item-card-title">Kavaratti Spiced Tuna Crisps</h3>
           <p class="item-card-desc">Crispy wafer flakes with shredded skipjack tuna, pepper, and roasted spices. Authentic island snack.</p>
-          <div class="item-card-meta">
+          <div class="item-card-rating" data-item-id="prd-kavaratti-01" data-item-name="Kavaratti Spiced Tuna Crisps" data-item-island="Kavaratti Island">
+        <span class="stars-gold">★★★★★</span>
+        <span class="rating-score">5.0</span>
+        <span class="rating-count">(1)</span>
+        <button type="button" class="btn-card-reviews">⭐ Reviews &amp; Write</button>
+      </div><div class="item-card-meta">
             <div class="item-price-info">
               <span class="price-label">Price Guide</span>
               <span class="price-value">₹240 / 200g</span>
             </div>
-            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AKavaratti%20Tuna%20Crisps%0AIsland%3A%20KAVARATTI%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKAVARATTI%0ANOODY_ITEM%3APRODUCT%3Aprd-kavaratti-01" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Kavaratti Tuna Crisps" data-item-kind="PRODUCT" data-item-id="prd-kavaratti-01">
+            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AKavaratti%20Tuna%20Crisps%0AIsland%3A%20Kavaratti%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKAVARATTI%0ANOODY_ITEM%3APRODUCT%3Aprd-kavaratti-01%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Kavaratti Tuna Crisps" data-item-kind="PRODUCT" data-item-id="prd-kavaratti-01">
               <span>WhatsApp</span> →
             </a>
           </div>
@@ -465,12 +525,17 @@
           <span class="item-card-island">Kalpeni Island</span>
           <h3 class="item-card-title">Kalpeni Palm Nectar Meera Halwa</h3>
           <p class="item-card-desc">Artisanal dessert simmered slowly with wild palm sap (Meera), coconut milk, cardamom, and toasted cashews.</p>
-          <div class="item-card-meta">
+          <div class="item-card-rating" data-item-id="prd-kalpeni-01" data-item-name="Kalpeni Palm Nectar Meera Halwa" data-item-island="Kalpeni Island">
+        <span class="stars-gold">★★★★★</span>
+        <span class="rating-score">5.0</span>
+        <span class="rating-count">(1)</span>
+        <button type="button" class="btn-card-reviews">⭐ Reviews &amp; Write</button>
+      </div><div class="item-card-meta">
             <div class="item-price-info">
               <span class="price-label">Price Guide</span>
               <span class="price-value">₹390 / 400g</span>
             </div>
-            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AKalpeni%20Palm%20Halwa%0AIsland%3A%20KALPENI%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKALPENI%0ANOODY_ITEM%3APRODUCT%3Aprd-kalpeni-01" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Kalpeni Palm Halwa" data-item-kind="PRODUCT" data-item-id="prd-kalpeni-01">
+            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AKalpeni%20Palm%20Halwa%0AIsland%3A%20Kavaratti%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKAVARATTI%0ANOODY_ITEM%3APRODUCT%3Aprd-kalpeni-01%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Kalpeni Palm Halwa" data-item-kind="PRODUCT" data-item-id="prd-kalpeni-01">
               <span>WhatsApp</span> →
             </a>
           </div>
