@@ -1,0 +1,20 @@
+{
+  "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+  "steps": [
+    {
+      "step": "setSiteOptions",
+      "options": {
+        "blogname": "NOODY.AI — Oceanic Platform",
+        "blogdescription": "Next-gen Oceanic Operations, Data & Yield."
+      }
+    },
+    {
+      "step": "activateTheme",
+      "themeFolderName": "noody-oceanic"
+    },
+    {
+      "step": "activatePlugin",
+      "pluginPath": "noody-core-connector/noody-core-connector.php"
+    }
+  ]
+}
