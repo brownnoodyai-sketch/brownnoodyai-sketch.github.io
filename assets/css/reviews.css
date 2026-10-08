@@ -1,0 +1,359 @@
+/* ==========================================================================
+   NOODY.AI — Per-Service & Per-Product Customer Reviews & Add Item Modals
+   ========================================================================== */
+
+/* Item Card Rating Display */
+.item-card-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+  font-size: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.stars-gold {
+  color: #f59e0b;
+  letter-spacing: 1px;
+  font-size: 0.95rem;
+}
+
+.rating-score {
+  font-weight: 800;
+  color: var(--noody-deep-ocean, #0a2239);
+}
+
+.rating-count {
+  color: var(--noody-muted, #475569);
+  font-size: 0.8rem;
+}
+
+.btn-card-reviews {
+  margin-left: auto;
+  background: rgba(8, 117, 92, 0.08);
+  border: 1px solid rgba(8, 117, 92, 0.25);
+  color: var(--noody-turquoise, #08755c);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+.btn-card-reviews:hover {
+  background: var(--noody-turquoise, #08755c);
+  color: #ffffff;
+  border-color: var(--noody-turquoise, #08755c);
+  transform: translateY(-1px);
+}
+
+/* Modal Backdrop */
+.noody-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 34, 57, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 10005;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.noody-modal-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Modal Window */
+.noody-modal {
+  background: #ffffff;
+  width: 100%;
+  max-width: 640px;
+  max-height: 90vh;
+  border-radius: 20px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: scale(0.94) translateY(20px);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: 'DM Sans', sans-serif;
+}
+
+.noody-modal-backdrop.active .noody-modal {
+  transform: scale(1) translateY(0);
+}
+
+.noody-modal-header {
+  padding: 22px 28px;
+  background: linear-gradient(135deg, #0a2239 0%, #08755c 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.noody-modal-header h3 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 800;
+  font-family: 'Syne', sans-serif;
+  color: #ffffff;
+}
+
+.noody-modal-subtitle {
+  font-size: 0.85rem;
+  color: #a7f3d0;
+  margin-top: 4px;
+}
+
+.noody-modal-close {
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: #ffffff;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.noody-modal-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.08);
+}
+
+.noody-modal-body {
+  padding: 24px 28px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Reviews List Inside Modal */
+.review-stats-banner {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.review-stats-score {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #08755c;
+  line-height: 1;
+}
+
+.review-stats-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.review-stats-meta .stars {
+  color: #f59e0b;
+  font-size: 1.1rem;
+}
+
+.review-stats-meta span {
+  font-size: 0.85rem;
+  color: #475569;
+  font-weight: 600;
+}
+
+.reviews-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 28px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.review-entry {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.review-entry-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.reviewer-name {
+  font-weight: 700;
+  color: #0a2239;
+  font-size: 0.92rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.verified-badge {
+  background: #dcfce7;
+  color: #166534;
+  font-size: 0.7rem;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.review-date {
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.review-entry-text {
+  font-size: 0.88rem;
+  color: #334155;
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* Add Review Form */
+.review-form-section {
+  border-top: 2px dashed #e2e8f0;
+  padding-top: 22px;
+}
+
+.review-form-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #0a2239;
+  margin: 0 0 14px 0;
+}
+
+.form-group {
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: #0a2239;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: #08755c;
+  box-shadow: 0 0 0 3px rgba(8, 117, 92, 0.15);
+}
+
+.form-textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* Interactive Star Picker */
+.star-picker {
+  display: inline-flex;
+  gap: 6px;
+  font-size: 1.6rem;
+  cursor: pointer;
+  color: #cbd5e1;
+  user-select: none;
+}
+
+.star-picker .star-item.selected,
+.star-picker .star-item:hover,
+.star-picker .star-item.hovered {
+  color: #f59e0b;
+}
+
+.btn-submit-review {
+  background: linear-gradient(135deg, #08755c 0%, #14b8a6 100%);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.92rem;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  cursor: pointer;
+  width: 100%;
+  box-shadow: 0 4px 14px rgba(8, 117, 92, 0.3);
+  transition: all 0.2s ease;
+}
+
+.btn-submit-review:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(8, 117, 92, 0.45);
+}
+
+/* Preset Photo Selection Chips for Add Item Modal */
+.photo-preset-chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  margin-top: 6px;
+}
+
+.photo-chip {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.photo-chip img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-chip:hover, .photo-chip.selected {
+  border-color: #08755c;
+  transform: scale(1.06);
+}
