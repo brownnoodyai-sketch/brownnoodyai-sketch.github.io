@@ -206,6 +206,30 @@
   gap: 10px;
 }
 
+.review-user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.review-user-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #14b8a6;
+  background: #e2e8f0;
+  flex-shrink: 0;
+}
+
+.review-email-badge {
+  display: block;
+  font-size: 0.7rem;
+  color: #64748b;
+  font-family: monospace;
+  margin-top: 1px;
+}
+
 .reviewer-name {
   font-weight: 700;
   color: #0a2239;
@@ -213,6 +237,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  flex-wrap: wrap;
 }
 
 .verified-badge {

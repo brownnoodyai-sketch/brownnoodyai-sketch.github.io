@@ -1,7 +1,10 @@
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
+import { exec } from 'node:child_process';
+import { promisify } from 'node:util';
 
+const execPromise = promisify(exec);
 const PORT = 3000;
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -28,6 +31,13 @@ const server = http.createServer(async (req, res) => {
   }
 
   let reqPath = req.url.split('?')[0];
+
+  // Health check endpoint
+  if (reqPath === '/api/health' || reqPath === '/health') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ status: 'ok', uptime: process.uptime() }));
+    return;
+  }
 
   // API endpoint to upload image directly to disk
   if (req.method === 'POST' && reqPath === '/api/upload-image') {
@@ -106,6 +116,33 @@ const server = http.createServer(async (req, res) => {
         res.end(JSON.stringify({ error: err.message }));
       }
     });
+    return;
+  }
+
+  // API endpoint to publish changes directly to public site on GitHub Pages
+  if (req.method === 'POST' && reqPath === '/api/publish-live') {
+    try {
+      console.log('[Publish] Staging and committing latest changes...');
+      await execPromise('git add -A');
+      try {
+        await execPromise('git commit -m "feat: publish live website updates via NOODY Studio"');
+      } catch (cErr) {
+        // Nothing to commit is okay
+      }
+      console.log('[Publish] Pushing to GitHub Pages (origin main)...');
+      await execPromise('git push origin HEAD:main');
+      console.log('[Publish] Successfully published to https://brownnoodyai-sketch.github.io/!');
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        success: true,
+        publicUrl: 'https://brownnoodyai-sketch.github.io/',
+        timestamp: new Date().toISOString()
+      }));
+    } catch (err) {
+      console.error('[Publish] Push failed:', err);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: err.message || 'Publishing failed' }));
+    }
     return;
   }
 

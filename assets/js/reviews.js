@@ -165,8 +165,19 @@
                   <input type="text" id="review-user-name" class="form-input" placeholder="e.g. Rahul M." required>
                 </div>
                 <div class="form-group">
+                  <label for="review-user-email">Email Address (Auto Verified Photo) *</label>
+                  <input type="email" id="review-user-email" class="form-input" placeholder="e.g. rahul@gmail.com" required>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
                   <label for="review-user-city">City / Hometown *</label>
                   <input type="text" id="review-user-city" class="form-input" placeholder="e.g. Bengaluru, Kochi" required>
+                </div>
+                <div class="form-group" style="display:flex; align-items:center; gap:12px; margin-top:22px;">
+                  <img id="review-form-avatar-preview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Guest" alt="Avatar" style="width:42px; height:42px; border-radius:50%; border:2px solid #14b8a6; background:#e2e8f0;">
+                  <span style="font-size:0.75rem; color:#64748b;">Profile photo automatically generated from your email</span>
                 </div>
               </div>
 
@@ -183,6 +194,14 @@
     `;
 
     document.body.appendChild(backdrop);
+
+    // Live avatar preview on email input
+    const emailInput = document.getElementById('review-user-email');
+    const avatarPreview = document.getElementById('review-form-avatar-preview');
+    emailInput.addEventListener('input', () => {
+      const val = emailInput.value.trim() || 'Guest';
+      avatarPreview.src = getAutoAvatar(val);
+    });
 
     // Close button
     document.getElementById('noody-review-modal-close').addEventListener('click', closeModal);
@@ -214,6 +233,7 @@
     document.getElementById('noody-add-review-form').addEventListener('submit', (e) => {
       e.preventDefault();
       const name = document.getElementById('review-user-name').value.trim();
+      const email = document.getElementById('review-user-email').value.trim();
       const city = document.getElementById('review-user-city').value.trim();
       const text = document.getElementById('review-user-comment').value.trim();
 
@@ -221,6 +241,8 @@
 
       const newReview = {
         name: name,
+        email: email,
+        avatar: getAutoAvatar(email || name),
         location: city,
         rating: selectedRating,
         date: 'Just now · Verified Guest',
@@ -231,6 +253,7 @@
 
       // Reset form
       document.getElementById('noody-add-review-form').reset();
+      avatarPreview.src = getAutoAvatar('Guest');
       selectedRating = 5;
       updateStarPickerUI();
 
@@ -238,7 +261,7 @@
       renderModalContent(currentActiveItem.id, currentActiveItem.name, currentActiveItem.island);
       renderAllCardRatings();
 
-      alert('✅ Thank you! Your verified review has been submitted and posted.');
+      alert('✅ Thank you! Your verified review has been submitted with your profile photo.');
     });
   }
 
@@ -268,6 +291,18 @@
     }
   }
 
+  function getAutoAvatar(seed) {
+    if (!seed) seed = 'Guest';
+    const cleanSeed = encodeURIComponent(seed.toLowerCase().trim());
+    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${cleanSeed}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc`;
+  }
+
+  function maskEmail(email) {
+    if (!email || !email.includes('@')) return '';
+    const [user, domain] = email.split('@');
+    return user.slice(0, 2) + '***@' + domain;
+  }
+
   function renderModalContent(itemId, itemName, islandName) {
     const stats = getStats(itemId);
     const store = getReviewsStore();
@@ -292,10 +327,16 @@
     listContainer.innerHTML = reviews.map(r => `
       <div class="review-entry">
         <div class="review-entry-top">
-          <span class="reviewer-name">
-            ${escapeHtml(r.name)} (${escapeHtml(r.location || 'Guest')})
-            <span class="verified-badge">✓ Verified</span>
-          </span>
+          <div class="review-user-info">
+            <img class="review-user-avatar" src="${r.avatar || getAutoAvatar(r.email || r.name)}" alt="${escapeHtml(r.name)}">
+            <div>
+              <span class="reviewer-name">
+                ${escapeHtml(r.name)} (${escapeHtml(r.location || 'Guest')})
+                <span class="verified-badge">✓ Verified</span>
+              </span>
+              ${r.email ? `<span class="review-email-badge">✉ ${maskEmail(r.email)}</span>` : ''}
+            </div>
+          </div>
           <span class="review-date">${escapeHtml(r.date || 'Recent')}</span>
         </div>
         <div class="stars-gold">${'★'.repeat(r.rating || 5)}${'☆'.repeat(5 - (r.rating || 5))}</div>

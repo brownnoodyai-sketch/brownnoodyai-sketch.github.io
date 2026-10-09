@@ -7,16 +7,20 @@
 (function () {
   'use strict';
 
+  const API_BASE = (window.location.origin && window.location.origin.startsWith('http')) ? window.location.origin : 'http://127.0.0.1:3000';
   let isEditing = false;
   const EDITABLE_SELECTORS = [
-    'h1', 'h2', 'h3', 'h4', 'p',
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p',
+    '.nav-link', '.noody-logo-text',
     '.hero-eyebrow', '.hero-title', '.hero-description',
     '.section-eyebrow', '.section-title', '.section-sub',
     '.island-name', '.island-desc',
     '.item-card-title', '.item-card-desc',
     '.price-label', '.price-value',
     '.review-author', '.review-text',
-    '.footer-tagline'
+    '.footer-tagline', '.footer-links a', '.footer-legal-links a', '.footer-col h4',
+    '.filter-pill', '.island-badge', '.item-category-tag',
+    '.btn-item-enquire span', '.btn-whatsapp-header span', '.btn-primary-hero', '.btn-secondary-hero'
   ];
 
   // Preset curated ocean images for instant 1-click selection
@@ -69,6 +73,9 @@
     const addSrvBtn = document.getElementById('editor-add-service-btn');
     const addPrdBtn = document.getElementById('editor-add-product-btn');
     const heroBtn = document.getElementById('editor-hero-bg-btn');
+    const logoBtn = document.getElementById('editor-logo-btn');
+    const btnsBtn = document.getElementById('editor-buttons-btn');
+    const pubBtn = document.getElementById('editor-publish-btn');
 
     if (isEditing) {
       badge.textContent = '✏️ Editing ON';
@@ -78,11 +85,20 @@
       if (addSrvBtn) addSrvBtn.style.display = 'inline-flex';
       if (addPrdBtn) addPrdBtn.style.display = 'inline-flex';
       if (heroBtn) heroBtn.style.display = 'inline-flex';
+      if (logoBtn) logoBtn.style.display = 'inline-flex';
+      if (btnsBtn) btnsBtn.style.display = 'inline-flex';
+      if (pubBtn) pubBtn.style.display = 'inline-flex';
       setupCardControls();
       setupHeroControls();
       setupImageDropHandlers();
+      setupNavControls();
+      setupFooterControls();
+      setupSectionControls();
+      setupLogoControls();
+      setupButtonControls();
+      initInlineTextFormatting();
       enableContentEditable();
-      showToast('✏️ Edit Mode Active: Drag photo position, toggle blur, shape box, or text colors on cards!');
+      showToast('✏️ Edit Mode Active: Click Logo to customize, edit buttons, or add icons!');
     } else {
       badge.textContent = '👁️ Preview Mode';
       badge.className = 'editor-badge';
@@ -91,7 +107,12 @@
       if (addSrvBtn) addSrvBtn.style.display = 'none';
       if (addPrdBtn) addPrdBtn.style.display = 'none';
       if (heroBtn) heroBtn.style.display = 'none';
+      if (logoBtn) logoBtn.style.display = 'none';
+      if (btnsBtn) btnsBtn.style.display = 'none';
+      if (pubBtn) pubBtn.style.display = 'none';
       disableContentEditable();
+      const bubble = document.getElementById('noody-text-bubble');
+      if (bubble) bubble.style.display = 'none';
       showToast('👁️ Preview Mode Active');
     }
   }
@@ -101,6 +122,20 @@
   // =========================================================================
 
   function setupCardControls() {
+    // 0. Ensure persistent card IDs for deep linking
+    document.querySelectorAll('.island-card, .item-card').forEach(card => {
+      if (!card.id) {
+        const idAttr = card.querySelector('[data-item-id]')?.getAttribute('data-item-id');
+        if (idAttr) {
+          card.id = idAttr;
+        } else {
+          const rawTitle = card.querySelector('.item-card-title, .island-name')?.textContent || 'item';
+          const prefix = card.classList.contains('island-card') ? 'island-' : 'item-';
+          card.id = prefix + rawTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        }
+      }
+    });
+
     // 1. Setup Card Delete Buttons on item-card
     document.querySelectorAll('.item-card').forEach(card => {
       if (!card.querySelector('.noody-delete-card-btn')) {
@@ -115,7 +150,9 @@
           const title = card.querySelector('.item-card-title')?.textContent || 'this item';
           if (confirm(`Do you want to delete "${title.trim()}"?`)) {
             card.remove();
-            showToast('🗑️ Item card deleted! Click "Save Changes" to apply.');
+            showToast('⏳ Removing item card...');
+            savePageToFile();
+            showToast('🗑️ Item card deleted & saved live to website!');
           }
         });
         card.style.position = 'relative';
@@ -123,7 +160,43 @@
       }
     });
 
-    // 2. Setup Price Remove Buttons
+    // 2. Setup Card Edit Button on item-card (Admin Only)
+    document.querySelectorAll('.item-card').forEach(card => {
+      if (!card.querySelector('.noody-card-edit-btn')) {
+        const editBtn = document.createElement('button');
+        editBtn.type = 'button';
+        editBtn.className = 'noody-card-edit-btn';
+        editBtn.innerHTML = '✏️ Edit';
+        editBtn.title = 'Edit item details, photo, prices, description';
+        editBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          openEditItemModal(card);
+        });
+        card.style.position = 'relative';
+        card.appendChild(editBtn);
+      }
+    });
+
+    // 3. Setup WhatsApp Bot Link Button directly on cards (Admin Only)
+    document.querySelectorAll('.island-card, .item-card').forEach(card => {
+      if (!card.querySelector('.noody-card-bot-btn')) {
+        const botBtn = document.createElement('button');
+        botBtn.type = 'button';
+        botBtn.className = 'noody-card-bot-btn';
+        botBtn.innerHTML = '🤖 Bot Link';
+        botBtn.title = 'Copy direct deep link & formatted text for WhatsApp Bot';
+        botBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          openBotLinkModal(card);
+        });
+        card.style.position = 'relative';
+        card.appendChild(botBtn);
+      }
+    });
+
+    // 4. Setup Price Remove Buttons
     document.querySelectorAll('.item-price-info').forEach(priceBox => {
       if (!priceBox.querySelector('.noody-price-toggle-btn')) {
         const removePriceBtn = document.createElement('button');
@@ -143,7 +216,7 @@
       }
     });
 
-    // 3. Setup Floating Style Toolbars on Island Cards and Item Cards
+    // 5. Setup Floating Style Toolbars on Island Cards and Item Cards
     document.querySelectorAll('.island-card, .item-card').forEach(card => {
       if (!card.querySelector('.noody-card-style-bar')) {
         const bar = document.createElement('div');
@@ -153,6 +226,8 @@
           <button type="button" class="style-bar-btn btn-blur-toggle" title="Toggle semi-blur intensity">🌫️ Blur</button>
           <button type="button" class="style-bar-btn btn-shape-toggle" title="Add frosted glass shape around text">🏷️ Shape</button>
           <button type="button" class="style-bar-btn btn-color-toggle" title="Change text color & focus">🎨 Color</button>
+          <button type="button" class="style-bar-btn btn-edit-item-bar" title="Edit this item details, photo, and pricing">✏️ Edit</button>
+          <button type="button" class="style-bar-btn btn-bot-modal" title="Copy WhatsApp Bot Deep Link">🤖 Bot Link</button>
           <button type="button" class="style-bar-btn btn-styler-modal" title="Open full styling inspector">⚙️ Styler</button>
         `;
 
@@ -178,6 +253,18 @@
           e.preventDefault();
           e.stopPropagation();
           cycleTextColor(card);
+        });
+
+        bar.querySelector('.btn-edit-item-bar').addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          openEditItemModal(card);
+        });
+
+        bar.querySelector('.btn-bot-modal').addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          openBotLinkModal(card);
         });
 
         bar.querySelector('.btn-styler-modal').addEventListener('click', (e) => {
@@ -554,6 +641,1089 @@
     });
   }
 
+  // =========================================================================
+  // WHATSAPP BOT INTEGRATION: DIRECT DEEP LINK & PRE-MADE BOT TEXT MODAL
+  // =========================================================================
+
+  function openBotLinkModal(card) {
+    const modalId = 'noody-bot-modal-backdrop';
+    let backdrop = document.getElementById(modalId);
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.id = modalId;
+      backdrop.className = 'noody-bot-modal-backdrop';
+      document.body.appendChild(backdrop);
+    }
+
+    // 1. Ensure Card has a persistent ID
+    let itemId = card.id;
+    if (!itemId) {
+      itemId = card.querySelector('[data-item-id]')?.getAttribute('data-item-id');
+    }
+    if (!itemId) {
+      const rawTitle = card.querySelector('.item-card-title, .island-name')?.textContent || 'item';
+      const prefix = card.classList.contains('island-card') ? 'island-' : 'item-';
+      itemId = prefix + rawTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      card.id = itemId;
+    }
+
+    // 2. Extract Card Info
+    const itemName = card.querySelector('.item-card-title, .island-name')?.textContent.trim() || 'NOODY Listing';
+    const rawIsland = card.getAttribute('data-listing-island') || card.getAttribute('data-island') || 'AGATTI';
+    const islandName = rawIsland.charAt(0) + rawIsland.slice(1).toLowerCase() + ' Island';
+    const category = card.querySelector('.item-category-tag, .island-badge')?.textContent.trim() || 'Experience';
+    const desc = card.querySelector('.item-card-desc, .island-desc')?.textContent.trim() || 'Verified Lakshadweep experience and island booking.';
+    const price = card.querySelector('.price-value')?.textContent.trim() || '';
+    const ratingScore = card.querySelector('.rating-score')?.textContent.trim() || '4.9';
+    const ratingCount = card.querySelector('.rating-count')?.textContent.trim() || '(5)';
+
+    // 3. Generate Link
+    const pageUrl = window.location.origin + window.location.pathname;
+    const directUrl = `${pageUrl}?item=${encodeURIComponent(itemId)}`;
+
+    // 4. Generate Styled WhatsApp Bot Message
+    const botMessage = 
+`🌴 *${itemName}*
+📍 Island: ${islandName} · ${category}
+⭐ Rating: ${ratingScore}/5.0 (Verified Operators)
+${price ? `💰 Price Guide: ${price}\n` : ''}
+📖 *Description:*
+${desc}
+
+📸 *View HD Photos, Reviews & Instant Booking Details:*
+👉 ${directUrl}`;
+
+    backdrop.innerHTML = `
+      <div class="noody-bot-modal-card" role="dialog" aria-modal="true">
+        <div class="bot-modal-header">
+          <div class="bot-modal-title">
+            <span>🤖 WhatsApp Bot Integration</span>
+          </div>
+          <button type="button" class="noody-modal-close" id="btn-bot-modal-close" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
+        </div>
+
+        <p style="font-size:0.85rem; color:#64748b; margin-bottom:12px;">
+          Use this direct deep-link in your WhatsApp Bot messages. When customers click this link, it opens directly to <b>${itemName}</b> with full photos, descriptions, reviews, and a direct WhatsApp booking button!
+        </p>
+
+        <!-- Direct Short Link Group -->
+        <div style="font-weight:700; font-size:0.8rem; color:#0a2239; margin-bottom:4px;">1. Direct Website Deep Link:</div>
+        <div class="bot-url-input-group">
+          <input type="text" class="bot-url-input" id="bot-modal-url-input" value="${directUrl}" readonly>
+          <button type="button" class="btn-bot-copy-url" id="btn-bot-copy-url-only">📋 Copy Link</button>
+        </div>
+
+        <!-- WhatsApp Bot Text Preview Box -->
+        <div style="font-weight:700; font-size:0.8rem; color:#0a2239; margin-bottom:4px;">2. Ready-to-Paste WhatsApp Bot Text:</div>
+        <div class="bot-wa-preview-box">
+          <div class="bot-wa-bubble" id="bot-modal-text-preview">${escapeHtml(botMessage)}</div>
+        </div>
+
+        <!-- Modal Actions -->
+        <div class="bot-modal-actions">
+          <button type="button" class="btn-bot-copy-all" id="btn-bot-copy-full-text">
+            <span>📋 Copy Full WhatsApp Bot Message</span>
+          </button>
+          <a href="${directUrl}" target="_blank" rel="noopener" class="btn-bot-test-link" id="btn-bot-test-link">
+            <span>🚀 Test Customer View</span> →
+          </a>
+        </div>
+      </div>
+    `;
+
+    backdrop.classList.add('active');
+
+    // Copy URL Only
+    backdrop.querySelector('#btn-bot-copy-url-only').addEventListener('click', () => {
+      navigator.clipboard.writeText(directUrl).then(() => {
+        showToast('✅ Short link copied! Paste in your WhatsApp bot.');
+      }).catch(() => {
+        const inp = backdrop.querySelector('#bot-modal-url-input');
+        inp.select();
+        document.execCommand('copy');
+        showToast('✅ Short link copied!');
+      });
+    });
+
+    // Copy Full Bot Message
+    backdrop.querySelector('#btn-bot-copy-full-text').addEventListener('click', () => {
+      navigator.clipboard.writeText(botMessage).then(() => {
+        showToast('✅ Full WhatsApp Bot message copied! Ready to paste into bot.');
+      }).catch(() => {
+        showToast('✅ Copied to clipboard!');
+      });
+    });
+
+    // Close handlers
+    const closeBtn = backdrop.querySelector('#btn-bot-modal-close');
+    const closeFn = () => backdrop.classList.remove('active');
+    closeBtn.addEventListener('click', closeFn);
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) closeFn();
+    });
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // =========================================================================
+  // INLINE FLOATING TEXT FORMATTING & COLOR TOOLBAR
+  // =========================================================================
+
+  let activeEditableElement = null;
+
+  function initInlineTextFormatting() {
+    let bubble = document.getElementById('noody-text-bubble');
+    if (!bubble) {
+      bubble = document.createElement('div');
+      bubble.id = 'noody-text-bubble';
+      bubble.className = 'noody-text-bubble';
+      bubble.style.display = 'none';
+      bubble.innerHTML = `
+        <div class="text-bubble-colors">
+          <div class="color-dot-chip" data-color="#ffffff" style="background:#ffffff;" title="White"></div>
+          <div class="color-dot-chip" data-color="#0a2239" style="background:#0a2239;" title="Navy"></div>
+          <div class="color-dot-chip" data-color="#f59e0b" style="background:#f59e0b;" title="Gold"></div>
+          <div class="color-dot-chip" data-color="#0284c7" style="background:#0284c7;" title="Sky Blue"></div>
+          <div class="color-dot-chip" data-color="#10b981" style="background:#10b981;" title="Emerald"></div>
+          <div class="color-dot-chip" data-color="#ef4444" style="background:#ef4444;" title="Coral Red"></div>
+          <div class="color-dot-chip" data-color="#8b5cf6" style="background:#8b5cf6;" title="Purple"></div>
+          <input type="color" class="color-picker-input-mini" id="bubble-custom-color" value="#ffffff" title="Custom Hex Color">
+        </div>
+        <div class="text-bubble-divider"></div>
+        <button type="button" class="text-bubble-btn" id="bubble-btn-bold" title="Bold"><b>B</b></button>
+        <button type="button" class="text-bubble-btn" id="bubble-btn-italic" title="Italic"><i>I</i></button>
+        <button type="button" class="text-bubble-btn" id="bubble-btn-icon" title="Add / Change Icon in HTML">⭐ Icon</button>
+        <button type="button" class="text-bubble-btn" id="bubble-btn-html" title="Edit HTML Directly">&lt;/&gt; HTML</button>
+      `;
+      document.body.appendChild(bubble);
+
+      // Event handlers for bubble colors
+      bubble.querySelectorAll('.color-dot-chip').forEach(chip => {
+        chip.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          const col = chip.getAttribute('data-color');
+          applyTextColor(col);
+        });
+      });
+
+      bubble.querySelector('#bubble-custom-color').addEventListener('input', (e) => {
+        applyTextColor(e.target.value);
+      });
+
+      bubble.querySelector('#bubble-btn-bold').addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        document.execCommand('bold', false, null);
+      });
+
+      bubble.querySelector('#bubble-btn-italic').addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        document.execCommand('italic', false, null);
+      });
+
+      bubble.querySelector('#bubble-btn-icon').addEventListener('click', (e) => {
+        e.preventDefault();
+        openIconPickerModal((chosenIcon) => {
+          insertIconIntoElement(chosenIcon);
+        });
+      });
+
+      bubble.querySelector('#bubble-btn-html').addEventListener('click', (e) => {
+        e.preventDefault();
+        if (activeEditableElement) {
+          openHtmlEditorModal(activeEditableElement);
+        }
+      });
+    }
+
+    function insertIconIntoElement(icon) {
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount > 0) {
+        const range = sel.getRangeAt(0);
+        range.deleteContents();
+        const textNode = document.createTextNode(icon + ' ');
+        range.insertNode(textNode);
+        range.setStartAfter(textNode);
+        range.setEndAfter(textNode);
+        sel.removeAllRanges();
+        sel.addRange(range);
+      } else if (activeEditableElement) {
+        activeEditableElement.innerHTML = icon + ' ' + activeEditableElement.innerHTML;
+      }
+      showToast(`⭐ Icon ${icon} added! Click "Save Changes" to apply.`);
+    }
+
+    function applyTextColor(hex) {
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount > 0 && !sel.isCollapsed) {
+        document.execCommand('styleWithCSS', false, true);
+        document.execCommand('foreColor', false, hex);
+      } else if (activeEditableElement) {
+        activeEditableElement.style.color = hex;
+      }
+      showToast('🎨 Text color changed to ' + hex + '! Save (Ctrl+S) to apply.');
+    }
+
+    function checkSelection(e) {
+      if (!isEditing) {
+        if (bubble) bubble.style.display = 'none';
+        return;
+      }
+
+      if (bubble.contains(e.target)) return;
+
+      const sel = window.getSelection();
+      const hasRange = sel && sel.rangeCount > 0 && !sel.isCollapsed;
+      const targetEditable = e.target.closest('[contenteditable="true"]');
+
+      if (hasRange || targetEditable) {
+        activeEditableElement = targetEditable || sel.anchorNode?.parentElement;
+        let rect = null;
+
+        if (hasRange) {
+          const range = sel.getRangeAt(0);
+          rect = range.getBoundingClientRect();
+        } else if (targetEditable) {
+          rect = targetEditable.getBoundingClientRect();
+        }
+
+        if (rect && rect.width >= 0) {
+          bubble.style.display = 'flex';
+          const top = rect.top + window.scrollY - 12;
+          const left = rect.left + window.scrollX + (rect.width / 2);
+          bubble.style.top = Math.max(top, 10) + 'px';
+          bubble.style.left = Math.max(left, 160) + 'px';
+          return;
+        }
+      }
+
+      bubble.style.display = 'none';
+    }
+
+    document.addEventListener('mouseup', checkSelection);
+    document.addEventListener('keyup', checkSelection);
+  }
+
+  // =========================================================================
+  // ICON PICKER MODAL (CATEGORIZED OCEAN, ISLAND, ADVENTURE & SHOPPING ICONS)
+  // =========================================================================
+  const ICON_SETS = [
+    { category: '🏄 Water Sports & Adventures', icons: ['🏄', '🤿', '⛵', '🐬', '🚤', '🏊', '🐠', '🎣', '🛶', '🌊'] },
+    { category: '🥥 Products & Shopping', icons: ['🥥', '🛒', '🛍️', '🐟', '🍲', '📦', '🎁', '🏷️', '🍯', '🌿'] },
+    { category: '🌴 Islands & Nature', icons: ['🏝️', '🌴', '☀️', '🌅', '🌺', '🐚', '🦀', '🏖️', '🍍', '🌈'] },
+    { category: '💬 Contact & Booking', icons: ['💬', '📞', '📱', '✉️', '📍', '🗺️', '🔔', '💳', '📅', '🤝'] },
+    { category: '⚡ Badges & Arrows', icons: ['⚡', '✨', '⭐', '🔥', '🎯', '🚀', '💎', '🔑', '→', '➜', '❯', '✓'] }
+  ];
+
+  function openIconPickerModal(onSelect) {
+    const modalId = 'noody-icon-modal-backdrop';
+    let backdrop = document.getElementById(modalId);
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.id = modalId;
+      backdrop.className = 'noody-icon-modal-backdrop';
+      document.body.appendChild(backdrop);
+    }
+
+    backdrop.innerHTML = `
+      <div class="noody-customizer-card" style="max-width: 480px;">
+        <div class="customizer-header">
+          <div class="customizer-title">
+            <span>⭐ Add / Change Icon in HTML</span>
+          </div>
+          <button type="button" class="noody-modal-close" id="btn-icon-close" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
+        </div>
+
+        <div style="margin-bottom: 12px;">
+          <input type="text" id="icon-custom-input" class="form-input" placeholder="Type custom emoji, symbol or text here...">
+        </div>
+
+        <div style="max-height: 280px; overflow-y: auto; padding-right: 4px;">
+          ${ICON_SETS.map(set => `
+            <div style="margin-bottom: 14px;">
+              <div style="font-size: 0.8rem; font-weight: 800; color: #0a2239; margin-bottom: 6px;">${set.category}</div>
+              <div class="icon-picker-grid" style="margin-bottom: 0;">
+                ${set.icons.map(ic => `<button type="button" class="icon-chip-btn" data-icon="${ic}">${ic}</button>`).join('')}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top: 16px;">
+          <button type="button" id="btn-apply-custom-icon" class="btn-submit-review" style="flex:1;">✓ Insert Custom</button>
+          <button type="button" id="btn-remove-icon" class="editor-dock-btn" style="background:#f1f5f9; color:#475569; border:1px solid #cbd5e1;">✕ Clear</button>
+        </div>
+      </div>
+    `;
+
+    backdrop.classList.add('active');
+
+    const closeFn = () => backdrop.classList.remove('active');
+    backdrop.querySelector('#btn-icon-close').addEventListener('click', closeFn);
+    backdrop.addEventListener('click', (e) => { if (e.target === backdrop) closeFn(); });
+
+    backdrop.querySelectorAll('.icon-chip-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const ic = btn.getAttribute('data-icon');
+        closeFn();
+        if (onSelect) onSelect(ic);
+      });
+    });
+
+    backdrop.querySelector('#btn-apply-custom-icon').addEventListener('click', () => {
+      const val = backdrop.querySelector('#icon-custom-input').value.trim();
+      if (val) {
+        closeFn();
+        if (onSelect) onSelect(val);
+      }
+    });
+
+    backdrop.querySelector('#btn-remove-icon').addEventListener('click', () => {
+      closeFn();
+      if (onSelect) onSelect('');
+    });
+  }
+
+  // =========================================================================
+  // RAW HTML ELEMENT EDITOR MODAL (TOTAL EDIT FOR ANY HTML AREA)
+  // =========================================================================
+  function openHtmlEditorModal(element) {
+    if (!element) return;
+    const modalId = 'noody-html-modal-backdrop';
+    let backdrop = document.getElementById(modalId);
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.id = modalId;
+      backdrop.className = 'noody-html-modal-backdrop';
+      document.body.appendChild(backdrop);
+    }
+
+    const currentHtml = element.innerHTML;
+    const tag = element.tagName.toLowerCase();
+
+    backdrop.innerHTML = `
+      <div class="noody-customizer-card" style="max-width: 620px;">
+        <div class="customizer-header">
+          <div class="customizer-title">
+            <span>&lt;/&gt; Edit HTML &amp; Total Content (${tag})</span>
+          </div>
+          <button type="button" class="noody-modal-close" id="btn-html-close" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
+        </div>
+
+        <p style="font-size:0.82rem; color:#64748b; margin-bottom:10px;">
+          Directly customize inner HTML, add icons, badges, spans or custom text. Changes reflect live on the page!
+        </p>
+
+        <textarea id="html-editor-textarea" class="html-editor-textarea">${escapeHtml(currentHtml)}</textarea>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
+          <div style="display:flex; gap:6px;">
+            <button type="button" id="btn-insert-span" class="editor-dock-btn" style="background:#f1f5f9; color:#0f172a; border:1px solid #cbd5e1; font-size:0.75rem; padding:4px 10px;">+ &lt;span&gt;</button>
+            <button type="button" id="btn-insert-icon-html" class="editor-dock-btn" style="background:#f1f5f9; color:#0f172a; border:1px solid #cbd5e1; font-size:0.75rem; padding:4px 10px;">⭐ Add Icon</button>
+          </div>
+          <button type="button" id="btn-apply-html" class="btn-submit-review" style="width:auto; padding:10px 24px;">✓ Apply HTML</button>
+        </div>
+      </div>
+    `;
+
+    backdrop.classList.add('active');
+
+    const textarea = backdrop.querySelector('#html-editor-textarea');
+    const closeFn = () => backdrop.classList.remove('active');
+    backdrop.querySelector('#btn-html-close').addEventListener('click', closeFn);
+    backdrop.addEventListener('click', (e) => { if (e.target === backdrop) closeFn(); });
+
+    backdrop.querySelector('#btn-insert-span').addEventListener('click', () => {
+      textarea.value += ' <span style="color:#14b8a6; font-weight:800;">Highlight</span>';
+    });
+
+    backdrop.querySelector('#btn-insert-icon-html').addEventListener('click', () => {
+      openIconPickerModal((icon) => {
+        textarea.value += (icon ? ` ${icon}` : '');
+      });
+    });
+
+    backdrop.querySelector('#btn-apply-html').addEventListener('click', () => {
+      element.innerHTML = textarea.value;
+      closeFn();
+      showToast('⏳ Saving HTML changes live to website...');
+      savePageToFile();
+      showToast('✅ HTML updated & saved live to website!');
+    });
+  }
+
+  // =========================================================================
+  // LOGO ADD & CUSTOMIZATION CONTROLS
+  // =========================================================================
+  function setupLogoControls() {
+    const brand = document.querySelector('.brand-wrapper') || document.querySelector('.noody-wordmark');
+    if (!brand) return;
+
+    brand.style.position = 'relative';
+
+    // 1. Add Edit Badge if not exists
+    if (!brand.querySelector('.noody-logo-edit-btn')) {
+      const editBtn = document.createElement('button');
+      editBtn.type = 'button';
+      editBtn.className = 'noody-logo-edit-btn';
+      editBtn.innerHTML = '✏️ Logo';
+      editBtn.title = 'Upload logo image, change icon or brand name';
+      editBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openLogoCustomizerModal();
+      });
+      brand.appendChild(editBtn);
+    }
+
+    // 2. Click on logo in edit mode
+    const wordmark = brand.querySelector('.noody-wordmark') || brand;
+    wordmark.addEventListener('click', (e) => {
+      if (isEditing) {
+        e.preventDefault();
+        openLogoCustomizerModal();
+      }
+    });
+
+    // 3. Drag and Drop Image File onto Logo
+    brand.addEventListener('dragover', (e) => {
+      if (!isEditing) return;
+      e.preventDefault();
+      brand.classList.add('noody-drop-target-active');
+    });
+
+    brand.addEventListener('dragleave', (e) => {
+      brand.classList.remove('noody-drop-target-active');
+    });
+
+    brand.addEventListener('drop', async (e) => {
+      if (!isEditing) return;
+      e.preventDefault();
+      brand.classList.remove('noody-drop-target-active');
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+        const file = e.dataTransfer.files[0];
+        if (file.type.startsWith('image/')) {
+          showToast('⏳ Uploading logo photo...');
+          try {
+            const url = await uploadImageFile(file);
+            applyLogoImage(url);
+            showToast('✅ New logo uploaded & applied! Save Changes to keep.');
+          } catch (err) {
+            showToast('❌ Logo upload failed: ' + err.message, true);
+          }
+        }
+      }
+    });
+  }
+
+  function applyLogoImage(url, maxH = '42px', shape = 'rounded') {
+    const wordmark = document.querySelector('.noody-wordmark');
+    if (!wordmark) return;
+
+    let img = wordmark.querySelector('.noody-logo-img');
+    const svg = wordmark.querySelector('.noody-logo-symbol');
+    const iconSpan = wordmark.querySelector('.noody-logo-icon-span');
+
+    if (!img) {
+      img = document.createElement('img');
+      img.className = 'noody-logo-img';
+      img.alt = 'NOODY.AI Logo';
+      wordmark.insertBefore(img, wordmark.firstChild);
+    }
+
+    img.src = url;
+    img.style.display = 'block';
+    img.style.maxHeight = maxH;
+    img.style.borderRadius = shape === 'circle' ? '50%' : (shape === 'rounded' ? '8px' : '0px');
+
+    if (svg) svg.style.display = 'none';
+    if (iconSpan) iconSpan.style.display = 'none';
+  }
+
+  function applyLogoIcon(icon) {
+    const wordmark = document.querySelector('.noody-wordmark');
+    if (!wordmark) return;
+
+    const img = wordmark.querySelector('.noody-logo-img');
+    const svg = wordmark.querySelector('.noody-logo-symbol');
+    let iconSpan = wordmark.querySelector('.noody-logo-icon-span');
+
+    if (img) img.style.display = 'none';
+
+    if (icon === 'DEFAULT_SVG') {
+      if (svg) svg.style.display = 'block';
+      if (iconSpan) iconSpan.style.display = 'none';
+    } else {
+      if (svg) svg.style.display = 'none';
+      if (!iconSpan) {
+        iconSpan = document.createElement('span');
+        iconSpan.className = 'noody-logo-icon-span';
+        iconSpan.style.fontSize = '2rem';
+        iconSpan.style.lineHeight = '1';
+        wordmark.insertBefore(iconSpan, wordmark.firstChild);
+      }
+      iconSpan.textContent = icon;
+      iconSpan.style.display = 'inline-block';
+    }
+  }
+
+  function openLogoCustomizerModal() {
+    const modalId = 'noody-logo-modal-backdrop';
+    let backdrop = document.getElementById(modalId);
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.id = modalId;
+      backdrop.className = 'noody-logo-modal-backdrop';
+      document.body.appendChild(backdrop);
+    }
+
+    const wordmark = document.querySelector('.noody-wordmark');
+    const currentImg = wordmark?.querySelector('.noody-logo-img');
+    const currentImgUrl = currentImg?.src || '';
+    const currentText = wordmark?.querySelector('.noody-logo-text')?.textContent || 'NOODY.AI';
+
+    backdrop.innerHTML = `
+      <div class="noody-customizer-card">
+        <div class="customizer-header">
+          <div class="customizer-title">
+            <span>🏷️ Logo &amp; Brand Customizer</span>
+          </div>
+          <button type="button" class="noody-modal-close" id="btn-logo-close" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
+        </div>
+
+        <!-- Live Logo Preview Box -->
+        <div class="customizer-preview-box" id="logo-preview-box">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <img id="logo-preview-img" src="${currentImgUrl}" alt="Preview" style="${currentImgUrl ? '' : 'display:none;'} max-height:42px; border-radius:8px;">
+            <span id="logo-preview-icon" style="font-size:2rem; ${currentImgUrl ? 'display:none;' : ''}">🌴</span>
+            <span id="logo-preview-text" class="noody-logo-text" style="font-size:1.5rem; font-weight:800;">${escapeHtml(currentText)}</span>
+          </div>
+        </div>
+
+        <!-- Mode Tabs -->
+        <div class="customizer-tabs">
+          <button type="button" class="customizer-tab-btn active" data-tab="image">📁 Upload Logo Image</button>
+          <button type="button" class="customizer-tab-btn" data-tab="icon">🏝️ Choose Icon</button>
+          <button type="button" class="customizer-tab-btn" data-tab="text">✏️ Brand Text</button>
+        </div>
+
+        <!-- Tab 1: Image Upload -->
+        <div class="tab-pane active" id="logo-tab-image">
+          <div class="image-dropzone-box" id="logo-dropzone">
+            <span class="image-dropzone-icon">📥</span>
+            <div class="image-dropzone-title">Upload Image Logo (PNG, SVG, JPG, WebP)</div>
+            <div class="image-dropzone-sub">Click to browse or drag and drop logo file here</div>
+            <input type="file" id="logo-file-input" accept="image/*" style="display:none;">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label style="font-weight:700; font-size:0.8rem; color:#0a2239; margin-bottom:4px; display:block;">Or Paste Direct Image URL:</label>
+            <input type="url" id="logo-url-input" class="form-input" value="${currentImgUrl}" placeholder="https://example.com/logo.png">
+          </div>
+
+          <div style="display:flex; gap:16px; margin-bottom:14px; align-items:center;">
+            <div style="flex:1;">
+              <label style="font-weight:700; font-size:0.8rem; color:#0a2239; margin-bottom:4px; display:block;">Logo Height: <span id="logo-height-val">42px</span></label>
+              <input type="range" id="logo-height-slider" min="20" max="64" value="42" style="width:100%;">
+            </div>
+            <div style="flex:1;">
+              <label style="font-weight:700; font-size:0.8rem; color:#0a2239; margin-bottom:4px; display:block;">Shape:</label>
+              <select id="logo-shape-select" class="form-select">
+                <option value="rounded">Rounded Corners (8px)</option>
+                <option value="circle">Circular Logo (50%)</option>
+                <option value="original">Original Square (0px)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Logo Icon -->
+        <div class="tab-pane" id="logo-tab-icon" style="display:none;">
+          <div style="font-weight:700; font-size:0.8rem; color:#0a2239; margin-bottom:6px;">Select Brand Icon:</div>
+          <div class="icon-picker-grid">
+            <button type="button" class="icon-chip-btn" data-logo-icon="DEFAULT_SVG" title="Original Circle N Symbol">Ⓝ</button>
+            <button type="button" class="icon-chip-btn" data-logo-icon="🌴">🌴</button>
+            <button type="button" class="icon-chip-btn" data-logo-icon="🏝️">🏝️</button>
+            <button type="button" class="icon-chip-btn" data-logo-icon="🌊">🌊</button>
+            <button type="button" class="icon-chip-btn" data-logo-icon="⛵">⛵</button>
+            <button type="button" class="icon-chip-btn" data-logo-icon="🤿">🤿</button>
+            <button type="button" class="icon-chip-btn" data-logo-icon="🐬">🐬</button>
+            <button type="button" class="icon-chip-btn" data-logo-icon="🥥">🥥</button>
+            <button type="button" class="icon-chip-btn" data-logo-icon="☀️">☀️</button>
+            <button type="button" class="icon-chip-btn" data-logo-icon="🐚">🐚</button>
+            <button type="button" class="icon-chip-btn" data-logo-icon="🐠">🐠</button>
+            <button type="button" class="icon-chip-btn" data-logo-icon="⚡">⚡</button>
+            <button type="button" class="icon-chip-btn" data-logo-icon="⭐">⭐</button>
+            <button type="button" class="icon-chip-btn" data-logo-icon="💎">💎</button>
+            <button type="button" class="icon-chip-btn" data-logo-icon="🎯">🎯</button>
+          </div>
+        </div>
+
+        <!-- Tab 3: Brand Text -->
+        <div class="tab-pane" id="logo-tab-text" style="display:none;">
+          <div class="form-group" style="margin-bottom:12px;">
+            <label style="font-weight:700; font-size:0.8rem; color:#0a2239; margin-bottom:4px; display:block;">Brand Name Text:</label>
+            <input type="text" id="logo-text-input" class="form-input" value="${escapeHtml(currentText)}" placeholder="NOODY.AI">
+          </div>
+          <div style="margin-bottom:12px;">
+            <label style="font-weight:700; font-size:0.8rem; color:#0a2239; margin-bottom:4px; display:block;">Display Layout:</label>
+            <div style="display:flex; gap:10px;">
+              <label style="font-size:0.85rem; display:flex; align-items:center; gap:4px; cursor:pointer;">
+                <input type="radio" name="logo-layout" value="both" checked> Logo + Brand Name
+              </label>
+              <label style="font-size:0.85rem; display:flex; align-items:center; gap:4px; cursor:pointer;">
+                <input type="radio" name="logo-layout" value="logo-only"> Logo Only
+              </label>
+              <label style="font-size:0.85rem; display:flex; align-items:center; gap:4px; cursor:pointer;">
+                <input type="radio" name="logo-layout" value="text-only"> Text Only
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit & Actions -->
+        <div style="display:flex; gap:10px; margin-top:20px;">
+          <button type="button" id="btn-apply-logo-changes" class="btn-submit-review" style="flex:1;">
+            ✓ Apply Logo to Header
+          </button>
+          <button type="button" id="btn-reset-logo" class="editor-dock-btn" style="background:#f1f5f9; color:#475569; border:1px solid #cbd5e1;">
+            ↺ Reset
+          </button>
+        </div>
+      </div>
+    `;
+
+    backdrop.classList.add('active');
+
+    // Tab switching
+    const tabBtns = backdrop.querySelectorAll('.customizer-tab-btn');
+    const panes = {
+      image: backdrop.querySelector('#logo-tab-image'),
+      icon: backdrop.querySelector('#logo-tab-icon'),
+      text: backdrop.querySelector('#logo-tab-text')
+    };
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const tab = btn.getAttribute('data-tab');
+        Object.keys(panes).forEach(k => {
+          if (panes[k]) panes[k].style.display = k === tab ? 'block' : 'none';
+        });
+      });
+    });
+
+    // Preview elements
+    const prevImg = backdrop.querySelector('#logo-preview-img');
+    const prevIcon = backdrop.querySelector('#logo-preview-icon');
+    const prevText = backdrop.querySelector('#logo-preview-text');
+
+    let chosenMode = currentImgUrl ? 'image' : 'icon';
+    let chosenImageUrl = currentImgUrl;
+    let chosenIcon = '🌴';
+    let chosenHeight = '42px';
+    let chosenShape = 'rounded';
+
+    // File input & Dropzone
+    const dropzone = backdrop.querySelector('#logo-dropzone');
+    const fileInp = backdrop.querySelector('#logo-file-input');
+    const urlInp = backdrop.querySelector('#logo-url-input');
+
+    dropzone.addEventListener('click', () => fileInp.click());
+    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+    dropzone.addEventListener('drop', async (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('drag-over');
+      if (e.dataTransfer && e.dataTransfer.files[0]) {
+        handleLogoFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    fileInp.addEventListener('change', () => {
+      if (fileInp.files && fileInp.files[0]) handleLogoFile(fileInp.files[0]);
+    });
+
+    async function handleLogoFile(file) {
+      dropzone.querySelector('.image-dropzone-title').textContent = '⏳ Uploading logo...';
+      try {
+        const uploadedUrl = await uploadImageFile(file);
+        chosenImageUrl = uploadedUrl;
+        chosenMode = 'image';
+        urlInp.value = uploadedUrl;
+        prevImg.src = uploadedUrl;
+        prevImg.style.display = 'block';
+        prevIcon.style.display = 'none';
+        dropzone.querySelector('.image-dropzone-title').textContent = '✓ Logo Uploaded!';
+      } catch (err) {
+        dropzone.querySelector('.image-dropzone-title').textContent = 'Upload Failed: ' + err.message;
+      }
+    }
+
+    urlInp.addEventListener('input', () => {
+      if (urlInp.value.trim()) {
+        chosenImageUrl = urlInp.value.trim();
+        chosenMode = 'image';
+        prevImg.src = chosenImageUrl;
+        prevImg.style.display = 'block';
+        prevIcon.style.display = 'none';
+      }
+    });
+
+    // Height Slider & Shape
+    const heightSlider = backdrop.querySelector('#logo-height-slider');
+    const heightVal = backdrop.querySelector('#logo-height-val');
+    const shapeSelect = backdrop.querySelector('#logo-shape-select');
+
+    heightSlider.addEventListener('input', () => {
+      chosenHeight = heightSlider.value + 'px';
+      heightVal.textContent = chosenHeight;
+      prevImg.style.maxHeight = chosenHeight;
+    });
+
+    shapeSelect.addEventListener('change', () => {
+      chosenShape = shapeSelect.value;
+      prevImg.style.borderRadius = chosenShape === 'circle' ? '50%' : (chosenShape === 'rounded' ? '8px' : '0px');
+    });
+
+    // Icon chips
+    backdrop.querySelectorAll('[data-logo-icon]').forEach(chip => {
+      chip.addEventListener('click', () => {
+        backdrop.querySelectorAll('[data-logo-icon]').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        chosenIcon = chip.getAttribute('data-logo-icon');
+        chosenMode = 'icon';
+        prevImg.style.display = 'none';
+        prevIcon.style.display = 'block';
+        prevIcon.textContent = chosenIcon === 'DEFAULT_SVG' ? 'Ⓝ' : chosenIcon;
+      });
+    });
+
+    // Text Input
+    const textInp = backdrop.querySelector('#logo-text-input');
+    textInp.addEventListener('input', () => {
+      prevText.textContent = textInp.value || 'NOODY.AI';
+    });
+
+    // Apply button
+    backdrop.querySelector('#btn-apply-logo-changes').addEventListener('click', () => {
+      const layoutRadio = backdrop.querySelector('input[name="logo-layout"]:checked');
+      const layout = layoutRadio ? layoutRadio.value : 'both';
+      const newText = textInp.value.trim() || 'NOODY.AI';
+
+      const wordmarkEl = document.querySelector('.noody-wordmark');
+      if (wordmarkEl) {
+        // Update brand text
+        let textSpan = wordmarkEl.querySelector('.noody-logo-text');
+        if (!textSpan) {
+          textSpan = document.createElement('span');
+          textSpan.className = 'noody-logo-text';
+          wordmarkEl.appendChild(textSpan);
+        }
+        textSpan.textContent = newText;
+        textSpan.style.display = layout === 'logo-only' ? 'none' : 'block';
+
+        // Apply Image or Icon
+        if (chosenMode === 'image' && chosenImageUrl) {
+          applyLogoImage(chosenImageUrl, chosenHeight, chosenShape);
+        } else {
+          applyLogoIcon(chosenIcon);
+        }
+
+        if (layout === 'text-only') {
+          const imgEl = wordmarkEl.querySelector('.noody-logo-img');
+          const svgEl = wordmarkEl.querySelector('.noody-logo-symbol');
+          const iconSpanEl = wordmarkEl.querySelector('.noody-logo-icon-span');
+          if (imgEl) imgEl.style.display = 'none';
+          if (svgEl) svgEl.style.display = 'none';
+          if (iconSpanEl) iconSpanEl.style.display = 'none';
+        }
+      }
+
+      backdrop.classList.remove('active');
+      showToast('⏳ Saving logo changes live to website...');
+      savePageToFile();
+      showToast('✅ Logo updated & saved live to website!');
+    });
+
+    // Reset button
+    backdrop.querySelector('#btn-reset-logo').addEventListener('click', () => {
+      applyLogoIcon('DEFAULT_SVG');
+      const textSpan = document.querySelector('.noody-logo-text');
+      if (textSpan) {
+        textSpan.textContent = 'NOODY.AI';
+        textSpan.style.display = 'block';
+      }
+      backdrop.classList.remove('active');
+      showToast('⏳ Resetting logo...');
+      savePageToFile();
+      showToast('↺ Logo reset to original symbol & saved!');
+    });
+
+    // Close handlers
+    const closeFn = () => backdrop.classList.remove('active');
+    backdrop.querySelector('#btn-logo-close').addEventListener('click', closeFn);
+    backdrop.addEventListener('click', (e) => { if (e.target === backdrop) closeFn(); });
+  }
+
+  // =========================================================================
+  // BUTTON & ICON CUSTOMIZER (TOTAL CHANGE FOR HERO & ACTION BUTTONS)
+  // =========================================================================
+  function setupButtonControls() {
+    const heroActions = document.querySelector('.hero-actions');
+    if (!heroActions) return;
+
+    // 1. Add badges to all buttons in .hero-actions
+    heroActions.querySelectorAll('a, button').forEach(btn => {
+      if (btn.classList.contains('noody-add-hero-btn')) return;
+      btn.style.position = 'relative';
+
+      if (!btn.querySelector('.noody-button-edit-badge')) {
+        const badge = document.createElement('span');
+        badge.className = 'noody-button-edit-badge';
+        badge.innerHTML = '✏️ Edit';
+        badge.title = 'Edit button text, icon, color & action (Total Change)';
+        badge.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          openButtonCustomizerModal(btn);
+        });
+        btn.appendChild(badge);
+      }
+
+      btn.addEventListener('click', (e) => {
+        if (isEditing) {
+          e.preventDefault();
+          openButtonCustomizerModal(btn);
+        }
+      });
+    });
+
+    // 2. Add "➕ Add Button" in edit mode
+    if (!heroActions.querySelector('.noody-add-hero-btn')) {
+      const addBtn = document.createElement('button');
+      addBtn.type = 'button';
+      addBtn.className = 'noody-add-hero-btn';
+      addBtn.innerHTML = '➕ Add Button';
+      addBtn.title = 'Add an extra custom action button';
+      addBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const newBtn = document.createElement('a');
+        newBtn.href = '#services-section';
+        newBtn.className = 'btn-hero-action btn-hero-services';
+        newBtn.innerHTML = '<span>⚡ Explore Now</span> →';
+        heroActions.insertBefore(newBtn, addBtn);
+        setupButtonControls();
+        openButtonCustomizerModal(newBtn);
+      });
+      heroActions.appendChild(addBtn);
+    }
+  }
+
+  function openButtonCustomizerModal(btn) {
+    if (!btn) return;
+    const modalId = 'noody-button-modal-backdrop';
+    let backdrop = document.getElementById(modalId);
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.id = modalId;
+      backdrop.className = 'noody-button-modal-backdrop';
+      document.body.appendChild(backdrop);
+    }
+
+    // Extract current button details
+    let currentText = btn.textContent.replace('Edit', '').trim();
+    let currentHref = btn.getAttribute('href') || '#';
+
+    // Parse leading icon if any
+    let iconMatch = currentText.match(/^([\p{Emoji}\u200d]+)\s*(.*)$/u);
+    let currentIcon = iconMatch ? iconMatch[1] : '';
+    let currentPureText = iconMatch ? iconMatch[2].replace(/[→➜❯]/g, '').trim() : currentText.replace(/[→➜❯]/g, '').trim();
+    let hasArrow = currentText.includes('→') || currentText.includes('➜') || currentText.includes('❯');
+
+    backdrop.innerHTML = `
+      <div class="noody-customizer-card">
+        <div class="customizer-header">
+          <div class="customizer-title">
+            <span>⚡ Button &amp; Icon Customizer (Total Change)</span>
+          </div>
+          <button type="button" class="noody-modal-close" id="btn-btn-close" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
+        </div>
+
+        <!-- Live Button Preview Box -->
+        <div class="customizer-preview-box">
+          <a href="#" id="button-preview-elem" class="${btn.className.replace('noody-button-edit-badge', '')}" style="pointer-events:none;">
+            <span id="button-preview-content">${escapeHtml(currentText)}</span>
+          </a>
+        </div>
+
+        <!-- 1. Icon Selection Grid -->
+        <div style="margin-bottom: 14px;">
+          <label style="font-weight:700; font-size:0.82rem; color:#0a2239; margin-bottom:6px; display:block;">1. Select Icon or Symbol:</label>
+          <div class="icon-picker-grid">
+            <button type="button" class="icon-chip-btn ${!currentIcon ? 'active' : ''}" data-btn-icon="" title="No Icon">✕</button>
+            <button type="button" class="icon-chip-btn" data-btn-icon="🏄">🏄</button>
+            <button type="button" class="icon-chip-btn" data-btn-icon="🥥">🥥</button>
+            <button type="button" class="icon-chip-btn" data-btn-icon="💬">💬</button>
+            <button type="button" class="icon-chip-btn" data-btn-icon="🏝️">🏝️</button>
+            <button type="button" class="icon-chip-btn" data-btn-icon="⛵">⛵</button>
+            <button type="button" class="icon-chip-btn" data-btn-icon="🤿">🤿</button>
+            <button type="button" class="icon-chip-btn" data-btn-icon="🐬">🐬</button>
+            <button type="button" class="icon-chip-btn" data-btn-icon="🏨">🏨</button>
+            <button type="button" class="icon-chip-btn" data-btn-icon="🌴">🌴</button>
+            <button type="button" class="icon-chip-btn" data-btn-icon="🌊">🌊</button>
+            <button type="button" class="icon-chip-btn" data-btn-icon="🐠">🐠</button>
+            <button type="button" class="icon-chip-btn" data-btn-icon="🛒">🛒</button>
+            <button type="button" class="icon-chip-btn" data-btn-icon="⚡">⚡</button>
+            <button type="button" class="icon-chip-btn" data-btn-icon="⭐">⭐</button>
+            <button type="button" class="icon-chip-btn" data-btn-icon="🔥">🔥</button>
+          </div>
+        </div>
+
+        <!-- 2. Button Text & Arrow -->
+        <div style="display:flex; gap:12px; margin-bottom:14px; align-items:flex-end;">
+          <div style="flex:1;">
+            <label style="font-weight:700; font-size:0.82rem; color:#0a2239; margin-bottom:4px; display:block;">2. Button Label Text:</label>
+            <input type="text" id="button-label-input" class="form-input" value="${escapeHtml(currentPureText)}">
+          </div>
+          <div>
+            <label style="font-weight:700; font-size:0.82rem; color:#0a2239; margin-bottom:4px; display:block;">Trailing Arrow:</label>
+            <label style="display:flex; align-items:center; gap:6px; height:42px; cursor:pointer;">
+              <input type="checkbox" id="button-arrow-checkbox" ${hasArrow ? 'checked' : ''}> Show "→"
+            </label>
+          </div>
+        </div>
+
+        <!-- 3. Target Link / Action URL -->
+        <div style="margin-bottom:14px;">
+          <label style="font-weight:700; font-size:0.82rem; color:#0a2239; margin-bottom:4px; display:block;">3. Action Target / Destination URL:</label>
+          <input type="text" id="button-url-input" class="form-input" value="${escapeHtml(currentHref)}">
+          <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;">
+            <button type="button" class="editor-dock-btn" data-quick-url="#services-section" style="background:#f1f5f9; color:#0f172a; border:1px solid #cbd5e1; font-size:0.75rem; padding:4px 10px;">🏄 Services Section</button>
+            <button type="button" class="editor-dock-btn" data-quick-url="#products-section" style="background:#f1f5f9; color:#0f172a; border:1px solid #cbd5e1; font-size:0.75rem; padding:4px 10px;">🥥 Products Section</button>
+            <button type="button" class="editor-dock-btn" data-quick-url="#islands-section" style="background:#f1f5f9; color:#0f172a; border:1px solid #cbd5e1; font-size:0.75rem; padding:4px 10px;">🏝️ Islands Section</button>
+            <button type="button" class="editor-dock-btn" data-quick-url="https://wa.me/919446944562" style="background:#f1f5f9; color:#0f172a; border:1px solid #cbd5e1; font-size:0.75rem; padding:4px 10px;">💬 WhatsApp Link</button>
+          </div>
+        </div>
+
+        <!-- 4. Style & Color Theme (Total Change) -->
+        <div style="margin-bottom:18px;">
+          <label style="font-weight:700; font-size:0.82rem; color:#0a2239; margin-bottom:6px; display:block;">4. Button Theme / Color Style:</label>
+          <div class="style-preset-chips" id="button-style-presets">
+            <button type="button" class="style-preset-btn" data-theme="btn-hero-services" style="background:linear-gradient(135deg, #14b8a6, #08755c); color:#ffffff;">🌊 Teal Lagoon</button>
+            <button type="button" class="style-preset-btn" data-theme="btn-hero-products" style="background:linear-gradient(135deg, #f59e0b, #d97706); color:#ffffff;">🥥 Amber Gold</button>
+            <button type="button" class="style-preset-btn" data-theme="btn-hero-whatsapp" style="background:#25D366; color:#ffffff;">💬 WhatsApp Green</button>
+            <button type="button" class="style-preset-btn" data-theme="theme-navy" style="background:#0a2239; color:#ffffff;">🌌 Deep Navy</button>
+            <button type="button" class="style-preset-btn" data-theme="theme-coral" style="background:linear-gradient(135deg, #f43f5e, #be123c); color:#ffffff;">🌺 Coral Red</button>
+            <button type="button" class="style-preset-btn" data-theme="theme-glass" style="background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.4); color:#ffffff;">🪟 Frosted Glass</button>
+          </div>
+        </div>
+
+        <!-- Modal Actions -->
+        <div style="display:flex; gap:10px;">
+          <button type="button" id="btn-apply-button-custom" class="btn-submit-review" style="flex:1;">
+            ✓ Apply Button Changes
+          </button>
+          <button type="button" id="btn-delete-this-button" class="editor-dock-btn" style="background:#fee2e2; color:#ef4444; border:1px solid #fca5a5;">
+            🗑️ Delete Button
+          </button>
+        </div>
+      </div>
+    `;
+
+    backdrop.classList.add('active');
+
+    const previewElem = backdrop.querySelector('#button-preview-elem');
+    const previewContent = backdrop.querySelector('#button-preview-content');
+    const labelInp = backdrop.querySelector('#button-label-input');
+    const arrowCheck = backdrop.querySelector('#button-arrow-checkbox');
+    const urlInp = backdrop.querySelector('#button-url-input');
+
+    let activeIcon = currentIcon;
+    let activeTheme = '';
+
+    function updateBtnPreview() {
+      const text = labelInp.value.trim();
+      const arrow = arrowCheck.checked ? ' →' : '';
+      const iconStr = activeIcon ? `${activeIcon} ` : '';
+      previewContent.textContent = `${iconStr}${text}${arrow}`;
+    }
+
+    labelInp.addEventListener('input', updateBtnPreview);
+    arrowCheck.addEventListener('change', updateBtnPreview);
+
+    // Icon chips
+    backdrop.querySelectorAll('[data-btn-icon]').forEach(chip => {
+      chip.addEventListener('click', () => {
+        backdrop.querySelectorAll('[data-btn-icon]').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        activeIcon = chip.getAttribute('data-btn-icon');
+        updateBtnPreview();
+      });
+    });
+
+    // Quick URLs
+    backdrop.querySelectorAll('[data-quick-url]').forEach(btnQuick => {
+      btnQuick.addEventListener('click', () => {
+        urlInp.value = btnQuick.getAttribute('data-quick-url');
+      });
+    });
+
+    // Theme chips
+    backdrop.querySelectorAll('#button-style-presets .style-preset-btn').forEach(preset => {
+      preset.addEventListener('click', () => {
+        backdrop.querySelectorAll('#button-style-presets .style-preset-btn').forEach(p => p.classList.remove('active'));
+        preset.classList.add('active');
+        activeTheme = preset.getAttribute('data-theme');
+        previewElem.className = 'btn-hero-action ' + activeTheme;
+      });
+    });
+
+    // Apply button
+    backdrop.querySelector('#btn-apply-button-custom').addEventListener('click', () => {
+      const text = labelInp.value.trim();
+      const arrow = arrowCheck.checked ? ' →' : '';
+      const iconStr = activeIcon ? `${activeIcon} ` : '';
+      const newUrl = urlInp.value.trim() || '#';
+
+      btn.setAttribute('href', newUrl);
+      if (newUrl.startsWith('https://wa.me')) {
+        btn.setAttribute('target', '_blank');
+        btn.setAttribute('rel', 'noopener');
+      }
+
+      if (activeTheme) {
+        btn.className = 'btn-hero-action ' + activeTheme;
+      }
+
+      btn.innerHTML = `<span>${iconStr}${text}</span>${arrow}`;
+      backdrop.classList.remove('active');
+      setupButtonControls();
+      showToast('⏳ Saving button changes live to website...');
+      savePageToFile();
+      showToast('✅ Button updated & saved live to website!');
+    });
+
+    // Delete button
+    backdrop.querySelector('#btn-delete-this-button').addEventListener('click', () => {
+      if (confirm('Are you sure you want to delete this button?')) {
+        btn.remove();
+        backdrop.classList.remove('active');
+        showToast('⏳ Removing button...');
+        savePageToFile();
+        showToast('🗑️ Button removed & saved live to website!');
+      }
+    });
+
+    // Close handlers
+    const closeFn = () => backdrop.classList.remove('active');
+    backdrop.querySelector('#btn-btn-close').addEventListener('click', closeFn);
+    backdrop.addEventListener('click', (e) => { if (e.target === backdrop) closeFn(); });
+  }
+
   function setupHeroControls() {
     const hero = document.querySelector('.noody-hero-slider');
     if (!hero) return;
@@ -577,11 +1747,157 @@
     }
   }
 
+  // NAV LINKS CUSTOMIZATION & DELETION
+  function setupNavControls() {
+    // 1. Setup Delete Buttons on all .nav-link
+    document.querySelectorAll('.site-nav .nav-link').forEach(link => {
+      if (!link.querySelector('.noody-nav-delete-btn')) {
+        const delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.className = 'noody-nav-delete-btn';
+        delBtn.innerHTML = '✕';
+        delBtn.title = 'Delete this menu item';
+        delBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const name = link.textContent.replace('✕', '').trim();
+          if (confirm(`Do you want to delete menu link "${name}"?`)) {
+            link.remove();
+            showToast(`⏳ Removing menu link...`);
+            savePageToFile();
+            showToast(`🗑️ Menu link "${name}" deleted & saved live!`);
+          }
+        });
+        link.style.position = 'relative';
+        link.appendChild(delBtn);
+
+        // Remove data-i18n on edit so translation table doesn't overwrite user changes
+        link.addEventListener('input', () => {
+          link.removeAttribute('data-i18n');
+        });
+
+        // Double click to change link URL
+        link.addEventListener('dblclick', (e) => {
+          if (!isEditing) return;
+          e.preventDefault();
+          e.stopPropagation();
+          const currentHref = link.getAttribute('href') || '#';
+          const newHref = prompt('Edit link destination URL (e.g. islands.html, services.html, #):', currentHref);
+          if (newHref !== null && newHref.trim()) {
+            link.setAttribute('href', newHref.trim());
+            showToast(`🔗 Link URL updated to "${newHref.trim()}"! Click "Save Changes" to save.`);
+          }
+        });
+      }
+    });
+
+    // 2. Add Nav Link button in .site-nav
+    const nav = document.querySelector('.site-nav');
+    if (nav && !nav.querySelector('.noody-add-nav-btn')) {
+      const addBtn = document.createElement('button');
+      addBtn.type = 'button';
+      addBtn.className = 'noody-add-nav-btn';
+      addBtn.innerHTML = '➕ Add Link';
+      addBtn.title = 'Add a new menu link to header';
+      addBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const linkText = prompt('Enter title for new menu link (e.g. Packages, Offers, Blog):');
+        if (linkText && linkText.trim()) {
+          const linkUrl = prompt('Enter link URL (e.g. packages.html, #services-section, #):', '#') || '#';
+          const newLink = document.createElement('a');
+          newLink.href = linkUrl.trim();
+          newLink.className = 'nav-link';
+          newLink.textContent = linkText.trim();
+          newLink.setAttribute('contenteditable', 'true');
+          newLink.setAttribute('spellcheck', 'false');
+          nav.insertBefore(newLink, addBtn);
+          setupNavControls();
+          showToast(`⏳ Saving new menu link...`);
+          savePageToFile();
+          showToast(`✅ Menu link "${linkText.trim()}" added & saved live!`);
+        }
+      });
+      nav.appendChild(addBtn);
+    }
+  }
+
+  // FOOTER LINKS CUSTOMIZATION & DELETION
+  function setupFooterControls() {
+    document.querySelectorAll('.footer-links li a, .footer-legal-links a').forEach(link => {
+      const parent = link.parentElement;
+      if (!parent.querySelector('.noody-nav-delete-btn')) {
+        const delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.className = 'noody-nav-delete-btn';
+        delBtn.innerHTML = '✕';
+        delBtn.title = 'Delete this link';
+        delBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const name = link.textContent.trim();
+          if (confirm(`Delete footer link "${name}"?`)) {
+            if (parent.tagName === 'LI') {
+              parent.remove();
+            } else {
+              link.remove();
+            }
+            showToast(`🗑️ Footer link "${name}" deleted! Click "Save Changes" to apply.`);
+          }
+        });
+        parent.style.position = 'relative';
+        parent.appendChild(delBtn);
+
+        link.addEventListener('input', () => {
+          link.removeAttribute('data-i18n');
+        });
+      }
+    });
+  }
+
+  // SECTION DELETION (DELETE ENTIRE SECTION)
+  function setupSectionControls() {
+    document.querySelectorAll('section, footer').forEach(sec => {
+      if (!sec.querySelector('.noody-delete-section-btn')) {
+        let label = 'Section';
+        if (sec.id === 'islands-section') label = 'Islands Section';
+        else if (sec.id === 'services-section') label = 'Services Section';
+        else if (sec.id === 'products-section') label = 'Products Section';
+        else if (sec.id === 'how-it-works') label = 'How It Works Section';
+        else if (sec.classList.contains('feedback-section')) label = 'Feedback Section';
+        else if (sec.classList.contains('noody-hero-slider')) label = 'Hero Slider Section';
+        else if (sec.tagName === 'FOOTER') label = 'Footer';
+
+        const delSecBtn = document.createElement('button');
+        delSecBtn.type = 'button';
+        delSecBtn.className = 'noody-delete-section-btn';
+        delSecBtn.innerHTML = `🗑️ Delete ${label}`;
+        delSecBtn.title = `Completely delete this ${label}`;
+        delSecBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (confirm(`Are you sure you want to completely delete "${label}" from this page?`)) {
+            sec.remove();
+            showToast(`🗑️ "${label}" deleted! Click "Save Changes" to apply.`);
+          }
+        });
+        sec.style.position = 'relative';
+        sec.appendChild(delSecBtn);
+      }
+    });
+  }
+
   function enableContentEditable() {
     EDITABLE_SELECTORS.forEach(selector => {
       document.querySelectorAll(selector).forEach(el => {
         el.setAttribute('contenteditable', 'true');
         el.setAttribute('spellcheck', 'false');
+        if (!el._hasI18nCleaner) {
+          el._hasI18nCleaner = true;
+          el.addEventListener('input', () => {
+            el.removeAttribute('data-i18n');
+          });
+        }
       });
     });
   }
@@ -605,7 +1921,7 @@
       reader.onload = async (e) => {
         const base64 = e.target.result;
         try {
-          const res = await fetch('/api/upload-image', {
+          const res = await fetch(`${API_BASE}/api/upload-image`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ filename: file.name, base64: base64 })
@@ -1085,7 +2401,241 @@
     }
 
     card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    showToast(`✅ "${item.name}" added! Click "💾 Save Changes" (Ctrl+S) to write to file.`);
+    showToast(`⏳ Saving "${item.name}" live to website...`);
+    savePageToFile();
+    showToast(`✅ "${item.name}" added & saved live to website!`);
+  }
+
+  // =========================================================================
+  // EDIT PRODUCT / SERVICE MODAL
+  // =========================================================================
+
+  function openEditItemModal(card) {
+    const modalId = 'noody-edit-item-modal-backdrop';
+    let backdrop = document.getElementById(modalId);
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.id = modalId;
+      backdrop.className = 'noody-modal-backdrop';
+      document.body.appendChild(backdrop);
+    }
+
+    const isService = card.closest('#services-section') !== null;
+    const currentName = card.querySelector('.item-card-title')?.textContent.trim() || '';
+    const currentDesc = card.querySelector('.item-card-desc')?.textContent.trim() || '';
+    const currentIsland = card.getAttribute('data-listing-island') || 'AGATTI';
+    const currentCategory = card.querySelector('.item-category-tag')?.textContent.trim() || '';
+    const currentImg = card.querySelector('.item-card-img')?.src || '';
+    const currentPrice = card.querySelector('.price-value')?.textContent.trim() || '';
+
+    const presets = isService ? SERVICE_PRESETS : PRODUCT_PRESETS;
+
+    backdrop.innerHTML = `
+      <div class="noody-modal" role="dialog" aria-modal="true" style="max-width: 600px;">
+        <div class="noody-modal-header" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);">
+          <div>
+            <h3>✏️ Edit ${isService ? 'Service' : 'Product'}: ${escapeHtml(currentName)}</h3>
+            <div class="noody-modal-subtitle">Update title, island, category, photo, description &amp; pricing</div>
+          </div>
+          <button type="button" class="noody-modal-close" id="noody-edit-item-close">&times;</button>
+        </div>
+
+        <div class="noody-modal-body" style="max-height: 80vh; overflow-y: auto;">
+          <form id="noody-edit-item-form">
+            <div class="form-group">
+              <label>Title / Name *</label>
+              <input type="text" id="edit-item-name" class="form-input" value="${escapeHtml(currentName)}" required>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Listing Kind *</label>
+                <select id="edit-item-kind" class="form-select">
+                  <option value="SERVICE" ${isService ? 'selected' : ''}>🏄 Service / Water Sport</option>
+                  <option value="PRODUCT" ${!isService ? 'selected' : ''}>🥥 Authentic Island Product</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Destination Island *</label>
+                <select id="edit-item-island" class="form-select">
+                  <option value="AGATTI" ${currentIsland === 'AGATTI' ? 'selected' : ''}>Agatti Island</option>
+                  <option value="KADMAT" ${currentIsland === 'KADMAT' ? 'selected' : ''}>Kadmat Island</option>
+                  <option value="KAVARATTI" ${currentIsland === 'KAVARATTI' ? 'selected' : ''}>Kavaratti Island</option>
+                  <option value="KALPENI" ${currentIsland === 'KALPENI' ? 'selected' : ''}>Kalpeni Island</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Category Tag</label>
+              <input type="text" id="edit-item-category" class="form-input" value="${escapeHtml(currentCategory)}" placeholder="e.g. Water Sports, Diving, Organic Produce">
+            </div>
+
+            <div class="form-group">
+              <label>Card Image (Upload Computer Photo or Enter URL) *</label>
+              <div style="display:flex; gap: 8px;">
+                <input type="url" id="edit-item-image" class="form-input" value="${escapeHtml(currentImg)}" required style="flex:1;">
+                <button type="button" id="btn-edit-item-upload-file" class="editor-dock-btn" style="background:#08755c; border-color:#14b8a6; padding: 6px 14px; font-size: 0.8rem; white-space:nowrap;">
+                  📁 Upload Photo
+                </button>
+                <input type="file" id="file-edit-item-upload" accept="image/*" style="display:none;">
+              </div>
+
+              <!-- Quick presets -->
+              <div style="margin-top: 10px;">
+                <span style="font-size:0.75rem; color:#64748b; font-weight:700;">Select from Curated Ocean Presets:</span>
+                <div class="photo-chips-bar" style="margin-top:6px;">
+                  ${presets.map(p => `
+                    <div class="photo-chip ${p.url === currentImg ? 'selected' : ''}" data-url="${p.url}">
+                      <img src="${p.url}" alt="${p.title}">
+                      <span>${p.title}</span>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Description *</label>
+              <textarea id="edit-item-desc" class="form-textarea" required>${escapeHtml(currentDesc)}</textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Price Guide (e.g. ₹1,200 / person or leave blank for enquiry)</label>
+              <input type="text" id="edit-item-price" class="form-input" value="${escapeHtml(currentPrice)}">
+            </div>
+
+            <button type="submit" class="btn-submit-review" style="margin-top: 10px; background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);">
+              ✓ Save &amp; Apply Changes to Card
+            </button>
+          </form>
+        </div>
+      </div>
+    `;
+
+    backdrop.classList.add('active');
+
+    // Preset chips
+    const chips = backdrop.querySelectorAll('.photo-chip');
+    const imgInput = backdrop.querySelector('#edit-item-image');
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        chips.forEach(c => c.classList.remove('selected'));
+        chip.classList.add('selected');
+        imgInput.value = chip.getAttribute('data-url');
+      });
+    });
+
+    // Upload photo
+    const uploadBtn = backdrop.querySelector('#btn-edit-item-upload-file');
+    const fileElem = backdrop.querySelector('#file-edit-item-upload');
+    uploadBtn.addEventListener('click', () => fileElem.click());
+    fileElem.addEventListener('change', async () => {
+      if (fileElem.files && fileElem.files[0]) {
+        uploadBtn.textContent = '⏳ Uploading...';
+        try {
+          const url = await uploadImageFile(fileElem.files[0]);
+          imgInput.value = url;
+          uploadBtn.textContent = '✓ Uploaded!';
+        } catch (err) {
+          uploadBtn.textContent = '📁 Upload Photo';
+        }
+      }
+    });
+
+    // Close
+    const closeBtn = backdrop.querySelector('#noody-edit-item-close');
+    closeBtn.addEventListener('click', () => backdrop.classList.remove('active'));
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) backdrop.classList.remove('active');
+    });
+
+    // Submit
+    const form = backdrop.querySelector('#noody-edit-item-form');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const newName = document.getElementById('edit-item-name').value.trim();
+      const newKind = document.getElementById('edit-item-kind').value;
+      const newIsland = document.getElementById('edit-item-island').value;
+      const newCategory = document.getElementById('edit-item-category').value.trim();
+      const newImg = document.getElementById('edit-item-image').value.trim();
+      const newDesc = document.getElementById('edit-item-desc').value.trim();
+      const newPrice = document.getElementById('edit-item-price').value.trim();
+
+      if (!newName || !newImg || !newDesc) return;
+
+      const islandTitle = newIsland.charAt(0) + newIsland.slice(1).toLowerCase();
+
+      // Update card DOM
+      const titleEl = card.querySelector('.item-card-title');
+      if (titleEl) titleEl.textContent = newName;
+
+      const descEl = card.querySelector('.item-card-desc');
+      if (descEl) descEl.textContent = newDesc;
+
+      const imgEl = card.querySelector('.item-card-img');
+      if (imgEl) imgEl.src = newImg;
+
+      card.setAttribute('data-listing-island', newIsland);
+      const islandBadgeEl = card.querySelector('.item-card-island');
+      if (islandBadgeEl) islandBadgeEl.textContent = islandTitle + ' Island';
+
+      if (newCategory) {
+        card.setAttribute('data-category', newCategory.toLowerCase().replace(/[^a-z0-9]+/g, ''));
+        const tagEl = card.querySelector('.item-category-tag');
+        if (tagEl) tagEl.textContent = newCategory;
+      }
+
+      // Price update
+      let priceBox = card.querySelector('.item-price-info');
+      if (newPrice) {
+        if (!priceBox) {
+          priceBox = document.createElement('div');
+          priceBox.className = 'item-price-info';
+          priceBox.innerHTML = `
+            <span class="price-label">Price Guide</span>
+            <span class="price-value">${escapeHtml(newPrice)}</span>
+          `;
+          const meta = card.querySelector('.item-card-meta');
+          if (meta) meta.insertBefore(priceBox, meta.firstChild);
+        } else {
+          const valEl = priceBox.querySelector('.price-value');
+          if (valEl) valEl.textContent = newPrice;
+        }
+      }
+
+      // Update WhatsApp link
+      const waBtn = card.querySelector('a[data-whatsapp-action]');
+      if (waBtn) {
+        waBtn.setAttribute('data-item-name', newName);
+        waBtn.setAttribute('data-item-kind', newKind);
+        const waText = encodeURIComponent(
+          `Hello NOODY.AI, please share details, availability and the final price.\n` +
+          `${newName}\n` +
+          `Island: ${islandTitle}\n` +
+          `NOODY_SOURCE:WEBSITE\n` +
+          `NOODY_ISLAND:${newIsland}\n` +
+          `NOODY_ITEM:${newKind}:${card.id || 'item'}`
+        );
+        waBtn.href = `https://wa.me/919446944562?text=${waText}`;
+      }
+
+      // Move grid if kind changed
+      const shouldBeInService = newKind === 'SERVICE';
+      const currentlyInService = card.closest('#services-section') !== null;
+      if (shouldBeInService !== currentlyInService) {
+        const targetGrid = shouldBeInService
+          ? document.querySelector('#services-section .items-grid')
+          : document.querySelector('#products-section .items-grid');
+        if (targetGrid) targetGrid.prepend(card);
+      }
+
+      backdrop.classList.remove('active');
+      setupCardControls();
+      showToast(`⏳ Saving "${newName}" live to website...`);
+      await savePageToFile();
+      showToast(`✅ "${newName}" updated & saved live to website!`);
+    });
   }
 
   // =========================================================================
@@ -1110,21 +2660,55 @@
       const revModal = document.getElementById('noody-review-modal-backdrop');
       const imgModal = document.getElementById('noody-image-picker-modal-backdrop');
       const stylerModal = document.getElementById('noody-card-styler-modal-backdrop');
+      const logoModal = document.getElementById('noody-logo-modal-backdrop');
+      const btnModal = document.getElementById('noody-button-modal-backdrop');
+      const iconModal = document.getElementById('noody-icon-modal-backdrop');
+      const htmlModal = document.getElementById('noody-html-modal-backdrop');
       const deleteButtons = Array.from(document.querySelectorAll('.noody-delete-card-btn'));
+      const editButtons = Array.from(document.querySelectorAll('.noody-card-edit-btn'));
       const priceToggleButtons = Array.from(document.querySelectorAll('.noody-price-toggle-btn'));
       const cardStyleBars = Array.from(document.querySelectorAll('.noody-card-style-bar'));
+      const navDeleteButtons = Array.from(document.querySelectorAll('.noody-nav-delete-btn'));
+      const addNavButtons = Array.from(document.querySelectorAll('.noody-add-nav-btn'));
+      const sectionDeleteButtons = Array.from(document.querySelectorAll('.noody-delete-section-btn'));
+      const botCardButtons = Array.from(document.querySelectorAll('.noody-card-bot-btn'));
+      const logoEditButtons = Array.from(document.querySelectorAll('.noody-logo-edit-btn'));
+      const btnEditBadges = Array.from(document.querySelectorAll('.noody-button-edit-badge'));
+      const addHeroButtons = Array.from(document.querySelectorAll('.noody-add-hero-btn'));
+      const botModal = document.getElementById('noody-bot-modal-backdrop');
+      const editModal = document.getElementById('noody-edit-item-modal-backdrop');
+      const textBubble = document.getElementById('noody-text-bubble');
+      const botBadges = Array.from(document.querySelectorAll('.noody-bot-card-badge'));
+      const botLandingBar = document.getElementById('noody-bot-landing-bar');
 
       if (dock) dock.remove();
       if (toast) toast.remove();
       if (heroBtn) heroBtn.remove();
       if (hud) hud.remove();
       if (addModal) addModal.remove();
+      if (editModal) editModal.remove();
       if (revModal) revModal.remove();
       if (imgModal) imgModal.remove();
       if (stylerModal) stylerModal.remove();
+      if (logoModal) logoModal.remove();
+      if (btnModal) btnModal.remove();
+      if (iconModal) iconModal.remove();
+      if (htmlModal) htmlModal.remove();
+      if (botModal) botModal.remove();
+      if (textBubble) textBubble.remove();
+      if (botLandingBar) botLandingBar.remove();
       deleteButtons.forEach(b => b.remove());
+      editButtons.forEach(b => b.remove());
       priceToggleButtons.forEach(b => b.remove());
       cardStyleBars.forEach(b => b.remove());
+      navDeleteButtons.forEach(b => b.remove());
+      addNavButtons.forEach(b => b.remove());
+      sectionDeleteButtons.forEach(b => b.remove());
+      botCardButtons.forEach(b => b.remove());
+      botBadges.forEach(b => b.remove());
+      logoEditButtons.forEach(b => b.remove());
+      btnEditBadges.forEach(b => b.remove());
+      addHeroButtons.forEach(b => b.remove());
 
       // Clone clean document
       const cleanHtml = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
@@ -1135,12 +2719,18 @@
       setupCardControls();
       setupHeroControls();
       setupImageDropHandlers();
+      setupNavControls();
+      setupFooterControls();
+      setupSectionControls();
+      setupLogoControls();
+      setupButtonControls();
+      initInlineTextFormatting();
       enableContentEditable();
 
       let pageName = window.location.pathname.split('/').pop() || 'index.html';
       if (!pageName.endsWith('.html')) pageName = 'index.html';
 
-      const res = await fetch('/api/save-page', {
+      const res = await fetch(`${API_BASE}/api/save-page`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ page: pageName, html: cleanHtml })
@@ -1160,6 +2750,48 @@
     }
   }
 
+  // =========================================================================
+  // PUBLISH LIVE TO PUBLIC GITHUB PAGES (https://brownnoodyai-sketch.github.io/)
+  // =========================================================================
+  async function publishPublicSite() {
+    const pubBtn = document.getElementById('editor-publish-btn');
+    const origText = pubBtn ? pubBtn.innerHTML : '🚀 Publish Public Site';
+    if (pubBtn) {
+      pubBtn.innerHTML = '⏳ Publishing...';
+      pubBtn.disabled = true;
+    }
+
+    showToast('⏳ Publishing live changes to GitHub Pages (https://brownnoodyai-sketch.github.io/)...');
+
+    try {
+      // 1. Ensure page is saved first
+      await savePageToFile();
+
+      // 2. Call publish API
+      const res = await fetch(`${API_BASE}/api/publish-live`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error || 'Publish failed');
+      }
+
+      const data = await res.json();
+      showToast(`🎉 SUCCESS: Website is now LIVE at ${data.publicUrl}! Opening in new tab...`);
+      window.open(data.publicUrl, '_blank');
+    } catch (err) {
+      console.error('[Publish] Error:', err);
+      showToast('❌ Publish failed: ' + err.message, true);
+    } finally {
+      if (pubBtn) {
+        pubBtn.innerHTML = origText;
+        pubBtn.disabled = false;
+      }
+    }
+  }
+
   function initEditorDock() {
     if (document.getElementById('noody-editor-dock')) return;
 
@@ -1167,18 +2799,54 @@
     dock.id = 'noody-editor-dock';
     dock.className = 'noody-editor-dock';
     dock.innerHTML = `
+      <div id="editor-admin-pill" class="editor-badge" style="cursor:pointer; display:inline-flex; align-items:center; gap:6px; background:rgba(20,184,166,0.18); border:1px solid rgba(20,184,166,0.4);" title="Click to verify Admin Email &amp; Auto Avatar">
+        <img id="editor-admin-avatar-img" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" style="width:22px; height:22px; border-radius:50%;" alt="Admin">
+        <span id="editor-admin-name">Admin Access</span>
+      </div>
       <span id="editor-mode-badge" class="editor-badge">👁️ Preview Mode</span>
       <button id="editor-toggle-btn" class="editor-dock-btn">✏️ Edit Page</button>
+      <button id="editor-logo-btn" class="editor-dock-btn" style="display:none; background: #08755c; border-color: #14b8a6;">🏷️ Logo</button>
+      <button id="editor-buttons-btn" class="editor-dock-btn" style="display:none; background: #d97706; border-color: #fbbf24;">⚡ Buttons</button>
       <button id="editor-add-service-btn" class="editor-dock-btn" style="display:none; background: #0284c7; border-color: #38bdf8;">➕ Add Service</button>
-      <button id="editor-add-product-btn" class="editor-dock-btn" style="display:none; background: #d97706; border-color: #fbbf24;">➕ Add Product</button>
+      <button id="editor-add-product-btn" class="editor-dock-btn" style="display:none; background: #059669; border-color: #34d399;">➕ Add Product</button>
       <button id="editor-save-btn" class="editor-dock-btn editor-btn-save" style="display:none;">💾 Save Changes</button>
+      <button id="editor-publish-btn" class="editor-dock-btn" style="display:none; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-color: #34d399; font-weight:800; box-shadow: 0 4px 14px rgba(16,185,129,0.35);" title="Push changes live to public URL https://brownnoodyai-sketch.github.io/">🚀 Publish Public Site</button>
     `;
     document.body.appendChild(dock);
 
     document.getElementById('editor-toggle-btn').addEventListener('click', toggleEditMode);
     document.getElementById('editor-save-btn').addEventListener('click', savePageToFile);
+    document.getElementById('editor-publish-btn').addEventListener('click', publishPublicSite);
     document.getElementById('editor-add-service-btn').addEventListener('click', () => openAddItemModal('SERVICE'));
     document.getElementById('editor-add-product-btn').addEventListener('click', () => openAddItemModal('PRODUCT'));
+    document.getElementById('editor-logo-btn').addEventListener('click', openLogoCustomizerModal);
+    document.getElementById('editor-buttons-btn').addEventListener('click', () => {
+      const firstHeroBtn = document.querySelector('.hero-actions a, .hero-actions button');
+      if (firstHeroBtn) openButtonCustomizerModal(firstHeroBtn);
+    });
+
+    // Admin Email Verification & Auto Photo
+    const adminPill = document.getElementById('editor-admin-pill');
+    if (adminPill) {
+      const storedEmail = localStorage.getItem('noody_admin_email') || 'admin@noody.ai';
+      updateAdminPill(storedEmail);
+
+      adminPill.addEventListener('click', () => {
+        const email = prompt('Enter your admin email to verify access & load your profile photo:', localStorage.getItem('noody_admin_email') || 'admin@noody.ai');
+        if (email && email.trim()) {
+          localStorage.setItem('noody_admin_email', email.trim());
+          updateAdminPill(email.trim());
+          showToast(`👑 Admin access verified & photo loaded for ${email.trim()}!`);
+        }
+      });
+    }
+
+    function updateAdminPill(email) {
+      const img = document.getElementById('editor-admin-avatar-img');
+      const name = document.getElementById('editor-admin-name');
+      if (img) img.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(email)}&backgroundColor=b6e3f4`;
+      if (name) name.textContent = email.split('@')[0];
+    }
 
     window.addEventListener('keydown', (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {

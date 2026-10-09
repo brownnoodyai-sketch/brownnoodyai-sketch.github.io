@@ -13,6 +13,7 @@
   const state = {
     island: localStorage.getItem('noody_island') || DEFAULT_ISLAND,
     lang: localStorage.getItem('noody_lang') || 'en',
+    typeFilter: localStorage.getItem('noody_type_filter') || 'all',
     currentSlide: 0,
     slideInterval: null,
   };
@@ -198,15 +199,33 @@
       card.classList.toggle('active', isSel);
     });
 
-    // Filter Items by Island
+    // Filter Items by Island and count per type
+    let servicesCount = 0;
+    let productsCount = 0;
+
     document.querySelectorAll('[data-listing-island]').forEach(item => {
       const itemIsland = item.getAttribute('data-listing-island');
-      if (itemIsland === islandCode || itemIsland === 'ALL') {
+      const matches = itemIsland === islandCode || itemIsland === 'ALL';
+      const isService = item.closest('#services-section') !== null;
+      if (matches) {
         item.style.display = '';
+        if (isService) servicesCount++;
+        else productsCount++;
       } else {
         item.style.display = 'none';
       }
     });
+
+    // Update Type Filter Count Badges
+    const badgeAll = document.getElementById('count-all-badge');
+    const badgeSrv = document.getElementById('count-services-badge');
+    const badgePrd = document.getElementById('count-products-badge');
+    if (badgeAll) badgeAll.textContent = (servicesCount + productsCount) + ' Items';
+    if (badgeSrv) badgeSrv.textContent = servicesCount + ' Services';
+    if (badgePrd) badgePrd.textContent = productsCount + ' Products';
+
+    // Apply active Type Mode (all / services / products)
+    applyTypeFilter(state.typeFilter || 'all');
 
     // Update dynamic island headers
     document.querySelectorAll('[data-island-title]').forEach(el => {
@@ -215,6 +234,30 @@
 
     // Rebind WhatsApp CTA links
     updateAllWhatsappButtons();
+  }
+
+  // Listing Type Filter (All / Services Only / Products Only)
+  function applyTypeFilter(mode) {
+    state.typeFilter = mode;
+    localStorage.setItem('noody_type_filter', mode);
+
+    document.querySelectorAll('.type-filter-pill').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-type-filter') === mode);
+    });
+
+    const srvSec = document.getElementById('services-section');
+    const prdSec = document.getElementById('products-section');
+
+    if (mode === 'services') {
+      if (srvSec) srvSec.style.display = '';
+      if (prdSec) prdSec.style.display = 'none';
+    } else if (mode === 'products') {
+      if (srvSec) srvSec.style.display = 'none';
+      if (prdSec) prdSec.style.display = '';
+    } else {
+      if (srvSec) srvSec.style.display = '';
+      if (prdSec) prdSec.style.display = '';
+    }
   }
 
   // Multilingual Selector Handler
@@ -336,12 +379,113 @@
     }
   }
 
+  // Handle WhatsApp Bot Deep Link (?item=... or #...)
+  function handleDeepLinkArrival() {
+    const params = new URLSearchParams(window.location.search);
+    const itemId = params.get('item') || window.location.hash.replace(/^#/, '');
+    if (!itemId) return;
+
+    // Search for element
+    let target = document.getElementById(itemId);
+    if (!target) {
+      target = document.querySelector(`[data-item-id="${itemId}"]`)?.closest('.item-card, .island-card');
+    }
+    if (!target) {
+      target = document.querySelector(`.island-card[data-island="${itemId.toUpperCase()}"]`);
+    }
+    if (!target) {
+      // Try search by slug or name
+      const cleanSlug = itemId.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      document.querySelectorAll('.item-card, .island-card').forEach(el => {
+        const title = el.querySelector('.item-card-title, .island-name')?.textContent || '';
+        const elSlug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        if (elSlug.includes(cleanSlug) || cleanSlug.includes(elSlug)) {
+          target = el;
+        }
+      });
+    }
+
+    if (!target) return;
+
+    // 1. If target belongs to an island, select that island!
+    const targetIsland = target.getAttribute('data-listing-island') || target.getAttribute('data-island');
+    if (targetIsland && ISLANDS[targetIsland]) {
+      selectIsland(targetIsland);
+    }
+
+    // 2. Unhide target if category filter was active
+    document.querySelectorAll('.filter-pill').forEach(p => {
+      p.classList.toggle('active', p.getAttribute('data-filter') === 'all');
+    });
+    target.style.display = '';
+
+    // 3. Highlight Card with Spotlight
+    target.classList.add('noody-bot-focused-card');
+    if (!target.querySelector('.noody-bot-card-badge')) {
+      const badge = document.createElement('div');
+      badge.className = 'noody-bot-card-badge';
+      badge.innerHTML = '🤖 WhatsApp Bot Selected · Direct Details';
+      target.appendChild(badge);
+    }
+
+    // 4. Smooth scroll
+    setTimeout(() => {
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 350);
+
+    // 5. Show Floating Landing Bar
+    showBotLandingBar(target);
+  }
+
+  function showBotLandingBar(card) {
+    let bar = document.getElementById('noody-bot-landing-bar');
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.id = 'noody-bot-landing-bar';
+      bar.className = 'noody-bot-landing-bar';
+      document.body.appendChild(bar);
+    }
+
+    const title = card.querySelector('.item-card-title, .island-name')?.textContent.trim() || 'Selected Item';
+    const tag = card.querySelector('.item-category-tag, .island-badge')?.textContent.trim() || 'Lakshadweep Experience';
+    const price = card.querySelector('.price-value')?.textContent.trim() || 'Custom Package';
+    const imgEl = card.querySelector('img');
+    const imgSrc = imgEl ? imgEl.src : (card.style.backgroundImage.replace(/url\(['"]?(.*?)['"]?\)/i, '$1') || 'assets/uploads/1791471201158_images__5_.jpg');
+    
+    // Find WhatsApp link
+    const waLink = card.querySelector('a[data-whatsapp-action]')?.href || makeWhatsappLink({ itemName: title });
+
+    bar.innerHTML = `
+      <img src="${imgSrc}" alt="${title}" class="bot-landing-thumb">
+      <div class="bot-landing-info">
+        <div class="bot-landing-tag">🤖 WhatsApp Bot Item · ${tag}</div>
+        <div class="bot-landing-title">${title}</div>
+        <div class="bot-landing-price">${price}</div>
+      </div>
+      <div class="bot-landing-actions">
+        <a href="${waLink}" class="btn-bot-wa-direct" target="_blank" rel="noopener">
+          <span>💬 Book / Enquire</span>
+        </a>
+        <button type="button" class="btn-bot-close" title="Close" aria-label="Close">✕</button>
+      </div>
+    `;
+
+    setTimeout(() => bar.classList.add('show'), 600);
+
+    bar.querySelector('.btn-bot-close').addEventListener('click', () => {
+      bar.classList.remove('show');
+    });
+  }
+
   // DOM Init
   document.addEventListener('DOMContentLoaded', () => {
     initHeroSlider();
     setLanguage(state.lang);
     selectIsland(state.island);
     checkBackendHealth();
+    handleDeepLinkArrival();
+
+    window.addEventListener('hashchange', handleDeepLinkArrival);
 
     // Bind island card click
     document.querySelectorAll('.island-card').forEach(card => {
@@ -377,12 +521,45 @@
         });
       });
     });
+
+    // Listing Type Filter Pills (All / Services Only / Products Only)
+    document.querySelectorAll('.type-filter-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const mode = btn.getAttribute('data-type-filter');
+        applyTypeFilter(mode);
+        const targetSec = mode === 'products' ? document.getElementById('products-section') : document.getElementById('services-section');
+        if (targetSec) {
+          targetSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Hero Conversion Action Buttons
+    const btnHeroServices = document.getElementById('btn-hero-services');
+    if (btnHeroServices) {
+      btnHeroServices.addEventListener('click', (e) => {
+        e.preventDefault();
+        applyTypeFilter('services');
+        document.getElementById('services-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+
+    const btnHeroProducts = document.getElementById('btn-hero-products');
+    if (btnHeroProducts) {
+      btnHeroProducts.addEventListener('click', (e) => {
+        e.preventDefault();
+        applyTypeFilter('products');
+        document.getElementById('products-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
   });
 
   window.Noody = {
     selectIsland,
     setLanguage,
     makeWhatsappLink,
+    handleDeepLinkArrival,
     state,
   };
 })();
+
