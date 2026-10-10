@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="assets/css/site.css">
   <link rel="stylesheet" href="assets/css/reviews.css">
   <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;circle cx='50' cy='50' r='46' fill='%2308755c'/&gt;&lt;text y='65' x='26' font-size='42' fill='white' font-family='sans-serif' font-weight='bold'&gt;N&lt;/text&gt;&lt;/svg&gt;">
-<link rel="stylesheet" href="assets/css/visual-editor.css"><link rel="stylesheet" href="assets/css/visual-editor.css"><link rel="stylesheet" href="assets/css/visual-editor.css"><link rel="stylesheet" href="assets/css/visual-editor.css"><link rel="stylesheet" href="assets/css/visual-editor.css"></head>
+<link rel="stylesheet" href="assets/css/visual-editor.css"><link rel="stylesheet" href="assets/css/visual-editor.css"><link rel="stylesheet" href="assets/css/visual-editor.css"><link rel="stylesheet" href="assets/css/visual-editor.css"><link rel="stylesheet" href="assets/css/visual-editor.css"><link rel="stylesheet" href="assets/css/visual-editor.css"></head>
 <body class="">
 
   <!-- ==========================================================================
@@ -15,7 +15,7 @@
        ========================================================================== -->
   <header class="noody-header">
     <div class="header-container">
-      <div class="brand-wrapper">
+      <div class="brand-wrapper" style="position: relative;">
         <a href="index.html" class="noody-wordmark" aria-label="NOODY.AI Home">
           <svg class="noody-logo-symbol" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="50" cy="50" r="44" stroke="#14b8a6" stroke-width="7" stroke-dasharray="14 7"></circle>
@@ -89,13 +89,13 @@
       <h1 class="hero-title" data-i18n="heroTitle">A little island. A world of possibilities.</h1>
       <p class="hero-description" data-i18n="heroDesc">Select an island, discover verified water sports, authentic local produce, and continue your enquiry directly on WhatsApp with official NOODY operations.</p>
       <div class="hero-actions">
-        <a href="#services-section" class="btn-hero-action btn-hero-services" id="btn-hero-services">
+        <a href="#services-section" class="btn-hero-action btn-hero-services" id="btn-hero-services" style="position: relative;">
           <span>🏄 Book Experiences</span> →
         </a>
-        <a href="#products-section" class="btn-hero-action btn-hero-products" id="btn-hero-products">
+        <a href="#products-section" class="btn-hero-action btn-hero-products" id="btn-hero-products" style="position: relative;">
           <span>🥥 Buy Island Products</span> →
         </a>
-        <a href="https://wa.me/919446944562" class="btn-hero-action btn-hero-whatsapp" target="_blank" rel="noopener">
+        <a href="https://wa.me/919446944562" class="btn-hero-action btn-hero-whatsapp" target="_blank" rel="noopener" style="position: relative;">
           <span>💬 WhatsApp Enquiry</span>
         </a>
       </div>
@@ -131,7 +131,7 @@
        ========================================================================== -->
   <section id="islands-section" class="island-journey-section" style="position: relative;">
     <div class="section-header section-header-compact">
-      <h2 class="section-title" data-i18n="allIslands">Select Island Destination</h2>
+      <h2 class="section-title" data-i18n="allIslands">Select Island</h2>
     </div>
 
     <div class="island-cards-grid">
@@ -148,7 +148,7 @@
       </div>
 
       <!-- Kadmat (Active) -->
-      <div class="island-card" data-island="KADMAT" style="background-image: url(&quot;assets/uploads/1791475508888_ChatGPT_Image_Oct_8__2026__08_.png&quot;); background-position: center center; --card-blur: 4px; position: relative; background-size: cover;" id="island-kadmat">
+      <div class="island-card active" data-island="KADMAT" style="background-image: url(&quot;assets/uploads/1791475508888_ChatGPT_Image_Oct_8__2026__08_.png&quot;); background-position: center center; --card-blur: 4px; position: relative; background-size: cover;" id="island-kadmat">
         <div class="card-text-box">
           <span class="island-badge badge-live">Active Destination</span>
           <h3 class="island-name">Kadmat</h3>
@@ -172,7 +172,7 @@
       </div>
 
       <!-- Kalpeni (Active) -->
-      <div class="island-card active" data-island="KALPENI" style="background-image: url(&quot;assets/uploads/1791475540028_ChatGPT_Image_Oct_8__2026__08_.png&quot;); background-position: center center; --card-blur: 5px; position: relative; background-size: cover;" id="island-kalpeni">
+      <div class="island-card" data-island="KALPENI" style="background-image: url(&quot;assets/uploads/1791475540028_ChatGPT_Image_Oct_8__2026__08_.png&quot;); background-position: center center; --card-blur: 5px; position: relative; background-size: cover;" id="island-kalpeni">
         <div class="card-text-box">
           <span class="island-badge badge-live">Active Destination</span>
           <h3 class="island-name">Kalpeni</h3>
@@ -193,17 +193,17 @@
       <button type="button" class="type-filter-pill active" data-type-filter="all" id="btn-tab-all">
         <span class="pill-icon">✨</span>
         <span class="pill-text">All Listings</span>
-        <span class="pill-count-tag" id="count-all-badge">All</span>
+        <span class="pill-count-tag" id="count-all-badge">2 Items</span>
       </button>
       <button type="button" class="type-filter-pill" data-type-filter="services" id="btn-tab-services">
         <span class="pill-icon">🏄</span>
         <span class="pill-text">Services Only</span>
-        <span class="pill-count-tag" id="count-services-badge">Services</span>
+        <span class="pill-count-tag" id="count-services-badge">1 Services</span>
       </button>
       <button type="button" class="type-filter-pill" data-type-filter="products" id="btn-tab-products">
         <span class="pill-icon">🥥</span>
         <span class="pill-text">Products Only</span>
-        <span class="pill-count-tag" id="count-products-badge">Products</span>
+        <span class="pill-count-tag" id="count-products-badge">1 Products</span>
       </button>
     </div>
   </div>
@@ -213,7 +213,7 @@
        ========================================================================== -->
   <section class="listings-section" id="services-section" style="position: relative;">
     <div class="section-header section-header-compact">
-      <h2 class="section-title"><span data-i18n="verifiedServices">Verified Services &amp; Experiences</span> · <span data-island-title="">Kalpeni</span></h2>
+      <h2 class="section-title"><span data-i18n="verifiedServices">Services &amp; Experiences</span> · <span data-island-title="">Kadmat</span></h2>
     </div>
 
     <!-- Category filter pills -->
@@ -242,7 +242,7 @@
         <button type="button" class="btn-card-reviews">⭐ Reviews &amp; Write</button>
       </div><div class="item-card-meta">
             
-            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AClear%20Lagoon%20Kayaking%0AIsland%3A%20Kalpeni%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKALPENI%0ANOODY_ITEM%3ASERVICE%3Asrv-agatti-01%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html%3Fitem%3Dsrv-kalpeni-01" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Clear Lagoon Kayaking" data-item-kind="SERVICE" data-item-id="srv-agatti-01">
+            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AClear%20Lagoon%20Kayaking%0AIsland%3A%20Kadmat%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKADMAT%0ANOODY_ITEM%3ASERVICE%3Asrv-agatti-01%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Clear Lagoon Kayaking" data-item-kind="SERVICE" data-item-id="srv-agatti-01">
               <span>WhatsApp</span> →
             </a>
           </div>
@@ -266,7 +266,7 @@
         <button type="button" class="btn-card-reviews">⭐ Reviews &amp; Write</button>
       </div><div class="item-card-meta">
             
-            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0ADiscover%20Scuba%20Diving%20(PADI)%0AIsland%3A%20Kalpeni%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKALPENI%0ANOODY_ITEM%3ASERVICE%3Asrv-agatti-02%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html%3Fitem%3Dsrv-kalpeni-01" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Discover Scuba Diving (PADI)" data-item-kind="SERVICE" data-item-id="srv-agatti-02">
+            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0ADiscover%20Scuba%20Diving%20(PADI)%0AIsland%3A%20Kadmat%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKADMAT%0ANOODY_ITEM%3ASERVICE%3Asrv-agatti-02%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Discover Scuba Diving (PADI)" data-item-kind="SERVICE" data-item-id="srv-agatti-02">
               <span>WhatsApp</span> →
             </a>
           </div>
@@ -290,7 +290,7 @@
         <button type="button" class="btn-card-reviews">⭐ Reviews &amp; Write</button>
       </div><div class="item-card-meta">
             
-            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AGlass%20Bottom%20Coral%20Tour%0AIsland%3A%20Kalpeni%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKALPENI%0ANOODY_ITEM%3ASERVICE%3Asrv-agatti-03%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html%3Fitem%3Dsrv-kalpeni-01" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Glass Bottom Coral Tour" data-item-kind="SERVICE" data-item-id="srv-agatti-03">
+            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AGlass%20Bottom%20Coral%20Tour%0AIsland%3A%20Kadmat%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKADMAT%0ANOODY_ITEM%3ASERVICE%3Asrv-agatti-03%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Glass Bottom Coral Tour" data-item-kind="SERVICE" data-item-id="srv-agatti-03">
               <span>WhatsApp</span> →
             </a>
           </div>
@@ -314,7 +314,7 @@
         <button type="button" class="btn-card-reviews">⭐ Reviews &amp; Write</button>
       </div><div class="item-card-meta">
             
-            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0ACoral%20Breeze%20Homestay%0AIsland%3A%20Kalpeni%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKALPENI%0ANOODY_ITEM%3ASERVICE%3Asrv-agatti-04%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html%3Fitem%3Dsrv-kalpeni-01" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Coral Breeze Homestay" data-item-kind="SERVICE" data-item-id="srv-agatti-04">
+            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0ACoral%20Breeze%20Homestay%0AIsland%3A%20Kadmat%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKADMAT%0ANOODY_ITEM%3ASERVICE%3Asrv-agatti-04%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Coral Breeze Homestay" data-item-kind="SERVICE" data-item-id="srv-agatti-04">
               <span>WhatsApp</span> →
             </a>
           </div>
@@ -322,7 +322,7 @@
       </div>
 
       <!-- Item 5: Kadmat Reef Diving (Kadmat) -->
-      <div class="item-card" data-listing-island="KADMAT" data-category="watersports" style="position: relative; display: none;" id="srv-kadmat-01">
+      <div class="item-card" data-listing-island="KADMAT" data-category="watersports" style="position: relative;" id="srv-kadmat-01">
         <div class="item-card-media">
           <img class="item-card-img" src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="Kadmat Deep Reef Dive" loading="lazy">
           <span class="item-category-tag">Diving</span>
@@ -341,7 +341,7 @@
               <span class="price-label">Price Guide</span>
               <span class="price-value">₹4,200 / dive</span>
             </div>
-            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AKadmat%20Deep%20Reef%20Safari%0AIsland%3A%20Kalpeni%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKALPENI%0ANOODY_ITEM%3ASERVICE%3Asrv-kadmat-01%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html%3Fitem%3Dsrv-kalpeni-01" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Kadmat Deep Reef Safari" data-item-kind="SERVICE" data-item-id="srv-kadmat-01">
+            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AKadmat%20Deep%20Reef%20Safari%0AIsland%3A%20Kadmat%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKADMAT%0ANOODY_ITEM%3ASERVICE%3Asrv-kadmat-01%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Kadmat Deep Reef Safari" data-item-kind="SERVICE" data-item-id="srv-kadmat-01">
               <span>WhatsApp</span> →
             </a>
           </div>
@@ -368,7 +368,7 @@
               <span class="price-label">Price Guide</span>
               <span class="price-value">₹950 / person</span>
             </div>
-            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AKavaratti%20Dolphin%20Safari%0AIsland%3A%20Kalpeni%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKALPENI%0ANOODY_ITEM%3ASERVICE%3Asrv-kavaratti-01%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html%3Fitem%3Dsrv-kalpeni-01" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Kavaratti Dolphin Safari" data-item-kind="SERVICE" data-item-id="srv-kavaratti-01">
+            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AKavaratti%20Dolphin%20Safari%0AIsland%3A%20Kadmat%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKADMAT%0ANOODY_ITEM%3ASERVICE%3Asrv-kavaratti-01%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Kavaratti Dolphin Safari" data-item-kind="SERVICE" data-item-id="srv-kavaratti-01">
               <span>WhatsApp</span> →
             </a>
           </div>
@@ -376,7 +376,7 @@
       </div>
 
       <!-- Item 7: Kalpeni Storm Bank Expedition (Kalpeni) -->
-      <div class="item-card noody-bot-focused-card" data-listing-island="KALPENI" data-category="watersports" style="position: relative;" id="srv-kalpeni-01">
+      <div class="item-card noody-bot-focused-card" data-listing-island="KALPENI" data-category="watersports" style="position: relative; display: none;" id="srv-kalpeni-01">
         <div class="item-card-media">
           <img class="item-card-img" src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="Kalpeni Storm Bank Tour" loading="lazy">
           <span class="item-category-tag">Lagoon Tour</span>
@@ -392,7 +392,7 @@
         <button type="button" class="btn-card-reviews">⭐ Reviews &amp; Write</button>
       </div><div class="item-card-meta">
             
-            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AKalpeni%20Islet%20Tour%0AIsland%3A%20Kalpeni%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKALPENI%0ANOODY_ITEM%3ASERVICE%3Asrv-kalpeni-01%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html%3Fitem%3Dsrv-kalpeni-01" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Kalpeni Islet Tour" data-item-kind="SERVICE" data-item-id="srv-kalpeni-01">
+            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AKalpeni%20Islet%20Tour%0AIsland%3A%20Kadmat%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKADMAT%0ANOODY_ITEM%3ASERVICE%3Asrv-kalpeni-01%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Kalpeni Islet Tour" data-item-kind="SERVICE" data-item-id="srv-kalpeni-01">
               <span>WhatsApp</span> →
             </a>
           </div>
@@ -406,7 +406,7 @@
        ========================================================================== -->
   <section class="listings-section" id="products-section" style="background-color: var(--noody-sand-warm); position: relative;">
     <div class="section-header section-header-compact">
-      <h2 class="section-title"><span data-i18n="localProduce">Island Products</span> · <span data-island-title="">Kalpeni</span></h2>
+      <h2 class="section-title"><span data-i18n="localProduce">Island Products</span> · <span data-island-title="">Kadmat</span></h2>
     </div>
 
     <div class="items-grid">
@@ -427,7 +427,7 @@
         <button type="button" class="btn-card-reviews">⭐ Reviews &amp; Write</button>
       </div><div class="item-card-meta">
             
-            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0ATraditional%20Smoked%20Tuna%20Mas%0AIsland%3A%20Kalpeni%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKALPENI%0ANOODY_ITEM%3APRODUCT%3Aprd-agatti-01%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html%3Fitem%3Dsrv-kalpeni-01" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Traditional Smoked Tuna Mas" data-item-kind="PRODUCT" data-item-id="prd-agatti-01">
+            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0ATraditional%20Smoked%20Tuna%20Mas%0AIsland%3A%20Kadmat%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKADMAT%0ANOODY_ITEM%3APRODUCT%3Aprd-agatti-01%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Traditional Smoked Tuna Mas" data-item-kind="PRODUCT" data-item-id="prd-agatti-01">
               <span>WhatsApp</span> →
             </a>
           </div>
@@ -451,7 +451,7 @@
         <button type="button" class="btn-card-reviews">⭐ Reviews &amp; Write</button>
       </div><div class="item-card-meta">
             
-            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AIsland%20Spicy%20Tuna%20Pickle%0AIsland%3A%20Kalpeni%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKALPENI%0ANOODY_ITEM%3APRODUCT%3Aprd-agatti-02%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html%3Fitem%3Dsrv-kalpeni-01" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Island Spicy Tuna Pickle" data-item-kind="PRODUCT" data-item-id="prd-agatti-02">
+            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AIsland%20Spicy%20Tuna%20Pickle%0AIsland%3A%20Kadmat%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKADMAT%0ANOODY_ITEM%3APRODUCT%3Aprd-agatti-02%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Island Spicy Tuna Pickle" data-item-kind="PRODUCT" data-item-id="prd-agatti-02">
               <span>WhatsApp</span> →
             </a>
           </div>
@@ -475,7 +475,7 @@
         <button type="button" class="btn-card-reviews">⭐ Reviews &amp; Write</button>
       </div><div class="item-card-meta">
             
-            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0ACarved%20Coconut%20Shell%20Bowls%0AIsland%3A%20Kalpeni%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKALPENI%0ANOODY_ITEM%3APRODUCT%3Aprd-agatti-03%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html%3Fitem%3Dsrv-kalpeni-01" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Carved Coconut Shell Bowls" data-item-kind="PRODUCT" data-item-id="prd-agatti-03">
+            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0ACarved%20Coconut%20Shell%20Bowls%0AIsland%3A%20Kadmat%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKADMAT%0ANOODY_ITEM%3APRODUCT%3Aprd-agatti-03%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Carved Coconut Shell Bowls" data-item-kind="PRODUCT" data-item-id="prd-agatti-03">
               <span>WhatsApp</span> →
             </a>
           </div>
@@ -483,7 +483,7 @@
       </div>
 
       <!-- Product 4: Kadmat Coconut Jaggery (Kadmat) -->
-      <div class="item-card" data-listing-island="KADMAT" data-category="craft" style="position: relative; display: none;" id="prd-kadmat-01">
+      <div class="item-card" data-listing-island="KADMAT" data-category="craft" style="position: relative;" id="prd-kadmat-01">
         <div class="item-card-media">
           <img class="item-card-img" src="https://images.unsplash.com/photo-1599940824399-b87987ceb72a?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="Kadmat Palm Jaggery" loading="lazy">
           <span class="item-category-tag">Organic Food</span>
@@ -502,7 +502,7 @@
               <span class="price-label">Price Guide</span>
               <span class="price-value">₹320 / 500g</span>
             </div>
-            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AKadmat%20Palm%20Jaggery%0AIsland%3A%20Kalpeni%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKALPENI%0ANOODY_ITEM%3APRODUCT%3Aprd-kadmat-01%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html%3Fitem%3Dsrv-kalpeni-01" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Kadmat Palm Jaggery" data-item-kind="PRODUCT" data-item-id="prd-kadmat-01">
+            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AKadmat%20Palm%20Jaggery%0AIsland%3A%20Kadmat%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKADMAT%0ANOODY_ITEM%3APRODUCT%3Aprd-kadmat-01%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Kadmat Palm Jaggery" data-item-kind="PRODUCT" data-item-id="prd-kadmat-01">
               <span>WhatsApp</span> →
             </a>
           </div>
@@ -529,7 +529,7 @@
               <span class="price-label">Price Guide</span>
               <span class="price-value">₹240 / 200g</span>
             </div>
-            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AKavaratti%20Tuna%20Crisps%0AIsland%3A%20Kalpeni%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKALPENI%0ANOODY_ITEM%3APRODUCT%3Aprd-kavaratti-01%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html%3Fitem%3Dsrv-kalpeni-01" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Kavaratti Tuna Crisps" data-item-kind="PRODUCT" data-item-id="prd-kavaratti-01">
+            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AKavaratti%20Tuna%20Crisps%0AIsland%3A%20Kadmat%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKADMAT%0ANOODY_ITEM%3APRODUCT%3Aprd-kavaratti-01%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Kavaratti Tuna Crisps" data-item-kind="PRODUCT" data-item-id="prd-kavaratti-01">
               <span>WhatsApp</span> →
             </a>
           </div>
@@ -537,7 +537,7 @@
       </div>
 
       <!-- Product 6: Kalpeni Palm Nectar Meera Halwa (Kalpeni) -->
-      <div class="item-card" data-listing-island="KALPENI" data-category="craft" style="position: relative;" id="prd-kalpeni-01">
+      <div class="item-card" data-listing-island="KALPENI" data-category="craft" style="position: relative; display: none;" id="prd-kalpeni-01">
         <div class="item-card-media">
           <img class="item-card-img" src="https://images.unsplash.com/photo-1541832676-9b763b0239ab?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="Kalpeni Palm Nectar Halwa" loading="lazy">
           <span class="item-category-tag">Traditional Sweet</span>
@@ -556,7 +556,7 @@
               <span class="price-label">Price Guide</span>
               <span class="price-value">₹390 / 400g</span>
             </div>
-            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AKalpeni%20Palm%20Halwa%0AIsland%3A%20Kalpeni%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKALPENI%0ANOODY_ITEM%3APRODUCT%3Aprd-kalpeni-01%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html%3Fitem%3Dsrv-kalpeni-01" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Kalpeni Palm Halwa" data-item-kind="PRODUCT" data-item-id="prd-kalpeni-01">
+            <a href="https://wa.me/919446944562?text=Hello%20NOODY.AI%2C%20please%20share%20details%2C%20availability%20and%20the%20final%20price.%0AKalpeni%20Palm%20Halwa%0AIsland%3A%20Kadmat%0ANOODY_SOURCE%3AWEBSITE%0ANOODY_ISLAND%3AKADMAT%0ANOODY_ITEM%3APRODUCT%3Aprd-kalpeni-01%0APage%3A%20http%3A%2F%2F127.0.0.1%3A3000%2Findex.html" class="btn-item-enquire" data-whatsapp-action="" data-item-name="Kalpeni Palm Halwa" data-item-kind="PRODUCT" data-item-id="prd-kalpeni-01">
               <span>WhatsApp</span> →
             </a>
           </div>
