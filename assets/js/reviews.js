@@ -117,8 +117,45 @@
     }
   }
 
+  const ADMIN_PASSCODE = 'admin123';
+
+  function isUserAdmin() {
+    // 1. Local studio server is always admin
+    if (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') {
+      return true;
+    }
+    // 2. URL param ?admin=true or hash #admin
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('admin') === 'true' || window.location.hash === '#admin') {
+      localStorage.setItem('noody_admin_verified', 'true');
+      return true;
+    }
+    // 3. Admin session verified in localStorage
+    if (localStorage.getItem('noody_admin_verified') === 'true') {
+      return true;
+    }
+    // 4. Visual editor active
+    if (document.body.classList.contains('noody-editing')) {
+      return true;
+    }
+    return false;
+  }
+
+  function checkAdminAuth() {
+    if (isUserAdmin()) return true;
+    const pass = prompt('🔒 Admin verification required:\nPlease enter Admin Password to manage reviews:');
+    if (pass === ADMIN_PASSCODE || pass === 'noody' || pass === 'noody2026') {
+      localStorage.setItem('noody_admin_verified', 'true');
+      alert('👑 Admin access verified! You can now edit and delete reviews.');
+      return true;
+    }
+    alert('❌ Unauthorized: Incorrect Admin Password.');
+    return false;
+  }
+
   function deleteReview(itemId, reviewId) {
-    if (!confirm('Are you sure you want to delete this verified review? (Admin action)')) {
+    if (!checkAdminAuth()) return false;
+    if (!confirm('Are you sure you want to permanently delete this verified review? (Admin action)')) {
       return false;
     }
     const deletedIds = getDeletedIds();
@@ -147,6 +184,49 @@
     }
     renderAllCardRatings();
     alert('✅ Review deleted successfully!');
+    return true;
+  }
+
+  function editReview(itemId, reviewId) {
+    if (!checkAdminAuth()) return false;
+    const store = getReviewsStore();
+    const list = store[itemId] || [];
+    const target = list.find(r => r.id === reviewId);
+    if (!target) return false;
+
+    const newText = prompt('✏️ Edit Review Text:', target.text);
+    if (newText === null) return false;
+
+    const newRatingStr = prompt('⭐ Edit Rating (1 to 5 stars):', target.rating || 5);
+    const newRating = parseInt(newRatingStr, 10);
+    if (!isNaN(newRating) && newRating >= 1 && newRating <= 5) {
+      target.rating = newRating;
+    }
+    target.text = newText.trim() || target.text;
+
+    try {
+      const stored = localStorage.getItem('noody_user_reviews');
+      const userReviews = stored ? JSON.parse(stored) : {};
+      if (!userReviews[itemId]) userReviews[itemId] = [];
+      const userIdx = userReviews[itemId].findIndex(r => r.id === reviewId);
+      if (userIdx >= 0) {
+        userReviews[itemId][userIdx] = { ...target };
+      } else {
+        userReviews[itemId].unshift({ ...target, id: 'edited-' + reviewId });
+        const deletedIds = getDeletedIds();
+        deletedIds.push(reviewId);
+        localStorage.setItem('noody_deleted_reviews', JSON.stringify(deletedIds));
+      }
+      localStorage.setItem('noody_user_reviews', JSON.stringify(userReviews));
+    } catch (e) {
+      console.error(e);
+    }
+
+    if (currentActiveItem && currentActiveItem.id === itemId) {
+      renderModalContent(itemId, currentActiveItem.name, currentActiveItem.island);
+    }
+    renderAllCardRatings();
+    alert('✅ Review updated successfully!');
     return true;
   }
 
@@ -445,6 +525,8 @@
     const store = getReviewsStore();
     const reviews = store[itemId] || [];
 
+    const adminActive = isUserAdmin();
+
     document.getElementById('noody-review-modal-title').textContent = itemName;
     document.getElementById('noody-review-modal-subtitle').textContent = (islandName || 'Lakshadweep') + ' · Verified Customer Feedback';
     document.getElementById('noody-review-modal-score').textContent = stats.score;
@@ -474,11 +556,16 @@
               ${r.email ? `<span class="review-email-badge">✉ ${maskEmail(r.email)}</span>` : ''}
             </div>
           </div>
-          <div style="display:flex; align-items:center; gap:8px;">
+          <div style="display:flex; align-items:center; gap:6px;">
             <span class="review-date">${escapeHtml(r.date || 'Recent')}</span>
-            <button type="button" class="btn-review-delete" data-item-id="${itemId}" data-review-id="${r.id}" title="Delete this review (Admin)">
-              🗑️ Delete
-            </button>
+            ${adminActive ? `
+              <button type="button" class="btn-review-edit" data-item-id="${itemId}" data-review-id="${r.id}" title="Edit this review (Admin Only)">
+                ✏️ Edit
+              </button>
+              <button type="button" class="btn-review-delete" data-item-id="${itemId}" data-review-id="${r.id}" title="Delete this review (Admin Only)">
+                🗑️ Delete
+              </button>
+            ` : ''}
           </div>
         </div>
         <div class="stars-gold">${'★'.repeat(r.rating || 5)}${'☆'.repeat(5 - (r.rating || 5))}</div>
@@ -494,16 +581,28 @@
       </div>
     `).join('');
 
-    // Attach delete listeners
-    listContainer.querySelectorAll('.btn-review-delete').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const iId = btn.getAttribute('data-item-id');
-        const rId = btn.getAttribute('data-review-id');
-        deleteReview(iId, rId);
+    // Attach admin listeners only if admin
+    if (adminActive) {
+      listContainer.querySelectorAll('.btn-review-edit').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const iId = btn.getAttribute('data-item-id');
+          const rId = btn.getAttribute('data-review-id');
+          editReview(iId, rId);
+        });
       });
-    });
+
+      listContainer.querySelectorAll('.btn-review-delete').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const iId = btn.getAttribute('data-item-id');
+          const rId = btn.getAttribute('data-review-id');
+          deleteReview(iId, rId);
+        });
+      });
+    }
   }
 
   function escapeHtml(str) {
@@ -589,7 +688,9 @@
     getStats: getStats,
     getReviewsStore: getReviewsStore,
     getAllReviewsList: getAllReviewsList,
-    deleteReview: deleteReview
+    deleteReview: deleteReview,
+    editReview: editReview,
+    isUserAdmin: isUserAdmin
   };
 
   document.addEventListener('DOMContentLoaded', () => {

@@ -476,6 +476,26 @@
   color: #ffffff;
 }
 
+.btn-review-edit {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #86efac;
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  transition: all 0.2s;
+}
+
+.btn-review-edit:hover {
+  background: #166534;
+  color: #ffffff;
+}
+
 /* Prominent Media Dropzone Upload Box */
 .review-upload-zone {
   margin-top: 10px;

@@ -563,13 +563,27 @@
               </div>
             ` : ''}
           </td>
-          <td style="padding:12px 14px; vertical-align:top; text-align:right;">
+          <td style="padding:12px 14px; vertical-align:top; text-align:right; white-space:nowrap;">
+            <button type="button" class="btn-review-edit" data-item-id="${r.itemId}" data-review-id="${r.id}" style="padding:6px 12px; font-size:0.8rem; margin-right:4px;">
+              ✏️ Edit
+            </button>
             <button type="button" class="btn-review-delete" data-item-id="${r.itemId}" data-review-id="${r.id}" style="padding:6px 12px; font-size:0.8rem;">
               🗑️ Delete
             </button>
           </td>
         </tr>
       `).join('');
+
+      tbody.querySelectorAll('.btn-review-edit').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const iId = btn.getAttribute('data-item-id');
+          const rId = btn.getAttribute('data-review-id');
+          if (window.NoodyReviews && window.NoodyReviews.editReview(iId, rId)) {
+            renderAdminReviewsTable(document.getElementById('admin-review-search')?.value || '');
+            addLog(`Admin edited review (${rId}) for ${iId}`, 'info');
+          }
+        });
+      });
 
       tbody.querySelectorAll('.btn-review-delete').forEach(btn => {
         btn.addEventListener('click', () => {
