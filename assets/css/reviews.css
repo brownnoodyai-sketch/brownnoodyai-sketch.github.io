@@ -476,3 +476,48 @@
   color: #ffffff;
 }
 
+/* Prominent Media Dropzone Upload Box */
+.review-upload-zone {
+  margin-top: 10px;
+  margin-bottom: 18px;
+}
+
+.media-dropzone-box {
+  border: 2px dashed #14b8a6;
+  background: #f0fdfa;
+  border-radius: 14px;
+  padding: 18px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.media-dropzone-box:hover, .media-dropzone-box.dragover {
+  background: #ccfbf1;
+  border-color: #08755c;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(20, 184, 166, 0.2);
+}
+
+.dropzone-icon {
+  font-size: 2.2rem;
+  margin-bottom: 4px;
+}
+
+.dropzone-text {
+  font-size: 0.95rem;
+  color: #08755c;
+  line-height: 1.4;
+}
+
+.dropzone-hint {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+

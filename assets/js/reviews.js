@@ -281,14 +281,22 @@
                 <textarea id="review-user-comment" class="form-textarea" placeholder="Share your experience with the service or product quality, safety, guides..." required></textarea>
               </div>
 
-              <!-- Media Attachment: Photos & Videos -->
-              <div class="form-group">
-                <label for="review-media-input">📸 Attach Photos / Videos (Optional):</label>
-                <input type="file" id="review-media-input" class="form-input" accept="image/*,video/*" multiple style="padding:6px; cursor:pointer;">
+              <!-- Prominent Media Attachment: Photos & Videos -->
+              <div class="form-group review-upload-zone">
+                <label style="display:flex; justify-content:space-between; align-items:center;">
+                  <span>📸 🎬 <strong>Attach Photos &amp; Short Videos</strong> (Optional):</span>
+                  <span style="font-size:0.75rem; color:#10b981; font-weight:700;">✓ JPG, PNG, MP4, MOV</span>
+                </label>
+                <div class="media-dropzone-box" id="review-media-dropzone" style="cursor:pointer;">
+                  <div class="dropzone-icon">📷 🎥</div>
+                  <div class="dropzone-text"><strong>Click to upload Photos &amp; Videos</strong> or drag &amp; drop here</div>
+                  <div class="dropzone-hint">Show your scuba diving, kayaking, homestay, or tuna experience</div>
+                  <input type="file" id="review-media-input" accept="image/*,video/*" multiple style="display:none;">
+                </div>
                 <div id="review-media-preview-container" class="review-media-previews"></div>
               </div>
 
-              <button type="submit" class="btn-submit-review">Submit Verified Review</button>
+              <button type="submit" class="btn-submit-review" style="margin-top:14px;">Submit Verified Review</button>
             </form>
           </div>
         </div>
@@ -305,10 +313,25 @@
       avatarPreview.src = getAutoAvatar(val);
     });
 
-    // Media input listener
+    // Media input and dropzone listeners
+    const dropzone = document.getElementById('review-media-dropzone');
     const mediaInput = document.getElementById('review-media-input');
-    if (mediaInput) {
+    if (dropzone && mediaInput) {
+      dropzone.addEventListener('click', () => mediaInput.click());
       mediaInput.addEventListener('change', handleMediaSelect);
+
+      dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('dragover');
+      });
+      dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+      dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+        if (e.dataTransfer && e.dataTransfer.files.length) {
+          handleMediaSelect({ target: { files: e.dataTransfer.files } });
+        }
+      });
     }
 
     // Close button
