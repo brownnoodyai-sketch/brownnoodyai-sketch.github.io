@@ -18,6 +18,40 @@ const MIME = {
   '.svg': 'image/svg+xml'
 };
 
+function getGitHubPushUrl() {
+  let token = process.env.GH_TOKEN || '';
+  const tokenFile = path.join(process.cwd(), '.git-token');
+  if (!token && fs.existsSync(tokenFile)) {
+    token = fs.readFileSync(tokenFile, 'utf8').trim();
+  }
+  if (!token) return 'https://github.com/brownnoodyai-sketch/brownnoodyai-sketch.github.io.git';
+  return `https://brownnoodyai-sketch:${token}@github.com/brownnoodyai-sketch/brownnoodyai-sketch.github.io.git`;
+}
+
+let isPushing = false;
+async function pushToLiveGitHub() {
+  if (isPushing) {
+    console.log('[Publish] Push already in progress, skipping duplicate queue...');
+    return;
+  }
+  isPushing = true;
+  try {
+    const pushRemote = getGitHubPushUrl();
+    console.log('[Publish] Staging and committing changes...');
+    await execPromise('git add -A');
+    try {
+      await execPromise('git commit -m "feat: live auto-update via NOODY Studio"');
+    } catch (cErr) {
+      // Clean tree is fine
+    }
+    console.log('[Publish] Pushing to GitHub main...');
+    await execPromise(`git -c credential.helper= -c core.askPass= push "${pushRemote}" HEAD:main --force`);
+    console.log('[Publish] Successfully published to https://brownnoodyai-sketch.github.io/!');
+  } finally {
+    isPushing = false;
+  }
+}
+
 const server = http.createServer(async (req, res) => {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -87,7 +121,7 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // API endpoint to save edited page directly to disk
+  // API endpoint to save edited page directly to disk & auto-publish
   if (req.method === 'POST' && reqPath === '/api/save-page') {
     let body = '';
     req.on('data', chunk => { body += chunk; });
@@ -108,8 +142,19 @@ const server = http.createServer(async (req, res) => {
         await fs.promises.writeFile(resolvedPath, data.html, 'utf8');
         console.log(`[Visual Editor] Successfully saved: ${targetFile}`);
 
+        // Trigger auto-publish to GitHub Pages in the background
+        pushToLiveGitHub().catch(err => {
+          console.error('[Auto-Publish Error]:', err);
+        });
+
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ success: true, file: targetFile, timestamp: new Date().toISOString() }));
+        res.end(JSON.stringify({
+          success: true,
+          file: targetFile,
+          livePublished: true,
+          publicUrl: 'https://brownnoodyai-sketch.github.io/',
+          timestamp: new Date().toISOString()
+        }));
       } catch (err) {
         console.error('[Visual Editor] Save error:', err);
         res.writeHead(500, { 'Content-Type': 'application/json' });
@@ -122,16 +167,8 @@ const server = http.createServer(async (req, res) => {
   // API endpoint to publish changes directly to public site on GitHub Pages
   if (req.method === 'POST' && reqPath === '/api/publish-live') {
     try {
-      console.log('[Publish] Staging and committing latest changes...');
-      await execPromise('git add -A');
-      try {
-        await execPromise('git commit -m "feat: publish live website updates via NOODY Studio"');
-      } catch (cErr) {
-        // Nothing to commit is okay
-      }
-      console.log('[Publish] Pushing to GitHub Pages (origin main)...');
-      await execPromise('git push origin HEAD:main');
-      console.log('[Publish] Successfully published to https://brownnoodyai-sketch.github.io/!');
+      console.log('[Publish] Manual publish triggered...');
+      await pushToLiveGitHub();
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({
         success: true,

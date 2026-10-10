@@ -78,9 +78,9 @@
       step2Desc: 'Find certified water sports, homestays, and authentic tuna & coconut crafts.',
       step3Title: 'Enquire on WhatsApp',
       step3Desc: 'Receive transparent pricing, check real-time availability, and speak to local operators.',
-      allIslands: 'Explore Islands',
-      verifiedServices: 'Verified Water Sports & Experiences',
-      localProduce: 'Authentic Lakshadweep Products',
+      allIslands: 'Select Island',
+      verifiedServices: 'Services & Experiences',
+      localProduce: 'Island Products',
       enquireNow: 'Enquire on WhatsApp',
       viewAll: 'View All',
       filterAll: 'All Categories',
@@ -112,9 +112,9 @@
       step2Desc: 'അംഗീകൃത സ്കൂബ, കയാക്കിംഗ്, ഹോംസ്റ്റേകൾ, ട്യൂണ ഉൽപ്പന്നങ്ങൾ എന്നിവ കണ്ടെത്തൂ.',
       step3Title: 'WhatsApp-ൽ ചോദിക്കൂ',
       step3Desc: 'ലഭ്യതയും അന്തിമ വിലയും WhatsApp-ൽ ഉടനടി സ്ഥിരീകരിക്കാം.',
-      allIslands: 'ദ്വീപുകൾ കാണാം',
-      verifiedServices: 'വാട്ടർ സ്പോർട്സ് & സേവനങ്ങൾ',
-      localProduce: 'പ്രാദേശിക ദ്വീപ് ഉൽപ്പന്നങ്ങൾ',
+      allIslands: 'ദ്വീപ് തിരഞ്ഞെടുക്കുക',
+      verifiedServices: 'സേവനങ്ങളും ആക്റ്റിവിറ്റികളും',
+      localProduce: 'ദ്വീപ് ഉൽപ്പന്നങ്ങൾ',
       enquireNow: 'WhatsApp-ൽ ചോദിക്കൂ',
       viewAll: 'എല്ലാം കാണാം',
       filterAll: 'എല്ലാ വിഭാഗങ്ങളും',
@@ -492,6 +492,11 @@
       card.addEventListener('click', () => {
         const code = card.getAttribute('data-island');
         selectIsland(code);
+        // Instant smooth scroll to products and services
+        const target = document.getElementById('noody-type-filter-wrapper') || document.getElementById('services-section');
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       });
     });
 

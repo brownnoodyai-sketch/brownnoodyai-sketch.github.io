@@ -2737,7 +2737,7 @@ ${desc}
       });
 
       if (res.ok) {
-        showToast(`✅ Saved directly to F:\\bot\\${pageName}!`);
+        showToast(`✅ Saved locally & 🚀 Auto-Publishing Live to https://brownnoodyai-sketch.github.io/!`);
       } else {
         throw new Error('Save endpoint failed');
       }
