@@ -1,89 +1,106 @@
 /**
  * NOODY.AI — Per-Service & Per-Product Customer Reviews System
- * Verified guest reviews, star rating calculations, interactive review modal & submission
+ * Verified guest reviews, star rating calculations, interactive review modal,
+ * Photo & Video uploads, and Admin Review Deletion / Management
  */
 
 (function () {
   'use strict';
 
-  // Seed data of verified Lakshadweep customer reviews
+  // Seed data of verified Lakshadweep customer reviews with unique IDs
   const DEFAULT_REVIEWS = {
     'srv-agatti-01': [
-      { name: 'Rahul Madhavan', location: 'Bengaluru', rating: 5, date: 'March 2026', text: 'Crystal clear lagoon water! We could see coral beds directly beneath the kayak. Guided safety was top tier.' },
-      { name: 'Ananya Sharma', location: 'Kochi', rating: 5, date: 'February 2026', text: 'Super smooth experience. The equipment was brand new and certified. WhatsApp booking was instantaneous.' },
-      { name: 'Vikram Joshi', location: 'Pune', rating: 4, date: 'January 2026', text: 'Peaceful morning paddle. Friendly island guides who know every corner of the reef.' }
+      { id: 'def-srv-agatti-01-1', name: 'Rahul Madhavan', location: 'Bengaluru', rating: 5, date: 'March 2026', text: 'Crystal clear lagoon water! We could see coral beds directly beneath the kayak. Guided safety was top tier.', media: [] },
+      { id: 'def-srv-agatti-01-2', name: 'Ananya Sharma', location: 'Kochi', rating: 5, date: 'February 2026', text: 'Super smooth experience. The equipment was brand new and certified. WhatsApp booking was instantaneous.', media: [] },
+      { id: 'def-srv-agatti-01-3', name: 'Vikram Joshi', location: 'Pune', rating: 4, date: 'January 2026', text: 'Peaceful morning paddle. Friendly island guides who know every corner of the reef.', media: [] }
     ],
     'srv-agatti-02': [
-      { name: 'Dr. Sameer Khan', location: 'Hyderabad', rating: 5, date: 'March 2026', text: 'Best scuba dive in India without question! Spotted 3 green sea turtles and huge schools of clownfish.' },
-      { name: 'Sneha Patel', location: 'Ahmedabad', rating: 5, date: 'February 2026', text: 'I was nervous as a first-timer, but the PADI dive master was incredibly patient and attentive. 10/10.' },
-      { name: 'Rohan Nair', location: 'Chennai', rating: 5, date: 'January 2026', text: 'Underwater visibility exceeded 25 meters. Truly pristine Lakshadweep marine ecosystem.' }
+      { id: 'def-srv-agatti-02-1', name: 'Dr. Sameer Khan', location: 'Hyderabad', rating: 5, date: 'March 2026', text: 'Best scuba dive in India without question! Spotted 3 green sea turtles and huge schools of clownfish.', media: [] },
+      { id: 'def-srv-agatti-02-2', name: 'Sneha Patel', location: 'Ahmedabad', rating: 5, date: 'February 2026', text: 'I was nervous as a first-timer, but the PADI dive master was incredibly patient and attentive. 10/10.', media: [] },
+      { id: 'def-srv-agatti-02-3', name: 'Rohan Nair', location: 'Chennai', rating: 5, date: 'January 2026', text: 'Underwater visibility exceeded 25 meters. Truly pristine Lakshadweep marine ecosystem.', media: [] }
     ],
     'srv-agatti-03': [
-      { name: 'Meera Nambiar', location: 'Calicut', rating: 5, date: 'March 2026', text: 'Great for families with kids and elderly parents. Very clear glass bottom view of vivid brain corals.' },
-      { name: 'Praveen Kumar', location: 'Delhi', rating: 4, date: 'February 2026', text: 'Relaxing 45-minute tour across the inner atoll lagoon. Very informative local captain.' }
+      { id: 'def-srv-agatti-03-1', name: 'Meera Nambiar', location: 'Calicut', rating: 5, date: 'March 2026', text: 'Great for families with kids and elderly parents. Very clear glass bottom view of vivid brain corals.', media: [] },
+      { id: 'def-srv-agatti-03-2', name: 'Praveen Kumar', location: 'Delhi', rating: 4, date: 'February 2026', text: 'Relaxing 45-minute tour across the inner atoll lagoon. Very informative local captain.', media: [] }
     ],
     'srv-agatti-04': [
-      { name: 'Kavita Menon', location: 'Kochi', rating: 5, date: 'March 2026', text: 'Authentic warm island hospitality! Delicious home-cooked tuna curry and steps away from the beach.' },
-      { name: 'Siddharth Roy', location: 'Kolkata', rating: 5, date: 'January 2026', text: 'Spotless clean AC room, breezy verandah, and lovely hosts who arranged all permits smoothly.' }
+      { id: 'def-srv-agatti-04-1', name: 'Kavita Menon', location: 'Kochi', rating: 5, date: 'March 2026', text: 'Authentic warm island hospitality! Delicious home-cooked tuna curry and steps away from the beach.', media: [] },
+      { id: 'def-srv-agatti-04-2', name: 'Siddharth Roy', location: 'Kolkata', rating: 5, date: 'January 2026', text: 'Spotless clean AC room, breezy verandah, and lovely hosts who arranged all permits smoothly.', media: [] }
     ],
     'srv-kadmat-01': [
-      { name: 'Arjun Das', location: 'Goa', rating: 5, date: 'March 2026', text: 'Unmatched deep drop-off reef. We encountered eagle rays and pristine branching corals in Kadmat!' },
-      { name: 'Fiona D’Souza', location: 'Mumbai', rating: 5, date: 'February 2026', text: 'Kadmat is a diver paradise. Pristine, quiet, and zero tourist crowd.' }
+      { id: 'def-srv-kadmat-01-1', name: 'Arjun Das', location: 'Goa', rating: 5, date: 'March 2026', text: 'Unmatched deep drop-off reef. We encountered eagle rays and pristine branching corals in Kadmat!', media: [] },
+      { id: 'def-srv-kadmat-01-2', name: 'Fiona D’Souza', location: 'Mumbai', rating: 5, date: 'February 2026', text: 'Kadmat is a diver paradise. Pristine, quiet, and zero tourist crowd.', media: [] }
     ],
     'srv-kavaratti-01': [
-      { name: 'Mohammed Basil', location: 'Malappuram', rating: 5, date: 'March 2026', text: 'Saw a pod of spinner dolphins right next to our glass bottom boat! Unforgettable experience.' },
-      { name: 'Deepika Rao', location: 'Bengaluru', rating: 5, date: 'February 2026', text: 'Northern lagoon of Kavaratti has breathtaking shades of turquoise. Highly recommended!' }
+      { id: 'def-srv-kavaratti-01-1', name: 'Mohammed Basil', location: 'Malappuram', rating: 5, date: 'March 2026', text: 'Saw a pod of spinner dolphins right next to our glass bottom boat! Unforgettable experience.', media: [] },
+      { id: 'def-srv-kavaratti-01-2', name: 'Deepika Rao', location: 'Bengaluru', rating: 5, date: 'February 2026', text: 'Northern lagoon of Kavaratti has breathtaking shades of turquoise. Highly recommended!', media: [] }
     ],
     'srv-kalpeni-01': [
-      { name: 'Karthik Raja', location: 'Chennai', rating: 5, date: 'March 2026', text: 'Walking along the 1847 coral storm bank was like being on another planet. Colossal lagoon.' },
-      { name: 'Aparna Nair', location: 'Trivandrum', rating: 5, date: 'February 2026', text: 'The satellite islet of Tilakkam is pure paradise. Clear water and total tranquility.' }
+      { id: 'def-srv-kalpeni-01-1', name: 'Karthik Raja', location: 'Chennai', rating: 5, date: 'March 2026', text: 'Walking along the 1847 coral storm bank was like being on another planet. Colossal lagoon.', media: [] },
+      { id: 'def-srv-kalpeni-01-2', name: 'Aparna Nair', location: 'Trivandrum', rating: 5, date: 'February 2026', text: 'The satellite islet of Tilakkam is pure paradise. Clear water and total tranquility.', media: [] }
     ],
     'prd-agatti-01': [
-      { name: 'Gopal Krishnan', location: 'Kochi', rating: 5, date: 'March 2026', text: 'Authentic wood-smoked skipjack tuna mas. Shelf-stable, high protein, and tastes extraordinary in stir fry.' },
-      { name: 'Harish Mehta', location: 'Mumbai', rating: 5, date: 'February 2026', text: 'Packed securely and delivered fresh. Direct from Agatti cooperative. Will order again!' }
+      { id: 'def-prd-agatti-01-1', name: 'Gopal Krishnan', location: 'Kochi', rating: 5, date: 'March 2026', text: 'Authentic wood-smoked skipjack tuna mas. Shelf-stable, high protein, and tastes extraordinary in stir fry.', media: [] },
+      { id: 'def-prd-agatti-01-2', name: 'Harish Mehta', location: 'Mumbai', rating: 5, date: 'February 2026', text: 'Packed securely and delivered fresh. Direct from Agatti cooperative. Will order again!', media: [] }
     ],
     'prd-agatti-02': [
-      { name: 'Divya Pillai', location: 'Kottayam', rating: 5, date: 'March 2026', text: 'Unbelievably flavourful spicy tuna pickle! Real virgin coconut oil aroma and zero chemical taste.' },
-      { name: 'Manoj Hegde', location: 'Mangalore', rating: 5, date: 'January 2026', text: 'Generous tuna chunks and perfect island chilli blend. Best pickle we have tried.' }
+      { id: 'def-prd-agatti-02-1', name: 'Divya Pillai', location: 'Kottayam', rating: 5, date: 'March 2026', text: 'Unbelievably flavourful spicy tuna pickle! Real virgin coconut oil aroma and zero chemical taste.', media: [] },
+      { id: 'def-prd-agatti-02-2', name: 'Manoj Hegde', location: 'Mangalore', rating: 5, date: 'January 2026', text: 'Generous tuna chunks and perfect island chilli blend. Best pickle we have tried.', media: [] }
     ],
     'prd-agatti-03': [
-      { name: 'Sunita Sen', location: 'Kolkata', rating: 5, date: 'March 2026', text: 'Gorgeous polished natural coconut bowls. High quality handcraft and eco-friendly packaging.' }
+      { id: 'def-prd-agatti-03-1', name: 'Sunita Sen', location: 'Kolkata', rating: 5, date: 'March 2026', text: 'Gorgeous polished natural coconut bowls. High quality handcraft and eco-friendly packaging.', media: [] }
     ],
     'prd-agatti-08': [
-      { name: 'Lakshmi Warrier', location: 'Thrissur', rating: 5, date: 'March 2026', text: 'Pure cold-pressed virgin coconut oil with natural sweet aroma. Amazing for hair and skin.' }
+      { id: 'def-prd-agatti-08-1', name: 'Lakshmi Warrier', location: 'Thrissur', rating: 5, date: 'March 2026', text: 'Pure cold-pressed virgin coconut oil with natural sweet aroma. Amazing for hair and skin.', media: [] }
     ],
     'prd-kadmat-01': [
-      { name: 'Rajesh G.', location: 'Coimbatore', rating: 5, date: 'March 2026', text: 'Authentic Kadmat palm jaggery. Unrefined natural sweetness with zero artificial additives.' }
+      { id: 'def-prd-kadmat-01-1', name: 'Rajesh G.', location: 'Coimbatore', rating: 5, date: 'March 2026', text: 'Authentic Kadmat palm jaggery. Unrefined natural sweetness with zero artificial additives.', media: [] }
     ],
     'prd-kavaratti-01': [
-      { name: 'Shyam Sundar', location: 'Palakkad', rating: 5, date: 'March 2026', text: 'Crispy, peppery tuna crisps. Everyone at home finished the pack in one sitting!' }
+      { id: 'def-prd-kavaratti-01-1', name: 'Shyam Sundar', location: 'Palakkad', rating: 5, date: 'March 2026', text: 'Crispy, peppery tuna crisps. Everyone at home finished the pack in one sitting!', media: [] }
     ],
     'prd-kalpeni-01': [
-      { name: 'Anjali V.', location: 'Kannur', rating: 5, date: 'March 2026', text: 'Traditional Meera halwa with wild palm nectar is rich and authentic. Real island heritage recipe.' }
+      { id: 'def-prd-kalpeni-01-1', name: 'Anjali V.', location: 'Kannur', rating: 5, date: 'March 2026', text: 'Traditional Meera halwa with wild palm nectar is rich and authentic. Real island heritage recipe.', media: [] }
     ]
   };
 
-  // Load reviews store from localStorage or initialize with seed data
+  function getDeletedIds() {
+    try {
+      const stored = localStorage.getItem('noody_deleted_reviews');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  // Load reviews store from localStorage filtered by blacklist
   function getReviewsStore() {
+    const deletedIds = new Set(getDeletedIds());
+    const merged = {};
+
+    // 1. Load default reviews filtered
+    for (const id in DEFAULT_REVIEWS) {
+      merged[id] = DEFAULT_REVIEWS[id].filter(r => !deletedIds.has(r.id));
+    }
+
+    // 2. Load user submitted reviews filtered
     try {
       const stored = localStorage.getItem('noody_user_reviews');
       if (stored) {
         const parsed = JSON.parse(stored);
-        // Merge with default reviews
-        const merged = { ...DEFAULT_REVIEWS };
         for (const id in parsed) {
+          const userList = (parsed[id] || []).filter(r => !deletedIds.has(r.id));
           if (merged[id]) {
-            merged[id] = [...parsed[id], ...merged[id]];
+            merged[id] = [...userList, ...merged[id]];
           } else {
-            merged[id] = parsed[id];
+            merged[id] = userList;
           }
         }
-        return merged;
       }
     } catch (e) {
       console.warn('Reviews storage load error:', e);
     }
-    return DEFAULT_REVIEWS;
+    return merged;
   }
 
   function saveUserReview(itemId, review) {
@@ -100,11 +117,44 @@
     }
   }
 
+  function deleteReview(itemId, reviewId) {
+    if (!confirm('Are you sure you want to delete this verified review? (Admin action)')) {
+      return false;
+    }
+    const deletedIds = getDeletedIds();
+    if (!deletedIds.includes(reviewId)) {
+      deletedIds.push(reviewId);
+      localStorage.setItem('noody_deleted_reviews', JSON.stringify(deletedIds));
+    }
+
+    // Also remove from user reviews if present
+    try {
+      const stored = localStorage.getItem('noody_user_reviews');
+      if (stored) {
+        const userReviews = JSON.parse(stored);
+        if (userReviews[itemId]) {
+          userReviews[itemId] = userReviews[itemId].filter(r => r.id !== reviewId);
+          localStorage.setItem('noody_user_reviews', JSON.stringify(userReviews));
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    // Refresh modal and card ratings
+    if (currentActiveItem && currentActiveItem.id === itemId) {
+      renderModalContent(itemId, currentActiveItem.name, currentActiveItem.island);
+    }
+    renderAllCardRatings();
+    alert('✅ Review deleted successfully!');
+    return true;
+  }
+
   function getStats(itemId) {
     const store = getReviewsStore();
     const list = store[itemId] || [];
     if (!list.length) {
-      return { score: '5.0', count: 1, stars: '★★★★★' };
+      return { score: '5.0', count: 0, stars: '★★★★★' };
     }
     const sum = list.reduce((acc, r) => acc + Number(r.rating || 5), 0);
     const avg = (sum / list.length).toFixed(1);
@@ -116,6 +166,51 @@
   // Active modal state
   let currentActiveItem = { id: '', name: '', island: '' };
   let selectedRating = 5;
+  let currentAttachedMedia = [];
+
+  function handleMediaSelect(e) {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    files.forEach(file => {
+      const isVideo = file.type.startsWith('video/');
+      const isImage = file.type.startsWith('image/');
+      if (!isImage && !isVideo) return;
+
+      const reader = new FileReader();
+      reader.onload = (loadEvent) => {
+        currentAttachedMedia.push({
+          type: isVideo ? 'video' : 'image',
+          dataUrl: loadEvent.target.result,
+          name: file.name
+        });
+        renderMediaPreviewChips();
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function renderMediaPreviewChips() {
+    const container = document.getElementById('review-media-preview-container');
+    if (!container) return;
+    container.innerHTML = currentAttachedMedia.map((m, idx) => `
+      <div class="review-media-preview-chip">
+        ${m.type === 'video'
+          ? `<video src="${m.dataUrl}" style="width:64px; height:64px; object-fit:cover; border-radius:8px;"></video>`
+          : `<img src="${m.dataUrl}" alt="Attached preview" style="width:64px; height:64px; object-fit:cover; border-radius:8px;">`
+        }
+        <button type="button" class="btn-remove-chip" data-media-idx="${idx}" title="Remove media">✕</button>
+      </div>
+    `).join('');
+
+    container.querySelectorAll('.btn-remove-chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.getAttribute('data-media-idx'), 10);
+        currentAttachedMedia.splice(idx, 1);
+        renderMediaPreviewChips();
+      });
+    });
+  }
 
   function createModalDOM() {
     if (document.getElementById('noody-review-modal-backdrop')) return;
@@ -186,6 +281,13 @@
                 <textarea id="review-user-comment" class="form-textarea" placeholder="Share your experience with the service or product quality, safety, guides..." required></textarea>
               </div>
 
+              <!-- Media Attachment: Photos & Videos -->
+              <div class="form-group">
+                <label for="review-media-input">📸 Attach Photos / Videos (Optional):</label>
+                <input type="file" id="review-media-input" class="form-input" accept="image/*,video/*" multiple style="padding:6px; cursor:pointer;">
+                <div id="review-media-preview-container" class="review-media-previews"></div>
+              </div>
+
               <button type="submit" class="btn-submit-review">Submit Verified Review</button>
             </form>
           </div>
@@ -202,6 +304,12 @@
       const val = emailInput.value.trim() || 'Guest';
       avatarPreview.src = getAutoAvatar(val);
     });
+
+    // Media input listener
+    const mediaInput = document.getElementById('review-media-input');
+    if (mediaInput) {
+      mediaInput.addEventListener('change', handleMediaSelect);
+    }
 
     // Close button
     document.getElementById('noody-review-modal-close').addEventListener('click', closeModal);
@@ -240,13 +348,15 @@
       if (!name || !city || !text) return;
 
       const newReview = {
+        id: 'rev-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6),
         name: name,
         email: email,
         avatar: getAutoAvatar(email || name),
         location: city,
         rating: selectedRating,
         date: 'Just now · Verified Guest',
-        text: text
+        text: text,
+        media: [...currentAttachedMedia]
       };
 
       saveUserReview(currentActiveItem.id, newReview);
@@ -255,13 +365,15 @@
       document.getElementById('noody-add-review-form').reset();
       avatarPreview.src = getAutoAvatar('Guest');
       selectedRating = 5;
+      currentAttachedMedia = [];
+      renderMediaPreviewChips();
       updateStarPickerUI();
 
       // Refresh list & card UI
       renderModalContent(currentActiveItem.id, currentActiveItem.name, currentActiveItem.island);
       renderAllCardRatings();
 
-      alert('✅ Thank you! Your verified review has been submitted with your profile photo.');
+      alert('✅ Thank you! Your verified review with photos/videos has been published successfully.');
     });
   }
 
@@ -277,7 +389,9 @@
     createModalDOM();
     currentActiveItem = { id: itemId, name: itemName, island: islandName };
     selectedRating = 5;
+    currentAttachedMedia = [];
     updateStarPickerUI();
+    renderMediaPreviewChips();
     renderModalContent(itemId, itemName, islandName);
 
     const backdrop = document.getElementById('noody-review-modal-backdrop');
@@ -325,7 +439,7 @@
     }
 
     listContainer.innerHTML = reviews.map(r => `
-      <div class="review-entry">
+      <div class="review-entry" id="entry-${r.id}">
         <div class="review-entry-top">
           <div class="review-user-info">
             <img class="review-user-avatar" src="${r.avatar || getAutoAvatar(r.email || r.name)}" alt="${escapeHtml(r.name)}">
@@ -337,12 +451,36 @@
               ${r.email ? `<span class="review-email-badge">✉ ${maskEmail(r.email)}</span>` : ''}
             </div>
           </div>
-          <span class="review-date">${escapeHtml(r.date || 'Recent')}</span>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="review-date">${escapeHtml(r.date || 'Recent')}</span>
+            <button type="button" class="btn-review-delete" data-item-id="${itemId}" data-review-id="${r.id}" title="Delete this review (Admin)">
+              🗑️ Delete
+            </button>
+          </div>
         </div>
         <div class="stars-gold">${'★'.repeat(r.rating || 5)}${'☆'.repeat(5 - (r.rating || 5))}</div>
         <p class="review-entry-text">${escapeHtml(r.text)}</p>
+        ${r.media && r.media.length ? `
+          <div class="review-media-grid">
+            ${r.media.map(m => m.type === 'video'
+              ? `<video src="${m.dataUrl}" controls class="review-video-item" preload="metadata"></video>`
+              : `<img src="${m.dataUrl}" alt="Guest Review Photo" class="review-photo-item" onclick="window.open('${m.dataUrl}', '_blank')">`
+            ).join('')}
+          </div>
+        ` : ''}
       </div>
     `).join('');
+
+    // Attach delete listeners
+    listContainer.querySelectorAll('.btn-review-delete').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const iId = btn.getAttribute('data-item-id');
+        const rId = btn.getAttribute('data-review-id');
+        deleteReview(iId, rId);
+      });
+    });
   }
 
   function escapeHtml(str) {
@@ -358,21 +496,18 @@
   // Inject / update rating snippet on every card
   function renderAllCardRatings() {
     document.querySelectorAll('.item-card').forEach(card => {
-      // Find item metadata
       const enquireBtn = card.querySelector('[data-whatsapp-action]');
       let itemId = enquireBtn ? enquireBtn.getAttribute('data-item-id') : null;
       let itemName = card.querySelector('.item-card-title')?.textContent?.trim() || 'Item';
       let island = card.querySelector('.item-card-island')?.textContent?.trim() || 'Lakshadweep';
 
       if (!itemId) {
-        // Fallback or generate unique stable id from title
         itemId = 'item-' + itemName.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 24);
         if (enquireBtn) enquireBtn.setAttribute('data-item-id', itemId);
       }
 
       const stats = getStats(itemId);
 
-      // Check if rating element already exists
       let ratingEl = card.querySelector('.item-card-rating');
       if (!ratingEl) {
         ratingEl = document.createElement('div');
@@ -407,23 +542,40 @@
     });
   }
 
+  // Function to get a flattened list of all reviews across all items for admin panel
+  function getAllReviewsList() {
+    const store = getReviewsStore();
+    const result = [];
+    for (const itemId in store) {
+      const list = store[itemId] || [];
+      list.forEach(r => {
+        result.push({
+          itemId: itemId,
+          ...r
+        });
+      });
+    }
+    return result;
+  }
+
   // Expose global API
   window.NoodyReviews = {
     openModal: openModal,
     closeModal: closeModal,
     renderAllCardRatings: renderAllCardRatings,
     getStats: getStats,
+    getReviewsStore: getReviewsStore,
+    getAllReviewsList: getAllReviewsList,
+    deleteReview: deleteReview
   };
 
   document.addEventListener('DOMContentLoaded', () => {
-    // Load reviews CSS dynamically if not present
     if (!document.querySelector('link[href*="reviews.css"]')) {
       const link = document.createElement('link');
       link.rel = 'stylesheet';
       link.href = 'assets/css/reviews.css';
       document.head.appendChild(link);
     }
-
     renderAllCardRatings();
   });
 })();

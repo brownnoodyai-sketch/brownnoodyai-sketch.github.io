@@ -382,3 +382,97 @@
   border-color: #08755c;
   transform: scale(1.06);
 }
+
+/* Review Media Attachments (Photos & Videos) */
+.review-media-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.review-photo-item {
+  width: 84px;
+  height: 84px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.review-photo-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.review-video-item {
+  max-width: 220px;
+  max-height: 140px;
+  border-radius: 8px;
+  background: #000;
+  border: 1px solid #cbd5e1;
+}
+
+.review-media-previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.review-media-preview-chip {
+  position: relative;
+  display: inline-block;
+}
+
+.review-media-preview-chip img,
+.review-media-preview-chip video {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #14b8a6;
+  background: #0f172a;
+}
+
+.review-media-preview-chip .btn-remove-chip {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ef4444;
+  color: #ffffff;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  border: none;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Admin Review Delete Action Button */
+.btn-review-delete {
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s;
+}
+
+.btn-review-delete:hover {
+  background: #dc2626;
+  color: #ffffff;
+}
+
