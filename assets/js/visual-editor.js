@@ -2811,6 +2811,7 @@ ${desc}
       <button id="editor-add-product-btn" class="editor-dock-btn" style="display:none; background: #059669; border-color: #34d399;">➕ Add Product</button>
       <button id="editor-save-btn" class="editor-dock-btn editor-btn-save" style="display:none;">💾 Save Changes</button>
       <button id="editor-publish-btn" class="editor-dock-btn" style="display:none; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-color: #34d399; font-weight:800; box-shadow: 0 4px 14px rgba(16,185,129,0.35);" title="Push changes live to public URL https://brownnoodyai-sketch.github.io/">🚀 Publish Public Site</button>
+      <a href="admin.html" id="editor-admin-panel-btn" class="editor-dock-btn" style="background: #0f172a; border-color: #334155; text-decoration: none; color:#fff;" target="_blank">⚙️ Admin Panel</a>
     `;
     document.body.appendChild(dock);
 

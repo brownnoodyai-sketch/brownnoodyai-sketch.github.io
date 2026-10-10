@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOODY Studio — Admin Control Panel</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <link rel="stylesheet" href="assets/css/visual-editor.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%2308755c'/><text y='65' x='26' font-size='42' fill='white' font-family='sans-serif' font-weight='bold'>N</text></svg>">
+  <style>
+    :root {
+      --admin-bg: #f8fafc;
+      --admin-card: #ffffff;
+      --admin-border: #e2e8f0;
+      --admin-accent: #08755c;
+      --admin-teal: #14b8a6;
+      --admin-dark: #0f172a;
+    }
+    body {
+      background: var(--admin-bg);
+      color: var(--admin-dark);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .admin-nav {
+      background: #08755c;
+      color: #fff;
+      padding: 16px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(8, 117, 92, 0.15);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .admin-nav .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: #fff;
+      text-decoration: none;
+    }
+    .admin-nav .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .admin-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      border: none;
+      transition: all 0.2s ease;
+    }
+    .admin-btn-primary {
+      background: #14b8a6;
+      color: #fff;
+    }
+    .admin-btn-primary:hover {
+      background: #0d9488;
+      transform: translateY(-1px);
+    }
+    .admin-btn-pub {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+    }
+    .admin-btn-pub:hover {
+      background: #047857;
+      transform: translateY(-1px);
+    }
+    .admin-btn-outline {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .admin-btn-outline:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+    .admin-container {
+      max-width: 1240px;
+      margin: 32px auto;
+      padding: 0 20px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .stat-card {
+      background: #fff;
+      border: 1px solid var(--admin-border);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card .stat-label {
+      font-size: 0.82rem;
+      color: #64748b;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+    .stat-card .stat-value {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .stat-card .stat-sub {
+      font-size: 0.82rem;
+      color: #10b981;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+    .admin-section {
+      background: #fff;
+      border: 1px solid var(--admin-border);
+      border-radius: 14px;
+      padding: 28px;
+      margin-bottom: 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+    .section-title-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .section-title-bar h2 {
+      margin: 0;
+      font-size: 1.3rem;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .live-status-box {
+      background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+      border: 1px solid #bbf7d0;
+      border-radius: 12px;
+      padding: 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .live-info h3 {
+      margin: 0 0 6px 0;
+      color: #166534;
+      font-size: 1.15rem;
+    }
+    .live-info p {
+      margin: 0;
+      color: #15803d;
+      font-size: 0.9rem;
+    }
+    .live-link-pill {
+      font-family: monospace;
+      background: #fff;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid #86efac;
+      color: #166534;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 6px;
+    }
+    .quick-actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+    .action-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px;
+      background: #fafafa;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .action-card:hover {
+      background: #fff;
+      border-color: #14b8a6;
+      box-shadow: 0 6px 18px rgba(20, 184, 166, 0.12);
+      transform: translateY(-2px);
+    }
+    .action-card h4 {
+      margin: 0 0 8px 0;
+      font-size: 1.05rem;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .action-card p {
+      margin: 0 0 16px 0;
+      font-size: 0.88rem;
+      color: #64748b;
+      line-height: 1.45;
+    }
+    .log-terminal {
+      background: #0f172a;
+      color: #38bdf8;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 0.85rem;
+      padding: 16px;
+      border-radius: 10px;
+      max-height: 220px;
+      overflow-y: auto;
+      line-height: 1.6;
+      margin-top: 14px;
+    }
+    .log-terminal .log-time {
+      color: #94a3b8;
+    }
+    .log-terminal .log-success {
+      color: #4ade80;
+    }
+    .log-terminal .log-warn {
+      color: #fbbf24;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Admin Top Bar -->
+  <header class="admin-nav">
+    <a href="admin.html" class="brand">
+      <svg width="28" height="28" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="44" stroke="#14b8a6" stroke-width="8" stroke-dasharray="14 7"/><path d="M28 65L28 35L42 35L58 55L58 35L72 35L72 65L58 65L42 45L42 65Z" fill="#ffffff"/></svg>
+      <span>NOODY Studio Admin</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="admin-btn admin-btn-outline" target="_blank">✏️ Open Studio Editor</a>
+      <a href="https://brownnoodyai-sketch.github.io/" class="admin-btn admin-btn-outline" target="_blank">🌐 Live Public Site</a>
+      <button id="btn-admin-publish" class="admin-btn admin-btn-pub">🚀 Sync &amp; Publish to GitHub Live</button>
+    </div>
+  </header>
+
+  <main class="admin-container">
+
+    <!-- Live Status Banner -->
+    <div class="live-status-box">
+      <div class="live-info">
+        <h3>🌐 Official Public Website is Live &amp; Connected</h3>
+        <p>Your Lakshadweep tourism platform is live on GitHub Pages with instant WhatsApp booking integration.</p>
+        <a href="https://brownnoodyai-sketch.github.io/" class="live-link-pill" target="_blank">https://brownnoodyai-sketch.github.io/ ↗</a>
+      </div>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <span class="island-badge badge-live" style="font-size:0.9rem; padding: 8px 16px;">● GitHub Pages: Active</span>
+        <button id="btn-quick-sync" class="admin-btn admin-btn-primary">🔄 Sync All Data Now</button>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Active Islands</div>
+        <div class="stat-value">4</div>
+        <div class="stat-sub">Agatti, Kadmat, Kavaratti, Kalpeni</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Experiences &amp; Services</div>
+        <div class="stat-value">7</div>
+        <div class="stat-sub">Scuba, Kayak, Stays &amp; Boats</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Island Products</div>
+        <div class="stat-value">6</div>
+        <div class="stat-sub">Tuna Mas, Halwa, Oil &amp; Crafts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">WhatsApp Bookings</div>
+        <div class="stat-value">+91 9446944562</div>
+        <div class="stat-sub">Direct Official WhatsApp</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">GitHub Repository</div>
+        <div class="stat-value" style="font-size:1.15rem; word-break:break-all;">brownnoodyai-sketch.github.io</div>
+        <div class="stat-sub">Branch: main (Synced)</div>
+      </div>
+    </div>
+
+    <!-- Quick Action Cards -->
+    <section class="admin-section">
+      <div class="section-title-bar">
+        <h2>⚡ Control &amp; Management Hub</h2>
+        <span style="font-size:0.85rem; color:#64748b;">Instant access to website operations</span>
+      </div>
+
+      <div class="quick-actions-grid">
+        <div class="action-card">
+          <div>
+            <h4>✏️ Live Visual Editor</h4>
+            <p>Edit cards, change images, update text, rearrange buttons, and customize logos directly in the visual frontend.</p>
+          </div>
+          <a href="index.html" class="admin-btn admin-btn-primary" target="_blank">Open Visual Editor →</a>
+        </div>
+
+        <div class="action-card">
+          <div>
+            <h4>🚀 1-Click GitHub Live Sync</h4>
+            <p>Save all changes and push the entire codebase, images, and content directly to GitHub main for instant public update.</p>
+          </div>
+          <button id="btn-card-sync" class="admin-btn admin-btn-pub">Push &amp; Publish Now</button>
+        </div>
+
+        <div class="action-card">
+          <div>
+            <h4>💬 WhatsApp Enquiry Desk</h4>
+            <p>Direct bookings and customer enquiries routed to your official WhatsApp number +91 9446944562.</p>
+          </div>
+          <a href="https://wa.me/919446944562" class="admin-btn admin-btn-outline" style="background:#059669;" target="_blank">Open WhatsApp Desk →</a>
+        </div>
+
+        <div class="action-card">
+          <div>
+            <h4>🐙 GitHub Repository</h4>
+            <p>View commit history, repository files, deployments, and GitHub Pages build statuses.</p>
+          </div>
+          <a href="https://github.com/brownnoodyai-sketch/brownnoodyai-sketch.github.io" class="admin-btn admin-btn-outline" style="background:#334155;" target="_blank">Open GitHub Repo →</a>
+        </div>
+
+        <div class="action-card">
+          <div>
+            <h4>⭐ Customer Reviews</h4>
+            <p>Verified reviews with auto-generated avatars from customer email addresses and interactive star rating system.</p>
+          </div>
+          <a href="index.html#services-section" class="admin-btn admin-btn-primary" target="_blank">View Reviews On Site →</a>
+        </div>
+
+        <div class="action-card">
+          <div>
+            <h4>🛠️ API &amp; Server Health</h4>
+            <p>Check the preview server daemon, auto-publish hooks, and core integrations status.</p>
+          </div>
+          <a href="admin-status.html" class="admin-btn admin-btn-outline" style="background:#475569;" target="_blank">System Health →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- GitHub Sync & Publish Terminal Console -->
+    <section class="admin-section">
+      <div class="section-title-bar">
+        <h2>🔄 GitHub Data Sync &amp; Deployment Console</h2>
+        <span id="sync-status-indicator" class="island-badge badge-live">● Ready</span>
+      </div>
+
+      <p style="color:#64748b; font-size:0.92rem; margin:0 0 14px 0;">
+        Whenever you make changes, click the button below or save in the visual editor. All files and images are safely committed and synced to GitHub Pages automatically.
+      </p>
+
+      <div style="display:flex; gap:12px; align-items:center;">
+        <button id="btn-console-publish" class="admin-btn admin-btn-pub" style="padding:12px 24px; font-size:1rem;">
+          🚀 Sync Full Data &amp; Publish Live
+        </button>
+        <span id="sync-feedback" style="font-size:0.9rem; font-weight:700; color:#059669;"></span>
+      </div>
+
+      <div class="log-terminal" id="admin-log-box">
+        <div><span class="log-time">[System]</span> <span class="log-success">NOODY Studio Admin Console initialized.</span></div>
+        <div><span class="log-time">[System]</span> Public site: https://brownnoodyai-sketch.github.io/</div>
+        <div><span class="log-time">[System]</span> Target GitHub Branch: main</div>
+        <div><span class="log-time">[System]</span> All modifications automatically saved and synced to GitHub repository.</div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer style="text-align:center; padding:30px 20px; color:#94a3b8; font-size:0.85rem;">
+    &copy; 2026 NOODY.AI. Lakshadweep Tourism Portal &amp; Operations Studio.
+  </footer>
+
+  <script>
+    const API_ORIGIN = (window.location.origin && window.location.origin.startsWith('http')) ? window.location.origin : 'http://127.0.0.1:3000';
+
+    function addLog(msg, type = 'info') {
+      const box = document.getElementById('admin-log-box');
+      if (!box) return;
+      const time = new Date().toLocaleTimeString();
+      let colorClass = '';
+      if (type === 'success') colorClass = 'log-success';
+      else if (type === 'warn') colorClass = 'log-warn';
+      const div = document.createElement('div');
+      div.innerHTML = `<span class="log-time">[${time}]</span> <span class="${colorClass}">${msg}</span>`;
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    async function triggerLivePublish() {
+      const btns = [
+        document.getElementById('btn-admin-publish'),
+        document.getElementById('btn-quick-sync'),
+        document.getElementById('btn-card-sync'),
+        document.getElementById('btn-console-publish')
+      ];
+      btns.forEach(b => { if (b) { b.disabled = true; b.style.opacity = '0.7'; } });
+      const statusInd = document.getElementById('sync-status-indicator');
+      if (statusInd) {
+        statusInd.textContent = '⏳ Syncing to GitHub...';
+        statusInd.className = 'island-badge badge-preview';
+      }
+
+      addLog('Triggering live sync and publish to GitHub main...', 'warn');
+
+      try {
+        const res = await fetch(`${API_ORIGIN}/api/publish-live`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || 'Sync request failed');
+        }
+
+        const data = await res.json();
+        addLog(`🎉 SUCCESS: All data committed & pushed to GitHub main!`, 'success');
+        addLog(`Live website updated: ${data.publicUrl}`, 'success');
+        if (statusInd) {
+          statusInd.textContent = '● Synced & Live';
+          statusInd.className = 'island-badge badge-live';
+        }
+        alert('🎉 SUCCESS! All data has been saved and published to GitHub live!\n\nPublic Site: ' + data.publicUrl);
+      } catch (err) {
+        console.error(err);
+        addLog(`❌ Sync error: ${err.message}`, 'warn');
+        if (statusInd) {
+          statusInd.textContent = '❌ Sync Failed';
+          statusInd.className = 'island-badge badge-preview';
+        }
+        alert('❌ Sync failed: ' + err.message + '\n\nPlease ensure preview-server is running.');
+      } finally {
+        btns.forEach(b => { if (b) { b.disabled = false; b.style.opacity = '1'; } });
+      }
+    }
+
+    document.getElementById('btn-admin-publish')?.addEventListener('click', triggerLivePublish);
+    document.getElementById('btn-quick-sync')?.addEventListener('click', triggerLivePublish);
+    document.getElementById('btn-card-sync')?.addEventListener('click', triggerLivePublish);
+    document.getElementById('btn-console-publish')?.addEventListener('click', triggerLivePublish);
+
+    // Initial check
+    fetch(`${API_ORIGIN}/api/health`).then(r => r.json()).then(() => {
+      addLog('Local server connected (port 3000). Auto-publish operational.', 'success');
+    }).catch(() => {
+      addLog('Preview server standby. Start server locally for live editing.', 'warn');
+    });
+  </script>
+</body>
+</html>
