@@ -100,6 +100,17 @@
     } catch (e) {
       console.warn('Reviews storage load error:', e);
     }
+
+    // 3. Sort pinned reviews to the very top
+    const pinnedIds = new Set(getPinnedIds());
+    for (const id in merged) {
+      merged[id].sort((a, b) => {
+        const aPin = pinnedIds.has(a.id) ? 1 : 0;
+        const bPin = pinnedIds.has(b.id) ? 1 : 0;
+        return bPin - aPin;
+      });
+    }
+
     return merged;
   }
 
@@ -228,6 +239,78 @@
     renderAllCardRatings();
     alert('✅ Review updated successfully!');
     return true;
+  }
+
+  function downloadMediaFile(dataUrl, filename) {
+    try {
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      const isVid = dataUrl.startsWith('data:video') || dataUrl.includes('.mp4');
+      a.download = filename || ('noody-media-' + Date.now() + (isVid ? '.mp4' : '.jpg'));
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch (e) {
+      console.error('Download failed:', e);
+      window.open(dataUrl, '_blank');
+    }
+  }
+
+  function getPinnedIds() {
+    try {
+      const stored = localStorage.getItem('noody_pinned_reviews');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function togglePinReview(itemId, reviewId) {
+    if (!checkAdminAuth()) return false;
+    let pinned = getPinnedIds();
+    const isAlreadyPinned = pinned.includes(reviewId);
+    if (isAlreadyPinned) {
+      pinned = pinned.filter(id => id !== reviewId);
+      alert('📌 Review unpinned!');
+    } else {
+      pinned.unshift(reviewId);
+      alert('📌 Review PINNED to the top!');
+    }
+    localStorage.setItem('noody_pinned_reviews', JSON.stringify(pinned));
+    if (currentActiveItem && currentActiveItem.id === itemId) {
+      renderModalContent(itemId, currentActiveItem.name, currentActiveItem.island);
+    }
+    return true;
+  }
+
+  function shareToInstagram(itemId, reviewId) {
+    const store = getReviewsStore();
+    const list = store[itemId] || [];
+    const r = list.find(item => item.id === reviewId);
+    if (!r) return;
+
+    // 1. Download media if available
+    if (r.media && r.media.length) {
+      r.media.forEach((m, i) => {
+        setTimeout(() => {
+          downloadMediaFile(m.dataUrl, `NOODY_Instagram_${(r.name || 'guest').replace(/\s+/g, '_')}_${i + 1}${m.type === 'video' ? '.mp4' : '.jpg'}`);
+        }, i * 400);
+      });
+    }
+
+    // 2. Prepare Instagram caption
+    const stars = '⭐'.repeat(r.rating || 5);
+    const caption = `🏝️ REAL GUEST EXPERIENCE FROM LAKSHADWEEP! 🌊\n\n"${r.text}"\n\n${stars} ${r.rating || 5}/5 by ${r.name} (${r.location || 'Guest'})\n\n🌴 Island: ${currentActiveItem.island || 'Lakshadweep'}\n🏄 Service: ${currentActiveItem.name || 'Verified Experience'}\n\n📲 Direct WhatsApp Booking: +91 9446944562\n🌐 Explore Online: https://brownnoodyai-sketch.github.io/\n\n#Lakshadweep #LakshadweepTourism #AgattiIsland #Kadmat #Kavaratti #Kalpeni #IncredibleIndia #NOODY #TravelIndia #OceanAdventures`;
+
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(caption).then(() => {
+        alert('📸 Ready for Instagram!\n\n1. Photo/Video has been downloaded to your device.\n2. Instagram caption copied to clipboard!\n\n👉 Open Instagram and paste the caption with your post.');
+      }).catch(() => {
+        prompt('Copy Instagram Caption:', caption);
+      });
+    } else {
+      prompt('Copy Instagram Caption:', caption);
+    }
   }
 
   function getStats(itemId) {
@@ -543,8 +626,12 @@
       return;
     }
 
-    listContainer.innerHTML = reviews.map(r => `
-      <div class="review-entry" id="entry-${r.id}">
+    const pinnedIds = new Set(getPinnedIds());
+
+    listContainer.innerHTML = reviews.map(r => {
+      const isPinned = pinnedIds.has(r.id);
+      return `
+      <div class="review-entry ${isPinned ? 'is-pinned' : ''}" id="entry-${r.id}">
         <div class="review-entry-top">
           <div class="review-user-info">
             <img class="review-user-avatar" src="${r.avatar || getAutoAvatar(r.email || r.name)}" alt="${escapeHtml(r.name)}">
@@ -552,13 +639,20 @@
               <span class="reviewer-name">
                 ${escapeHtml(r.name)} (${escapeHtml(r.location || 'Guest')})
                 <span class="verified-badge">✓ Verified</span>
+                ${isPinned ? '<span class="review-pinned-badge">📌 Pinned</span>' : ''}
               </span>
               ${r.email ? `<span class="review-email-badge">✉ ${maskEmail(r.email)}</span>` : ''}
             </div>
           </div>
-          <div style="display:flex; align-items:center; gap:6px;">
+          <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
             <span class="review-date">${escapeHtml(r.date || 'Recent')}</span>
             ${adminActive ? `
+              <button type="button" class="btn-review-pin ${isPinned ? 'active' : ''}" data-item-id="${itemId}" data-review-id="${r.id}" title="${isPinned ? 'Unpin from top' : 'Pin review to top'}">
+                📌 ${isPinned ? 'Unpin' : 'Pin'}
+              </button>
+              <button type="button" class="btn-review-insta" data-item-id="${itemId}" data-review-id="${r.id}" title="Download media & copy caption for Instagram post">
+                📸 Instagram
+              </button>
               <button type="button" class="btn-review-edit" data-item-id="${itemId}" data-review-id="${r.id}" title="Edit this review (Admin Only)">
                 ✏️ Edit
               </button>
@@ -572,17 +666,56 @@
         <p class="review-entry-text">${escapeHtml(r.text)}</p>
         ${r.media && r.media.length ? `
           <div class="review-media-grid">
-            ${r.media.map(m => m.type === 'video'
-              ? `<video src="${m.dataUrl}" controls class="review-video-item" preload="metadata"></video>`
-              : `<img src="${m.dataUrl}" alt="Guest Review Photo" class="review-photo-item" onclick="window.open('${m.dataUrl}', '_blank')">`
-            ).join('')}
+            ${r.media.map(m => `
+              <div class="review-media-item-wrapper">
+                ${m.type === 'video'
+                  ? `<video src="${m.dataUrl}" controls class="review-video-item" preload="metadata"></video>`
+                  : `<img src="${m.dataUrl}" alt="Guest Review Photo" class="review-photo-item" onclick="window.open('${m.dataUrl}', '_blank')">`
+                }
+                <button type="button" class="btn-media-download" data-media-url="${encodeURIComponent(m.dataUrl)}" data-media-type="${m.type}" title="Download photo/video to phone or computer">
+                  ⬇️ Save
+                </button>
+              </div>
+            `).join('')}
           </div>
         ` : ''}
       </div>
-    `).join('');
+    `;
+    }).join('');
+
+    // Attach download listeners to media chips
+    listContainer.querySelectorAll('.btn-media-download').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const rawUrl = decodeURIComponent(btn.getAttribute('data-media-url'));
+        const type = btn.getAttribute('data-media-type');
+        downloadMediaFile(rawUrl, `NOODY_Guest_${Date.now()}${type === 'video' ? '.mp4' : '.jpg'}`);
+      });
+    });
 
     // Attach admin listeners only if admin
     if (adminActive) {
+      listContainer.querySelectorAll('.btn-review-pin').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const iId = btn.getAttribute('data-item-id');
+          const rId = btn.getAttribute('data-review-id');
+          togglePinReview(iId, rId);
+        });
+      });
+
+      listContainer.querySelectorAll('.btn-review-insta').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const iId = btn.getAttribute('data-item-id');
+          const rId = btn.getAttribute('data-review-id');
+          shareToInstagram(iId, rId);
+        });
+      });
+
       listContainer.querySelectorAll('.btn-review-edit').forEach(btn => {
         btn.addEventListener('click', (e) => {
           e.preventDefault();
@@ -690,6 +823,9 @@
     getAllReviewsList: getAllReviewsList,
     deleteReview: deleteReview,
     editReview: editReview,
+    togglePinReview: togglePinReview,
+    shareToInstagram: shareToInstagram,
+    downloadMediaFile: downloadMediaFile,
     isUserAdmin: isUserAdmin
   };
 
